@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ThirdParty">
+      <UniqueIdentifier>{f5305824-6dc0-4ad8-bac3-f7082091a316}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\MinHook">
+      <UniqueIdentifier>{9c475a7d-d1ae-47db-b4db-5cfe59895d90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\MinHook\src">
+      <UniqueIdentifier>{b742973a-44d3-4831-8781-6376871375fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\MinHook\src\hde">
+      <UniqueIdentifier>{1df2b4e7-6c20-4a4a-878c-a9de587e1987}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\jsoncpp">
+      <UniqueIdentifier>{bb5bc7f3-9881-42ea-8212-81a779e6dee2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\jsoncpp\src">
+      <UniqueIdentifier>{db0eae71-4e80-41c6-9be6-b3fb4d9b1ff0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Source\TelegramAntiRevoke\AntiRevoke.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\TelegramAntiRevoke\DllMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\TelegramAntiRevoke\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\TelegramAntiRevoke\QtString.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\TelegramAntiRevoke\RealMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\TelegramAntiRevoke\Telegram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\TelegramAntiRevoke\Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThirdParty\MinHook\src\buffer.c">
+      <Filter>ThirdParty\MinHook\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThirdParty\MinHook\src\hook.c">
+      <Filter>ThirdParty\MinHook\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThirdParty\MinHook\src\trampoline.c">
+      <Filter>ThirdParty\MinHook\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThirdParty\MinHook\src\hde\hde32.c">
+      <Filter>ThirdParty\MinHook\src\hde</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThirdParty\MinHook\src\hde\hde64.c">
+      <Filter>ThirdParty\MinHook\src\hde</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThirdParty\jsoncpp\src\json_reader.cpp">
+      <Filter>ThirdParty\jsoncpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThirdParty\jsoncpp\src\json_value.cpp">
+      <Filter>ThirdParty\jsoncpp\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThirdParty\jsoncpp\src\json_writer.cpp">
+      <Filter>ThirdParty\jsoncpp\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Source\TelegramAntiRevoke\AntiRevoke.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\TelegramAntiRevoke\Global.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\TelegramAntiRevoke\Header.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\TelegramAntiRevoke\Logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\TelegramAntiRevoke\QtString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\TelegramAntiRevoke\Telegram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\TelegramAntiRevoke\Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\TelegramAntiRevoke\Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\MinHook\MinHook.h">
+      <Filter>ThirdParty\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\MinHook\src\buffer.h">
+      <Filter>ThirdParty\MinHook\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\MinHook\src\trampoline.h">
+      <Filter>ThirdParty\MinHook\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\MinHook\src\hde\hde32.h">
+      <Filter>ThirdParty\MinHook\src\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\MinHook\src\hde\hde64.h">
+      <Filter>ThirdParty\MinHook\src\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\MinHook\src\hde\pstdint.h">
+      <Filter>ThirdParty\MinHook\src\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\MinHook\src\hde\table32.h">
+      <Filter>ThirdParty\MinHook\src\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\MinHook\src\hde\table64.h">
+      <Filter>ThirdParty\MinHook\src\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\allocator.h">
+      <Filter>ThirdParty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\assertions.h">
+      <Filter>ThirdParty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\autolink.h">
+      <Filter>ThirdParty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\config.h">
+      <Filter>ThirdParty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\forwards.h">
+      <Filter>ThirdParty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\json.h">
+      <Filter>ThirdParty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\json_features.h">
+      <Filter>ThirdParty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\reader.h">
+      <Filter>ThirdParty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\value.h">
+      <Filter>ThirdParty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\version.h">
+      <Filter>ThirdParty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\writer.h">
+      <Filter>ThirdParty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\src\json_tool.h">
+      <Filter>ThirdParty\jsoncpp\src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\Source\TelegramAntiRevoke\TelegramAntiRevoke.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Source\ThirdParty\jsoncpp\src\json_valueiterator.inl">
+      <Filter>ThirdParty\jsoncpp\src</Filter>
+    </None>
+  </ItemGroup>
+</Project>
