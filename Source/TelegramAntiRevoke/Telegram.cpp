@@ -66,7 +66,7 @@ HistoryMessageEdited* HistoryMessage::GetEdited()
 {
 	HistoryMessageEdited* Result = NULL;
 
-	SafeExcept([&]()
+	Safe::Except([&]()
 	{
 		PVOID *pData = *(PVOID**)((ULONG_PTR)this + 8);
 		INT Offset = *(INT*)((ULONG_PTR)(*pData) + 4 * g::fnGetEditedIndex() + 8);
@@ -80,7 +80,6 @@ HistoryMessageEdited* HistoryMessage::GetEdited()
 	}, [&](ULONG ExceptionCode)
 	{
 		g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::StringFormatA("0x%x", ExceptionCode) + "] Address: [" + Text::StringFormatA("0x%x", this) + "]");
-		// MessageBoxA(NULL, ("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::StringFormatA("0x%x", ExceptionCode) + "]").c_str(), "", 0);
 	});
 
 	return Result;

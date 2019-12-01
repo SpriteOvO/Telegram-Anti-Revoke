@@ -9,15 +9,15 @@ public:
 	LoggerManager();
 	~LoggerManager();
 
-	void TraceText(string Content);
-	void TraceInfo(string Content);
-	void TraceWarn(string Content);
-	void TraceError(string Content, BOOLEAN NeedReport = TRUE);
+	void TraceText(std::string Content);
+	void TraceInfo(std::string Content);
+	void TraceWarn(std::string Content);
+	void TraceError(std::string Content, BOOLEAN NeedReport = TRUE);
 
 	void Close();
 
 private:
 	HANDLE hMutex;
-	ofstream File;
+	std::ofstream File;
 
 };

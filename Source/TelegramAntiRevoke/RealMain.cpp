@@ -139,7 +139,7 @@ BOOLEAN HookMemoryFree(BOOLEAN Status)
 
 void InitMarkLanguage()
 {
-	SafeExcept([]()
+	Safe::Except([]()
 	{
 		LanguageInstance *Instance = g::fnGetCurrentInstance();
 		if (Instance == NULL) {
@@ -378,14 +378,36 @@ BOOLEAN SearchSigns()
 		.text:00B6FBFA E8 41 F7 9C FF                          call    ?fail@assertion@base@@YAXPBD0H@Z ; base::assertion::fail(char const *,char const *,int)
 
 		51 A1 ?? ?? ?? ?? 85 C0 74 05 8B 40 ?? 59 C3
+		
+		this sign has changed on 1.9.1, so we use the following.
+
+
+		.text:00B48E94 25 00 04 00 00                          and     eax, 400h
+		.text:00B48E99 0F 84 8D 01 00 00                       jz      loc_B4902C
+		.text:00B48E9F 8B CB                                   mov     this, ebx       ; this
+		.text:00B48EA1 E8 EA 07 56 00                          call    ?c_user@MTPuser@@QBEABVMTPDuser@@XZ ; MTPuser::c_user(void)
+		.text:00B48EA6 83 78 0C 00                             cmp     dword ptr [eax+0Ch], 0
+		.text:00B48EAA 0F 84 7C 01 00 00                       jz      loc_B4902C
+		.text:00B48EB0 E8 1B 6D 02 00                          call    ?Current@Lang@@YAAAVInstance@1@XZ ; Lang::Current(void)
+
+		25 00 04 00 00 0F 84 ?? ?? ?? ?? 8B CB E8 ?? ?? ?? ?? 83 78 ?? 00 0F 84 ?? ?? ?? ?? E8
 	*/
-	vector<PVOID> vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x51\xA1\x00\x00\x00\x00\x85\xC0\x74\x05\x8B\x40\x00\x59\xC3", "xx????xxxxxx?xx");
+
+	//vector<PVOID> vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x51\xA1\x00\x00\x00\x00\x85\xC0\x74\x05\x8B\x40\x00\x59\xC3", "xx????xxxxxx?xx");
+	//if (vCallCurrent.size() != 1) {
+	//	g::Logger.TraceWarn("Search GetCurrentInstance falied.");
+	//	return FALSE;
+	//}
+
+	//g::fnGetCurrentInstance = (fntGetCurrentInstance)vCallCurrent[0];
+
+	vector<PVOID> vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x25\x00\x04\x00\x00\x0F\x84\x00\x00\x00\x00\x8B\xCB\xE8\x00\x00\x00\x00\x83\x78\x00\x00\x0F\x84\x00\x00\x00\x00\xE8", "xxxxxxx????xxx????xx?xxx????x");
 	if (vCallCurrent.size() != 1) {
 		g::Logger.TraceWarn("Search GetCurrentInstance falied.");
 		return FALSE;
 	}
 
-	g::fnGetCurrentInstance = (fntGetCurrentInstance)vCallCurrent[0];
+	g::fnGetCurrentInstance = (fntGetCurrentInstance)(PVOID)((ULONG_PTR)vCallCurrent[0] + 33 + *(INT*)((ULONG_PTR)vCallCurrent[0] + 29));
 
 
 	//printf("Call_Malloc: %p\n", (PVOID)Call_Malloc);
@@ -523,12 +545,10 @@ BOOL WINAPI RealDllMain(HINSTANCE hModule, DWORD dwReason, PVOID pReserved)
 	case DLL_PROCESS_ATTACH:
 		DisableThreadLibraryCalls(hModule);
 		// Utils::CreateConsole();
-
-		if (!CheckProcess()) {
-			return FALSE;
+		
+		if (CheckProcess()) {
+			CloseHandle(CreateThread(NULL, 0, Initialize, NULL, 0, NULL));
 		}
-
-		CloseHandle(CreateThread(NULL, 0, Initialize, NULL, 0, NULL));
 
 		break;
 	}

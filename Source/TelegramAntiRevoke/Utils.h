@@ -33,6 +33,25 @@ namespace Internet
 	std::string			RequestGetA(const std::string &HostName, INTERNET_PORT Port, const std::string &ObjectName, const std::string &AdditionalHeader = "Accept: */*\r\nAccept-Language: *\r\n");
 }
 
+namespace Safe
+{
+	template <typename T1, typename T2> BOOLEAN Except(T1 TryCallback, T2 ExceptCallback)
+	{
+		__try
+		{
+			TryCallback();
+			return TRUE;
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER)
+		{
+			ExceptCallback(GetExceptionCode());
+			return FALSE;
+		}
+	}
+
+	void				Mutex(HANDLE hMutex, std::function<void()> Callback);
+}
+
 namespace Thread
 {
 	template <typename T> void TimedExecute(DWORD Time, T ExecuteCallback)

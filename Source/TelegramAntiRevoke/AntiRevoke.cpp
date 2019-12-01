@@ -5,7 +5,7 @@
 
 void Session::ProcessRevoke(HistoryMessage* pMessage)
 {
-	SafeExcept([&]()
+	Safe::Except([&]()
 	{
 		if (!pMessage->IsMessage()) {
 			return;
@@ -14,7 +14,7 @@ void Session::ProcessRevoke(HistoryMessage* pMessage)
 		QtString *pTimeText = pMessage->GetTimeText();
 		if (pTimeText->IsValidTime())
 		{
-			SafeMutex(g::hMutex, [&]()
+			Safe::Mutex(g::hMutex, [&]()
 			{
 				g::RevokedMessages.push_back(pMessage);
 			});
@@ -39,14 +39,14 @@ void ProcessItems()
 
 		static vector<HistoryMessage*> RevokedCache;
 
-		SafeMutex(g::hMutex, [&]()
+		Safe::Mutex(g::hMutex, [&]()
 		{
 			RevokedCache.assign(g::RevokedMessages.begin(), g::RevokedMessages.end());
 		});
 
 		for (HistoryMessage *pMessage : RevokedCache)
 		{
-			SafeExcept([&]()
+			Safe::Except([&]()
 			{
 				QtString *pTimeText = NULL;
 				HistoryMessageEdited *pEdited = pMessage->GetEdited();
@@ -105,7 +105,7 @@ void ProcessItems()
 
 void __cdecl FakeFree(void *block)
 {
-	SafeMutex(g::hMutex, [&]()
+	Safe::Mutex(g::hMutex, [&]()
 	{
 		// when we delete a msg by ourselves, tg will free this memory block.
 		// so, we will earse this msg from the vector.

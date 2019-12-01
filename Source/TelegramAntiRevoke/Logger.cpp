@@ -31,7 +31,7 @@ void LoggerManager::TraceText(string Content)
 
 	Content = Text::SubReplaceA(Content, "\n", "[\\n]");
 
-	SafeMutex(this->hMutex, [&]()
+	Safe::Mutex(this->hMutex, [&]()
 	{
 		this->File << string(TimeBuffer) + Content << endl;
 	});
@@ -57,28 +57,40 @@ void LoggerManager::TraceError(string Content, BOOLEAN NeedReport)
 
 	/*
 		An error has occurred!
+		Please help us fix this problem.
+		--------------------------------------------------
 
 		[error content]
 
-		Please help us fix this problem.
-		Click "OK" to go to GitHub to submit a question.
+		--------------------------------------------------
+		Click "Abort" or "Ignore" will pop up GitHub issue tracker page.
+		You can submit this problem to us there.
 		Thank you very much.
-	*/ 
+	*/
 	string Msg;
 	if (NeedReport) {
 		Msg = "An error has occurred!\n"
 			"Please help us fix this problem.\n"
-			"\n" + 
+			"--------------------------------------------------\n"
+			"\n" +
 			Content + "\n"
 			"\n"
-			"Click \"OK\" to go to GitHub to submit a question.\n"
+			"--------------------------------------------------\n"
+			"Click \"Abort\" or \"Ignore\" will pop up GitHub issue tracker page.\n"
+			"You can submit this problem to us there.\n"
 			"Thank you very much.";
 	}
 	else {
 		Msg = Content;
 	}
 
-	MessageBoxA(NULL, Msg.c_str(), "Anti-Revoke Plugin", MB_ICONERROR);
+	INT Result;
+	do 
+	{
+		Result = MessageBoxA(NULL, Msg.c_str(), "Anti-Revoke Plugin", MB_ABORTRETRYIGNORE | MB_ICONERROR);
+		// lol..
+	} while (Result == IDRETRY);
+
 
 	if (NeedReport) {
 		// Pop up Github issues tracker
@@ -90,7 +102,9 @@ void LoggerManager::TraceError(string Content, BOOLEAN NeedReport)
 		system("start " AR_URL_ISSUES);
 	}
 
-	FORCE_EXIT();
+	if (Result == IDABORT) {
+		FORCE_EXIT();
+	}
 }
 
 void LoggerManager::Close()

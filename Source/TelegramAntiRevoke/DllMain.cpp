@@ -95,6 +95,7 @@ namespace AheadLib
 		FARPROC Address = GetProcAddress(hModule, ProcName);
 		if (Address == NULL) {
 			g::Logger.TraceError("Could not find [" + string(ProcName) + "] function.");
+			FORCE_EXIT();
 			return NULL;
 		}
 
@@ -140,6 +141,7 @@ namespace AheadLib
 			hModule = LoadLibraryA((string(SystemPath) + "\\avrt.dll").c_str());
 			if (hModule == NULL) {
 				g::Logger.TraceError("Unable to load the original module.");
+				FORCE_EXIT();
 				return;
 			}
 		}

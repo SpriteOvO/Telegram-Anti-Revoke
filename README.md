@@ -20,7 +20,7 @@ Automatic recognition is currently supported:
 * You can still actively delete messages.
 
 ## :tomato: Compatibility
-Currently only compatible with Windows Telegram 1.8.0 ~ 1.8.15 or higher.
+Currently only compatible with Windows Telegram 1.8.0 ~ 1.9.1 or higher.
 
 ## :hamburger: Usage
 1. Close the running Telegram process.  
@@ -53,4 +53,4 @@ Please report the issue and wait for the plugin to update.
 * Thanks to [dummycatz] for pointing out the reason for the error in malloc/free memory across modules.
 
 ## :warning: Warning
-* This open source project and plugin is unofficial and is for educational purposes only.
+This open source project and plugin is unofficial and is for educational purposes only.

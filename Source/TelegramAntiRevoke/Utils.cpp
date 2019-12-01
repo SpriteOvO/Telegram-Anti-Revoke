@@ -140,6 +140,16 @@ namespace Internet
 	}
 }
 
+namespace Safe
+{
+	void			Mutex(HANDLE hMutex, std::function<void()> Callback)
+	{
+		WaitForSingleObject(hMutex, INFINITE);
+		Callback();
+		ReleaseMutex(hMutex);
+	}
+}
+
 namespace Process
 {
 	string			GetCurrentName()
