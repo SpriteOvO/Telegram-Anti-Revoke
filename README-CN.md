@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/badge/beta-v0.1.0-blue.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/pulls)
 
-[:earth_americas: English](/README.md) | :earth_asia: 简体中文
+:earth_americas: [English](/README.md) | :earth_asia: 简体中文
 
 Telegram 本地消息防撤回插件。
 
@@ -16,11 +16,11 @@ Telegram 本地消息防撤回插件。
 * 插件具有极好的兼容性。
 * 标记的内容支持多语言自动识别。  
 目前已支持自动识别：  
-*English、Simplified Chinese、Traditional Chinese、Japanese、Korean*
+*英语、简体中文语、繁体中文语、日语、韩语*
 * 您仍然可以主动删除消息。
 
 ## :tomato: 兼容性
-目前仅兼容 Windows Telegram 1.8.0 ~ 1.9.1 或更高。
+目前仅兼容 Windows Telegram 1.8.3 ~ 1.9.3 或更高。
 
 ## :hamburger: 用法
 1、关闭正在运行的 Telegram 进程。  

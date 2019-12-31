@@ -85,7 +85,7 @@ void LoggerManager::TraceError(string Content, BOOLEAN NeedReport)
 	}
 
 	INT Result;
-	do 
+	do
 	{
 		Result = MessageBoxA(NULL, Msg.c_str(), "Anti-Revoke Plugin", MB_ABORTRETRYIGNORE | MB_ICONERROR);
 		// lol..

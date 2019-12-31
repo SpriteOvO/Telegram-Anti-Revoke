@@ -13,7 +13,8 @@ namespace g
 	fntFree fnFree = NULL;
 	fntFree fnOriginalFree = NULL;
 	fntGetEditedIndex fnGetEditedIndex = NULL;
-	fntGetCurrentInstance fnGetCurrentInstance = NULL;
+	// fntGetCurrentInstance fnGetCurrentInstance = NULL;
+	LanguageInstance **pInstance = NULL;
 	PVOID RevokeByServer = NULL;
 	PVOID OriginalRevoke = NULL;
 
@@ -141,7 +142,8 @@ void InitMarkLanguage()
 {
 	Safe::Except([]()
 	{
-		LanguageInstance *Instance = g::fnGetCurrentInstance();
+		// LanguageInstance *Instance = g::fnGetCurrentInstance();
+		LanguageInstance *Instance = *g::pInstance;
 		if (Instance == NULL) {
 			g::Logger.TraceWarn("Get language instance failed.");
 			return;
@@ -379,8 +381,9 @@ BOOLEAN SearchSigns()
 
 		51 A1 ?? ?? ?? ?? 85 C0 74 05 8B 40 ?? 59 C3
 		
-		this sign has changed on 1.9.1, so we use the following.
+		//////////////////////////////////////////////////
 
+		this sign has changed on 1.9.1, so we use the following.
 
 		.text:00B48E94 25 00 04 00 00                          and     eax, 400h
 		.text:00B48E99 0F 84 8D 01 00 00                       jz      loc_B4902C
@@ -391,6 +394,24 @@ BOOLEAN SearchSigns()
 		.text:00B48EB0 E8 1B 6D 02 00                          call    ?Current@Lang@@YAAAVInstance@1@XZ ; Lang::Current(void)
 
 		25 00 04 00 00 0F 84 ?? ?? ?? ?? 8B CB E8 ?? ?? ?? ?? 83 78 ?? 00 0F 84 ?? ?? ?? ?? E8
+		
+		//////////////////////////////////////////////////
+
+		2020.1.1
+		changed again (on 1.9.3
+		new:
+
+		std::_Deque_iterator<std::_Deque_val<std::_Deque_simple_types<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap> > > > *__thiscall std::deque<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap>,std::allocator<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap>>>::erase(std::deque<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap>,std::allocator<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap> > > *this, std::_Deque_iterator<std::_Deque_val<std::_Deque_simple_types<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap> > > > *result, std::_Deque_const_iterator<std::_Deque_val<std::_Deque_simple_types<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap> > > > _First_arg, std::_Deque_const_iterator<std::_Deque_val<std::_Deque_simple_types<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap> > > > _Last_arg)
+		
+		.text:005D611E                         loc_5D611E:                             ; CODE XREF: std::deque<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap>,std::allocator<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap>>>::erase(std::_Deque_const_iterator<std::_Deque_val<std::_Deque_simple_types<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap>>>>,std::_Deque_const_iterator<std::_Deque_val<std::_Deque_simple_types<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap>>>>)+9A↑j
+		.text:005D611E 8B 3D 44 1F 3B 03                       mov     edi, ?Instance@Application@Core@@0PAV12@A.ptr_ ; Core::Application * Core::Application::Instance
+		.text:005D6124 89 45 E8                                mov     [ebp+var_18], eax
+		.text:005D6127 39 55 E4                                cmp     [ebp+var_1C], edx
+		.text:005D612A 0F 84 A1 00 00 00                       jz      loc_5D61D1
+		.text:005D6130 8B 5D D4                                mov     ebx, [ebp+var_2C]
+		.text:005D6133 8B 75 EC                                mov     esi, [ebp+var_14]
+
+		8B 3D ?? ?? ?? ?? 89 45 ?? 39 55 ?? 0F 84
 	*/
 
 	//vector<PVOID> vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x51\xA1\x00\x00\x00\x00\x85\xC0\x74\x05\x8B\x40\x00\x59\xC3", "xx????xxxxxx?xx");
@@ -401,14 +422,29 @@ BOOLEAN SearchSigns()
 
 	//g::fnGetCurrentInstance = (fntGetCurrentInstance)vCallCurrent[0];
 
-	vector<PVOID> vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x25\x00\x04\x00\x00\x0F\x84\x00\x00\x00\x00\x8B\xCB\xE8\x00\x00\x00\x00\x83\x78\x00\x00\x0F\x84\x00\x00\x00\x00\xE8", "xxxxxxx????xxx????xx?xxx????x");
+	//////////////////////////////////////////////////
+
+	//vector<PVOID> vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x25\x00\x04\x00\x00\x0F\x84\x00\x00\x00\x00\x8B\xCB\xE8\x00\x00\x00\x00\x83\x78\x00\x00\x0F\x84\x00\x00\x00\x00\xE8", "xxxxxxx????xxx????xx?xxx????x");
+	//if (vCallCurrent.size() != 1) {
+	//	g::Logger.TraceWarn("Search GetCurrentInstance falied.");
+	//	return FALSE;
+	//}
+
+	//g::fnGetCurrentInstance = (fntGetCurrentInstance)(PVOID)((ULONG_PTR)vCallCurrent[0] + 33 + *(INT*)((ULONG_PTR)vCallCurrent[0] + 29));
+
+	//////////////////////////////////////////////////
+
+	vector<PVOID> vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x3D\x00\x00\x00\x00\x89\x45\x00\x39\x55\x00\x0F\x84", "xx????xx?xx?xx");
 	if (vCallCurrent.size() != 1) {
-		g::Logger.TraceWarn("Search GetCurrentInstance falied.");
+		g::Logger.TraceWarn("Search Instance falied.");
 		return FALSE;
 	}
 
-	g::fnGetCurrentInstance = (fntGetCurrentInstance)(PVOID)((ULONG_PTR)vCallCurrent[0] + 33 + *(INT*)((ULONG_PTR)vCallCurrent[0] + 29));
-
+	g::pInstance = (LanguageInstance**)(*(ULONG_PTR*)(*(ULONG_PTR*)((ULONG_PTR)vCallCurrent[0] + 2)) + 0x54);
+	if (g::pInstance == NULL) {
+		g::Logger.TraceWarn("Language Instance invalid.");
+		return FALSE;
+	}
 
 	//printf("Call_Malloc: %p\n", (PVOID)Call_Malloc);
 	//printf("Call_Free  : %p\n", (PVOID)Call_Free);

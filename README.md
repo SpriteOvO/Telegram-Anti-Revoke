@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/badge/beta-v0.1.0-blue.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/pulls)
 
-:earth_americas: English | [:earth_asia: 简体中文](/README-CN.md)
+:earth_americas: English | :earth_asia: [简体中文](/README-CN.md)
 
 Telegram local message anti-revoke plugin.
 
@@ -20,7 +20,7 @@ Automatic recognition is currently supported:
 * You can still actively delete messages.
 
 ## :tomato: Compatibility
-Currently only compatible with Windows Telegram 1.8.0 ~ 1.9.1 or higher.
+Currently only compatible with Windows Telegram 1.8.3 ~ 1.9.3 or higher.
 
 ## :hamburger: Usage
 1. Close the running Telegram process.  
