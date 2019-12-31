@@ -1,6 +1,6 @@
 # Telegram-Anti-Revoke
 
-[![Version](https://img.shields.io/badge/beta-v0.1.0-blue.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
+[![Version](https://img.shields.io/badge/beta-v0.1.3-blue.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/pulls)
 
 :earth_americas: English | :earth_asia: [简体中文](/README-CN.md)
