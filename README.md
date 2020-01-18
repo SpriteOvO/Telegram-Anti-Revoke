@@ -20,7 +20,7 @@ Automatic recognition is currently supported:
 * You can still actively delete messages.
 
 ## :tomato: Compatibility
-Currently only compatible with Windows Telegram 1.8.3 ~ 1.9.3 or higher.
+Currently only compatible with Windows Telegram 1.8.0 ~ 1.9.4 or higher.
 
 ## :hamburger: Usage
 1. Close the running Telegram process.  

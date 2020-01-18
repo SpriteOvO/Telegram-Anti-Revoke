@@ -412,6 +412,21 @@ BOOLEAN SearchSigns()
 		.text:005D6133 8B 75 EC                                mov     esi, [ebp+var_14]
 
 		8B 3D ?? ?? ?? ?? 89 45 ?? 39 55 ?? 0F 84
+
+
+		//////////////////////////////////////////////////
+
+		2020.1.18 - 1.9.4
+		new
+
+		Telegram.exe+6A74BB - 8B 0D 24A95B03        - mov ecx,[Telegram.exe+31FA924]
+		Telegram.exe+6A74C1 - 03 C6                 - add eax,esi
+		Telegram.exe+6A74C3 - 0FB7 C0               - movzx eax,ax
+		Telegram.exe+6A74C6 - 85 C9                 - test ecx,ecx
+		Telegram.exe+6A74C8 - 0F84 35010000         - je Telegram.exe+6A7603
+		Telegram.exe+6A74CE - 8B 49 54              - mov ecx,[ecx+54]
+
+		8B 0D ?? ?? ?? ?? 03 C6 0F B7 C0 85 C9 0F 84 ?? ?? ?? ?? 8B 49
 	*/
 
 	//vector<PVOID> vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x51\xA1\x00\x00\x00\x00\x85\xC0\x74\x05\x8B\x40\x00\x59\xC3", "xx????xxxxxx?xx");
@@ -434,13 +449,28 @@ BOOLEAN SearchSigns()
 
 	//////////////////////////////////////////////////
 
-	vector<PVOID> vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x3D\x00\x00\x00\x00\x89\x45\x00\x39\x55\x00\x0F\x84", "xx????xx?xx?xx");
-	if (vCallCurrent.size() != 1) {
+	//vector<PVOID> vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x3D\x00\x00\x00\x00\x89\x45\x00\x39\x55\x00\x0F\x84", "xx????xx?xx?xx");
+	//if (vCallCurrent.size() != 1) {
+	//	g::Logger.TraceWarn("Search Instance falied.");
+	//	return FALSE;
+	//}
+
+	//g::pInstance = (LanguageInstance**)(*(ULONG_PTR*)(*(ULONG_PTR*)((ULONG_PTR)vCallCurrent[0] + 2)) + 0x54);
+	//if (g::pInstance == NULL) {
+	//	g::Logger.TraceWarn("Language Instance invalid.");
+	//	return FALSE;
+	//}
+
+	//////////////////////////////////////////////////
+
+	vector<PVOID> vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x0D\x00\x00\x00\x00\x03\xC6\x0F\xB7\xC0\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B\x49", "xx????xxxxxxxxx????xx");
+	if (vCallCurrent.empty()) {
 		g::Logger.TraceWarn("Search Instance falied.");
 		return FALSE;
 	}
 
-	g::pInstance = (LanguageInstance**)(*(ULONG_PTR*)(*(ULONG_PTR*)((ULONG_PTR)vCallCurrent[0] + 2)) + 0x54);
+	BYTE Offset = *(BYTE*)((ULONG_PTR)vCallCurrent[0] + 21);
+	g::pInstance = (LanguageInstance**)(*(ULONG_PTR*)(*(ULONG_PTR*)((ULONG_PTR)vCallCurrent[0] + 2)) + Offset);
 	if (g::pInstance == NULL) {
 		g::Logger.TraceWarn("Language Instance invalid.");
 		return FALSE;
