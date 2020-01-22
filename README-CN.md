@@ -1,7 +1,12 @@
 # Telegram-Anti-Revoke
 
+<!--
 [![Version](https://img.shields.io/badge/beta-v0.1.3-blue.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/pulls)
+-->
+[![Version](https://img.shields.io/github/v/release/SpriteOvO/Telegram-Anti-Revoke)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
+[![Downloads](https://img.shields.io/github/downloads/SpriteOvO/Telegram-Anti-Revoke/total.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
+[![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
 :earth_americas: [English](/README.md) | :earth_asia: 简体中文
 
@@ -20,7 +25,7 @@ Telegram 本地消息防撤回插件。
 * 您仍然可以主动删除消息。
 
 ## :tomato: 兼容性
-目前仅兼容 Windows Telegram 1.8.0 ~ 1.9.4 或更高。
+目前仅兼容 Windows Telegram 1.8.0 ~ 1.9.6 或更高。
 
 ## :hamburger: 用法
 1、关闭正在运行的 Telegram 进程。  
