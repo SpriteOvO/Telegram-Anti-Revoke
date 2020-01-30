@@ -25,7 +25,7 @@ Telegram 本地消息防撤回插件。
 * 您仍然可以主动删除消息。
 
 ## :tomato: 兼容性
-目前仅兼容 Windows Telegram 1.8.0 ~ 1.9.8 或更高。
+目前仅兼容 Windows Telegram 1.8.0 ~ 1.9.9 或更高。
 
 ## :hamburger: 用法
 1、关闭正在运行的 Telegram 进程。  
