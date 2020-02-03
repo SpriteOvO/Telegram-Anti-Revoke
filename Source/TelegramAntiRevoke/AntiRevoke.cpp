@@ -37,68 +37,58 @@ void ProcessItems()
 	{
 		Sleep(1000);
 
-		static vector<HistoryMessage*> RevokedCache;
-
 		Safe::Mutex(g::hMutex, [&]()
 		{
-			RevokedCache.assign(g::RevokedMessages.begin(), g::RevokedMessages.end());
-		});
-
-		for (HistoryMessage *pMessage : RevokedCache)
-		{
-			Safe::Except([&]()
+			for (HistoryMessage *pMessage : g::RevokedMessages)
 			{
-				QtString *pTimeText = NULL;
-				HistoryMessageEdited *pEdited = pMessage->GetEdited();
-				if (pEdited == NULL) {
-					// Normal msg
-					pTimeText = pMessage->GetTimeText();
-				}
-				else {
-					// Edited msg
-					// 编辑过的消息时间字符串不在 Item 内，而是由 EditedComponent 单独管理
-					pTimeText = pEdited->GetTimeText();
-				}
-
-				if (pTimeText->IsEmpty() || pTimeText->Find(g::CurrentMark.Content) != wstring::npos) {
-					// [Empty] This message isn't the current channel. 
-					// [Found] This message is marked.
-					return;
-				}
-
-				// Mark deleted
-				wstring MarkedTime = g::CurrentMark.Content + pTimeText->GetText();
-				pTimeText->Replace(MarkedTime.c_str());
-
-				// Modify width
-				HistoryViewElement *pMainView = pMessage->GetMainView();
-				pMainView->SetWidth(pMainView->GetWidth() + g::CurrentMark.Width);
-				pMessage->SetTimeWidth(pMessage->GetTimeWidth() + g::CurrentMark.Width);
-
-				// 贴纸 和 LargeEmoji 的宽度是相对右对齐的
-				// 所以需要多修改一个宽度，否则会导致消息整体左移。
-				if (pMessage->IsSticker() || pMessage->IsLargeEmoji())
+				Safe::Except([&]()
 				{
-					Media *pMainViewMedia = pMainView->GetMedia();
-					if (pMainViewMedia != NULL) {
-						pMainViewMedia->SetWidth(pMainViewMedia->GetWidth() + g::CurrentMark.Width);
+					QtString *pTimeText = NULL;
+					HistoryMessageEdited *pEdited = pMessage->GetEdited();
+					if (pEdited == NULL) {
+						// Normal msg
+						pTimeText = pMessage->GetTimeText();
 					}
 					else {
-						// (For sticker) This may not be possible, but it takes time to prove.
-						g::Logger.TraceWarn("Function: [" __FUNCTION__ "] MainView is nullptr. Address: [" + Text::StringFormatA("0x%x", pMessage) + "]");
+						// Edited msg
+						// 编辑过的消息时间字符串不在 Item 内，而是由 EditedComponent 单独管理
+						pTimeText = pEdited->GetTimeText();
 					}
-				}
 
-			}, [&](ULONG ExceptionCode)
-			{
-				g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::StringFormatA("0x%x", ExceptionCode) + "] Address: [" + Text::StringFormatA("0x%x", pMessage) + "]");
-			});
-		}
+					if (pTimeText->IsEmpty() || pTimeText->Find(g::CurrentMark.Content) != wstring::npos) {
+						// [Empty] This message isn't the current channel. 
+						// [Found] This message is marked.
+						return;
+					}
 
-		// 每 60 秒释放一次内存（几乎没用。。msg 貌似只会在自己主动删除消息时才会被释放，所以基本不会减少太多容量
-		Thread::TimedExecute(60000, [&]()
-		{
-			vector<HistoryMessage*>().swap(RevokedCache);
+					// Mark deleted
+					wstring MarkedTime = g::CurrentMark.Content + pTimeText->GetText();
+					pTimeText->Replace(MarkedTime.c_str());
+
+					// Modify width
+					HistoryViewElement *pMainView = pMessage->GetMainView();
+					pMainView->SetWidth(pMainView->GetWidth() + g::CurrentMark.Width);
+					pMessage->SetTimeWidth(pMessage->GetTimeWidth() + g::CurrentMark.Width);
+
+					// 贴纸 和 LargeEmoji 的宽度是相对右对齐的
+					// 所以需要多修改一个宽度，否则会导致消息整体左移。
+					if (pMessage->IsSticker() || pMessage->IsLargeEmoji())
+					{
+						Media *pMainViewMedia = pMainView->GetMedia();
+						if (pMainViewMedia != NULL) {
+							pMainViewMedia->SetWidth(pMainViewMedia->GetWidth() + g::CurrentMark.Width);
+						}
+						else {
+							// (For sticker) This may not be possible, but it takes time to prove.
+							g::Logger.TraceWarn("Function: [" __FUNCTION__ "] MainView is nullptr. Address: [" + Text::StringFormatA("0x%x", pMessage) + "]");
+						}
+					}
+
+				}, [&](ULONG ExceptionCode)
+				{
+					g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::StringFormatA("0x%x", ExceptionCode) + "] Address: [" + Text::StringFormatA("0x%x", pMessage) + "]");
+				});
+			}
 		});
 	}
 }
