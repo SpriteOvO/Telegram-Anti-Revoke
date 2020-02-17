@@ -353,4 +353,5 @@ MigrationBackup/
 .ionide/
 
 # Custom
-note.txt
+Notes/
+Binary/

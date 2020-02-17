@@ -29,7 +29,7 @@ Currently only compatible with Windows Telegram 1.8.0 ~ 1.9.13 or higher.
 
 ## :hamburger: Usage
 1. Close the running Telegram process.  
-2. Copy *avrt.dll* file into the Telegram root directory.  
+2. Copy *version.dll* file into the Telegram root directory.  
 3. Run the Telegram program.
 
 ## :bug: Report
@@ -37,7 +37,7 @@ Please use the [GitHub issue tracker](https://github.com/SpriteOvO/Telegram-Anti
 
 <!--
 If a crash occurs, please provide the following information when reporting a problem:
-* *ArLog.txt* file. (In the same directory as the *avrt.dll* file.)
+* *ArLog.txt* file. (In the same directory as the *version.dll* file.)
 * Which version of Telegram are you using?
 * Which operating system are you using?
 * Did you do anything when it crashed?

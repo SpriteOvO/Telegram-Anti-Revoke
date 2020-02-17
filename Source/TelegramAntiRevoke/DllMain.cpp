@@ -19,66 +19,80 @@ BOOL WINAPI RealDllMain(HINSTANCE hModule, DWORD dwReason, LPVOID pReserved);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 导出函数
-#pragma comment(linker, "/EXPORT:AvCreateTaskIndex=_AheadLib_AvCreateTaskIndex,@1")
-#pragma comment(linker, "/EXPORT:AvQuerySystemResponsiveness=_AheadLib_AvQuerySystemResponsiveness,@2")
-#pragma comment(linker, "/EXPORT:AvQueryTaskIndexValue=_AheadLib_AvQueryTaskIndexValue,@3")
-#pragma comment(linker, "/EXPORT:AvRevertMmThreadCharacteristics=_AheadLib_AvRevertMmThreadCharacteristics,@4")
-#pragma comment(linker, "/EXPORT:AvRtCreateThreadOrderingGroup=_AheadLib_AvRtCreateThreadOrderingGroup,@5")
-#pragma comment(linker, "/EXPORT:AvRtCreateThreadOrderingGroupExA=_AheadLib_AvRtCreateThreadOrderingGroupExA,@6")
-#pragma comment(linker, "/EXPORT:AvRtCreateThreadOrderingGroupExW=_AheadLib_AvRtCreateThreadOrderingGroupExW,@7")
-#pragma comment(linker, "/EXPORT:AvRtDeleteThreadOrderingGroup=_AheadLib_AvRtDeleteThreadOrderingGroup,@8")
-#pragma comment(linker, "/EXPORT:AvRtJoinThreadOrderingGroup=_AheadLib_AvRtJoinThreadOrderingGroup,@9")
-#pragma comment(linker, "/EXPORT:AvRtLeaveThreadOrderingGroup=_AheadLib_AvRtLeaveThreadOrderingGroup,@10")
-#pragma comment(linker, "/EXPORT:AvRtWaitOnThreadOrderingGroup=_AheadLib_AvRtWaitOnThreadOrderingGroup,@11")
-#pragma comment(linker, "/EXPORT:AvSetMmMaxThreadCharacteristicsA=_AheadLib_AvSetMmMaxThreadCharacteristicsA,@12")
-#pragma comment(linker, "/EXPORT:AvSetMmMaxThreadCharacteristicsW=_AheadLib_AvSetMmMaxThreadCharacteristicsW,@13")
-#pragma comment(linker, "/EXPORT:AvSetMmThreadCharacteristicsA=_AheadLib_AvSetMmThreadCharacteristicsA,@14")
-#pragma comment(linker, "/EXPORT:AvSetMmThreadCharacteristicsW=_AheadLib_AvSetMmThreadCharacteristicsW,@15")
-#pragma comment(linker, "/EXPORT:AvSetMmThreadPriority=_AheadLib_AvSetMmThreadPriority,@16")
-#pragma comment(linker, "/EXPORT:AvSetMultimediaMode=_AheadLib_AvSetMultimediaMode,@17")
-#pragma comment(linker, "/EXPORT:AvTaskIndexYield=_AheadLib_AvTaskIndexYield,@18")
-#pragma comment(linker, "/EXPORT:AvTaskIndexYieldCancel=_AheadLib_AvTaskIndexYieldCancel,@19")
-#pragma comment(linker, "/EXPORT:AvThreadOpenTaskIndex=_AheadLib_AvThreadOpenTaskIndex,@20")
+
+#ifdef OS_WIN10
+
+#pragma comment(linker, "/EXPORT:GetFileVersionInfoA=_AheadLib_GetFileVersionInfoA,@1")
+#pragma comment(linker, "/EXPORT:GetFileVersionInfoByHandle=_AheadLib_GetFileVersionInfoByHandle,@2")
+#pragma comment(linker, "/EXPORT:GetFileVersionInfoExA=_AheadLib_GetFileVersionInfoExA,@3")
+#pragma comment(linker, "/EXPORT:GetFileVersionInfoExW=_AheadLib_GetFileVersionInfoExW,@4")
+#pragma comment(linker, "/EXPORT:GetFileVersionInfoSizeA=_AheadLib_GetFileVersionInfoSizeA,@5")
+#pragma comment(linker, "/EXPORT:GetFileVersionInfoSizeExA=_AheadLib_GetFileVersionInfoSizeExA,@6")
+#pragma comment(linker, "/EXPORT:GetFileVersionInfoSizeExW=_AheadLib_GetFileVersionInfoSizeExW,@7")
+#pragma comment(linker, "/EXPORT:GetFileVersionInfoSizeW=_AheadLib_GetFileVersionInfoSizeW,@8")
+#pragma comment(linker, "/EXPORT:GetFileVersionInfoW=_AheadLib_GetFileVersionInfoW,@9")
+#pragma comment(linker, "/EXPORT:VerFindFileA=_AheadLib_VerFindFileA,@10")
+#pragma comment(linker, "/EXPORT:VerFindFileW=_AheadLib_VerFindFileW,@11")
+#pragma comment(linker, "/EXPORT:VerInstallFileA=_AheadLib_VerInstallFileA,@12")
+#pragma comment(linker, "/EXPORT:VerInstallFileW=_AheadLib_VerInstallFileW,@13")
+#pragma comment(linker, "/EXPORT:VerLanguageNameA=_AheadLib_VerLanguageNameA,@14")
+#pragma comment(linker, "/EXPORT:VerLanguageNameW=_AheadLib_VerLanguageNameW,@15")
+#pragma comment(linker, "/EXPORT:VerQueryValueA=_AheadLib_VerQueryValueA,@16")
+#pragma comment(linker, "/EXPORT:VerQueryValueW=_AheadLib_VerQueryValueW,@17")
+
+#elif defined OS_WIN7
+
+#pragma comment(linker, "/EXPORT:GetFileVersionInfoA=_AheadLib_GetFileVersionInfoA,@1")
+#pragma comment(linker, "/EXPORT:GetFileVersionInfoByHandle=_AheadLib_GetFileVersionInfoByHandle,@2")
+#pragma comment(linker, "/EXPORT:GetFileVersionInfoExW=_AheadLib_GetFileVersionInfoExW,@3")
+#pragma comment(linker, "/EXPORT:GetFileVersionInfoSizeA=_AheadLib_GetFileVersionInfoSizeA,@4")
+#pragma comment(linker, "/EXPORT:GetFileVersionInfoSizeExW=_AheadLib_GetFileVersionInfoSizeExW,@5")
+#pragma comment(linker, "/EXPORT:GetFileVersionInfoSizeW=_AheadLib_GetFileVersionInfoSizeW,@6")
+#pragma comment(linker, "/EXPORT:GetFileVersionInfoW=_AheadLib_GetFileVersionInfoW,@7")
+#pragma comment(linker, "/EXPORT:VerFindFileA=_AheadLib_VerFindFileA,@8")
+#pragma comment(linker, "/EXPORT:VerFindFileW=_AheadLib_VerFindFileW,@9")
+#pragma comment(linker, "/EXPORT:VerInstallFileA=_AheadLib_VerInstallFileA,@10")
+#pragma comment(linker, "/EXPORT:VerInstallFileW=_AheadLib_VerInstallFileW,@11")
+#pragma comment(linker, "/EXPORT:VerLanguageNameA=_AheadLib_VerLanguageNameA,@12")
+#pragma comment(linker, "/EXPORT:VerLanguageNameW=_AheadLib_VerLanguageNameW,@13")
+#pragma comment(linker, "/EXPORT:VerQueryValueA=_AheadLib_VerQueryValueA,@14")
+#pragma comment(linker, "/EXPORT:VerQueryValueW=_AheadLib_VerQueryValueW,@15")
+
+#else
+
+static_assert(false, "Project configuration error. You must define OS_WIN10 or OS_WIN7 in Preprocessor Definitions.");
+
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 原函数地址指针
-PVOID pfnAvCreateTaskIndex = NULL;
-PVOID pfnAvQuerySystemResponsiveness = NULL;
-PVOID pfnAvQueryTaskIndexValue = NULL;
-PVOID pfnAvRevertMmThreadCharacteristics = NULL;
-PVOID pfnAvRtCreateThreadOrderingGroup = NULL;
-PVOID pfnAvRtCreateThreadOrderingGroupExA = NULL;
-PVOID pfnAvRtCreateThreadOrderingGroupExW = NULL;
-PVOID pfnAvRtDeleteThreadOrderingGroup = NULL;
-PVOID pfnAvRtJoinThreadOrderingGroup = NULL;
-PVOID pfnAvRtLeaveThreadOrderingGroup = NULL;
-PVOID pfnAvRtWaitOnThreadOrderingGroup = NULL;
-PVOID pfnAvSetMmMaxThreadCharacteristicsA = NULL;
-PVOID pfnAvSetMmMaxThreadCharacteristicsW = NULL;
-PVOID pfnAvSetMmThreadCharacteristicsA = NULL;
-PVOID pfnAvSetMmThreadCharacteristicsW = NULL;
-PVOID pfnAvSetMmThreadPriority = NULL;
-PVOID pfnAvSetMultimediaMode = NULL;
-PVOID pfnAvTaskIndexYield = NULL;
-PVOID pfnAvTaskIndexYieldCancel = NULL;
-PVOID pfnAvThreadOpenTaskIndex = NULL;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+PVOID pfnAheadLib_GetFileVersionInfoA = NULL;
+PVOID pfnAheadLib_GetFileVersionInfoByHandle = NULL;
+PVOID pfnAheadLib_GetFileVersionInfoExW = NULL;
+PVOID pfnAheadLib_GetFileVersionInfoSizeA = NULL;
+PVOID pfnAheadLib_GetFileVersionInfoSizeExW = NULL;
+PVOID pfnAheadLib_GetFileVersionInfoSizeW = NULL;
+PVOID pfnAheadLib_GetFileVersionInfoW = NULL;
+PVOID pfnAheadLib_VerFindFileA = NULL;
+PVOID pfnAheadLib_VerFindFileW = NULL;
+PVOID pfnAheadLib_VerInstallFileA = NULL;
+PVOID pfnAheadLib_VerInstallFileW = NULL;
+PVOID pfnAheadLib_VerLanguageNameA = NULL;
+PVOID pfnAheadLib_VerLanguageNameW = NULL;
+PVOID pfnAheadLib_VerQueryValueA = NULL;
+PVOID pfnAheadLib_VerQueryValueW = NULL;
 
+#ifdef OS_WIN10
 
+// These two routines are not exported in Version.dll of Windows7.
+PVOID pfnAheadLib_GetFileVersionInfoExA = NULL;
+PVOID pfnAheadLib_GetFileVersionInfoSizeExA = NULL;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 宏定义
-#define EXTERNC extern "C"
-#define NAKED __declspec(naked)
-#define EXPORT __declspec(dllexport)
-
-#define ALCPP EXPORT NAKED
-#define ALSTD EXTERNC EXPORT NAKED void __stdcall
-#define ALCFAST EXTERNC EXPORT NAKED void __fastcall
-#define ALCDECL EXTERNC NAKED void __cdecl
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -106,26 +120,28 @@ namespace AheadLib
 	{
 #define IF_NULL_SET(v, c)	{ if (v == NULL) { v = c; } }
 
-		IF_NULL_SET(pfnAvCreateTaskIndex, GetAddress("AvCreateTaskIndex"));
-		IF_NULL_SET(pfnAvQuerySystemResponsiveness, GetAddress("AvQuerySystemResponsiveness"));
-		IF_NULL_SET(pfnAvQueryTaskIndexValue, GetAddress("AvQueryTaskIndexValue"));
-		IF_NULL_SET(pfnAvRevertMmThreadCharacteristics, GetAddress("AvRevertMmThreadCharacteristics"));
-		IF_NULL_SET(pfnAvRtCreateThreadOrderingGroup, GetAddress("AvRtCreateThreadOrderingGroup"));
-		IF_NULL_SET(pfnAvRtCreateThreadOrderingGroupExA, GetAddress("AvRtCreateThreadOrderingGroupExA"));
-		IF_NULL_SET(pfnAvRtCreateThreadOrderingGroupExW, GetAddress("AvRtCreateThreadOrderingGroupExW"));
-		IF_NULL_SET(pfnAvRtDeleteThreadOrderingGroup, GetAddress("AvRtDeleteThreadOrderingGroup"));
-		IF_NULL_SET(pfnAvRtJoinThreadOrderingGroup, GetAddress("AvRtJoinThreadOrderingGroup"));
-		IF_NULL_SET(pfnAvRtLeaveThreadOrderingGroup, GetAddress("AvRtLeaveThreadOrderingGroup"));
-		IF_NULL_SET(pfnAvRtWaitOnThreadOrderingGroup, GetAddress("AvRtWaitOnThreadOrderingGroup"));
-		IF_NULL_SET(pfnAvSetMmMaxThreadCharacteristicsA, GetAddress("AvSetMmMaxThreadCharacteristicsA"));
-		IF_NULL_SET(pfnAvSetMmMaxThreadCharacteristicsW, GetAddress("AvSetMmMaxThreadCharacteristicsW"));
-		IF_NULL_SET(pfnAvSetMmThreadCharacteristicsA, GetAddress("AvSetMmThreadCharacteristicsA"));
-		IF_NULL_SET(pfnAvSetMmThreadCharacteristicsW, GetAddress("AvSetMmThreadCharacteristicsW"));
-		IF_NULL_SET(pfnAvSetMmThreadPriority, GetAddress("AvSetMmThreadPriority"));
-		IF_NULL_SET(pfnAvSetMultimediaMode, GetAddress("AvSetMultimediaMode"));
-		IF_NULL_SET(pfnAvTaskIndexYield, GetAddress("AvTaskIndexYield"));
-		IF_NULL_SET(pfnAvTaskIndexYieldCancel, GetAddress("AvTaskIndexYieldCancel"));
-		IF_NULL_SET(pfnAvThreadOpenTaskIndex, GetAddress("AvThreadOpenTaskIndex"));
+		IF_NULL_SET(pfnAheadLib_GetFileVersionInfoA, GetAddress("GetFileVersionInfoA"));
+		IF_NULL_SET(pfnAheadLib_GetFileVersionInfoByHandle, GetAddress("GetFileVersionInfoByHandle"));
+		IF_NULL_SET(pfnAheadLib_GetFileVersionInfoExW, GetAddress("GetFileVersionInfoExW"));
+		IF_NULL_SET(pfnAheadLib_GetFileVersionInfoSizeA, GetAddress("GetFileVersionInfoSizeA"));
+		IF_NULL_SET(pfnAheadLib_GetFileVersionInfoSizeExW, GetAddress("GetFileVersionInfoSizeExW"));
+		IF_NULL_SET(pfnAheadLib_GetFileVersionInfoSizeW, GetAddress("GetFileVersionInfoSizeW"));
+		IF_NULL_SET(pfnAheadLib_GetFileVersionInfoW, GetAddress("GetFileVersionInfoW"));
+		IF_NULL_SET(pfnAheadLib_VerFindFileA, GetAddress("VerFindFileA"));
+		IF_NULL_SET(pfnAheadLib_VerFindFileW, GetAddress("VerFindFileW"));
+		IF_NULL_SET(pfnAheadLib_VerInstallFileA, GetAddress("VerInstallFileA"));
+		IF_NULL_SET(pfnAheadLib_VerInstallFileW, GetAddress("VerInstallFileW"));
+		IF_NULL_SET(pfnAheadLib_VerLanguageNameA, GetAddress("VerLanguageNameA"));
+		IF_NULL_SET(pfnAheadLib_VerLanguageNameW, GetAddress("VerLanguageNameW"));
+		IF_NULL_SET(pfnAheadLib_VerQueryValueA, GetAddress("VerQueryValueA"));
+		IF_NULL_SET(pfnAheadLib_VerQueryValueW, GetAddress("VerQueryValueW"));
+
+#ifdef OS_WIN10
+
+		IF_NULL_SET(pfnAheadLib_GetFileVersionInfoExA, GetAddress("GetFileVersionInfoExA"));
+		IF_NULL_SET(pfnAheadLib_GetFileVersionInfoSizeExA, GetAddress("GetFileVersionInfoSizeExA"));
+
+#endif
 
 #undef IF_NULL_SET
 	}
@@ -138,7 +154,7 @@ namespace AheadLib
 			CHAR SystemPath[MAX_PATH];
 
 			GetSystemDirectoryA(SystemPath, MAX_PATH);
-			hModule = LoadLibraryA((string(SystemPath) + "\\avrt.dll").c_str());
+			hModule = LoadLibraryA((string(SystemPath) + "\\version.dll").c_str());
 			if (hModule == NULL) {
 				g::Logger.TraceError("Unable to load the original module.");
 				FORCE_EXIT();
@@ -181,300 +197,176 @@ BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, PVOID pvReserved)
 
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvCreateTaskIndex(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_GetFileVersionInfoA(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvCreateTaskIndex
+		jmp pfnAheadLib_GetFileVersionInfoA
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvQuerySystemResponsiveness(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_GetFileVersionInfoByHandle(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvQuerySystemResponsiveness
+		jmp pfnAheadLib_GetFileVersionInfoByHandle
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvQueryTaskIndexValue(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_GetFileVersionInfoExW(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvQueryTaskIndexValue
+		jmp pfnAheadLib_GetFileVersionInfoExW
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvRevertMmThreadCharacteristics(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_GetFileVersionInfoSizeA(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvRevertMmThreadCharacteristics
+		jmp pfnAheadLib_GetFileVersionInfoSizeA
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvRtCreateThreadOrderingGroup(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_GetFileVersionInfoSizeExW(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvRtCreateThreadOrderingGroup
+		jmp pfnAheadLib_GetFileVersionInfoSizeExW
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvRtCreateThreadOrderingGroupExA(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_GetFileVersionInfoSizeW(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvRtCreateThreadOrderingGroupExA
+		jmp pfnAheadLib_GetFileVersionInfoSizeW
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvRtCreateThreadOrderingGroupExW(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_GetFileVersionInfoW(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvRtCreateThreadOrderingGroupExW
+		jmp pfnAheadLib_GetFileVersionInfoW
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvRtDeleteThreadOrderingGroup(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_VerFindFileA(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvRtDeleteThreadOrderingGroup
+		jmp pfnAheadLib_VerFindFileA
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvRtJoinThreadOrderingGroup(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_VerFindFileW(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvRtJoinThreadOrderingGroup
+		jmp pfnAheadLib_VerFindFileW
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvRtLeaveThreadOrderingGroup(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_VerInstallFileA(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvRtLeaveThreadOrderingGroup
+		jmp pfnAheadLib_VerInstallFileA
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvRtWaitOnThreadOrderingGroup(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_VerInstallFileW(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvRtWaitOnThreadOrderingGroup
+		jmp pfnAheadLib_VerInstallFileW
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvSetMmMaxThreadCharacteristicsA(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_VerLanguageNameA(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvSetMmMaxThreadCharacteristicsA
+		jmp pfnAheadLib_VerLanguageNameA
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvSetMmMaxThreadCharacteristicsW(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_VerLanguageNameW(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvSetMmMaxThreadCharacteristicsW
+		jmp pfnAheadLib_VerLanguageNameW
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvSetMmThreadCharacteristicsA(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_VerQueryValueA(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvSetMmThreadCharacteristicsA
+		jmp pfnAheadLib_VerQueryValueA
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvSetMmThreadCharacteristicsW(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_VerQueryValueW(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvSetMmThreadCharacteristicsW
+		jmp pfnAheadLib_VerQueryValueW
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#ifdef OS_WIN10
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvSetMmThreadPriority(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_GetFileVersionInfoExA(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvSetMmThreadPriority
+		jmp pfnAheadLib_GetFileVersionInfoExA
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvSetMultimediaMode(void)
+EXTERN_C __declspec(naked) void __cdecl AheadLib_GetFileVersionInfoSizeExA(void)
 {
 	__asm {
 		pushad
 		call Load
 		popad
-		jmp pfnAvSetMultimediaMode
+		jmp pfnAheadLib_GetFileVersionInfoSizeExA
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvTaskIndexYield(void)
-{
-	__asm {
-		pushad
-		call Load
-		popad
-		jmp pfnAvTaskIndexYield
-	}
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvTaskIndexYieldCancel(void)
-{
-	__asm {
-		pushad
-		call Load
-		popad
-		jmp pfnAvTaskIndexYieldCancel
-	}
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 导出函数
-ALCDECL AheadLib_AvThreadOpenTaskIndex(void)
-{
-	__asm {
-		pushad
-		call Load
-		popad
-		jmp pfnAvThreadOpenTaskIndex
-	}
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#endif

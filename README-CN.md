@@ -29,7 +29,7 @@ Telegram 本地消息防撤回插件。
 
 ## :hamburger: 用法
 1、关闭正在运行的 Telegram 进程。  
-2、将 *avrt.dll* 文件复制进 Telegram 根目录。  
+2、将 *version.dll* 文件复制进 Telegram 根目录。  
 3、运行 Telegram 程序。
 
 ## :bug: 报告
@@ -37,7 +37,7 @@ Telegram 本地消息防撤回插件。
 
 <!--
 如果发生崩溃，请在报告问题时提供以下信息：
-* *ArLog.txt* 文件。（与 *avrt.dll* 文件同于一个目录）
+* *ArLog.txt* 文件。（与 *version.dll* 文件同于一个目录）
 * 您正在使用 Telegram 的哪个版本？
 * 您正在使用哪个操作系统？
 * 崩溃时您是否做了什么操作？
