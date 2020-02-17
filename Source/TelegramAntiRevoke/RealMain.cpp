@@ -531,12 +531,12 @@ void CheckUpdate()
 	ULONG LatestNumber = stoul(LatestString);
 
 	if (LocalNumber >= LatestNumber) {
-		// no need update.
-		g::Logger.TraceInfo("No need update. Local: [" + LocalString + "] Latest: [" + LatestString + "]");
+		// no need to update.
+		g::Logger.TraceInfo("No need to update. Local: [" + LocalString + "] Latest: [" + LatestString + "]");
 		return;
 	}
 
-	g::Logger.TraceInfo("Need update. Local: [" + LocalString + "] Latest: [" + LatestString + "]");
+	g::Logger.TraceInfo("Need to update. Local: [" + LocalString + "] Latest: [" + LatestString + "]");
 
 	/*
 		A new version has been released.

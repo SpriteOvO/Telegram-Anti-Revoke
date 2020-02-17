@@ -50,7 +50,7 @@ void LoggerManager::TraceWarn(string Content)
 #endif
 }
 
-void LoggerManager::TraceError(string Content, BOOLEAN NeedReport)
+void LoggerManager::TraceError(string Content, BOOLEAN bReport)
 {
 	TraceText("[Error] " + Content);
 	Close();
@@ -68,7 +68,7 @@ void LoggerManager::TraceError(string Content, BOOLEAN NeedReport)
 		Thank you very much.
 	*/
 	string Msg;
-	if (NeedReport) {
+	if (bReport) {
 		Msg = "An error has occurred!\n"
 			"Please help us fix this problem.\n"
 			"--------------------------------------------------\n"
@@ -92,7 +92,7 @@ void LoggerManager::TraceError(string Content, BOOLEAN NeedReport)
 	} while (Result == IDRETRY);
 
 
-	if (NeedReport) {
+	if (bReport) {
 		// Pop up Github issues tracker
 
 		// 这里用 ShellExecute 会导致阻塞卡死，猜测可能和跨模块 malloc/free 一样，不同的 Runtime 库导致的。

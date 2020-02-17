@@ -12,7 +12,7 @@ public:
 	void TraceText(std::string Content);
 	void TraceInfo(std::string Content);
 	void TraceWarn(std::string Content);
-	void TraceError(std::string Content, BOOLEAN NeedReport = TRUE);
+	void TraceError(std::string Content, BOOLEAN bReport = TRUE);
 
 	void Close();
 
