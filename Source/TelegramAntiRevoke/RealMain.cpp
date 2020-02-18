@@ -191,7 +191,7 @@ void InitMarkLanguage()
 
 BOOLEAN SearchSigns()
 {
-	// 以下的所有汇编取自 1.8.8 版本
+	// 以下的部分汇编取自 1.8.8 版本
 	// Thanks to [采蘑菇的小蘑菇] for providing help with compiling Telegram.
 
 	MODULEINFO MainModuleInfo = { 0 };

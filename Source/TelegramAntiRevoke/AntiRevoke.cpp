@@ -56,7 +56,7 @@ void ProcessItems()
 					}
 
 					if (pTimeText->IsEmpty() || pTimeText->Find(g::CurrentMark.Content) != wstring::npos) {
-						// [Empty] This message isn't the current channel. 
+						// [Empty] This message isn't the current channel or group. 
 						// [Found] This message is marked.
 						return;
 					}

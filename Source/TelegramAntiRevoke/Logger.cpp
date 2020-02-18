@@ -17,7 +17,7 @@ LoggerManager::~LoggerManager()
 	Close();
 }
 
-void LoggerManager::TraceText(string Content)
+void LoggerManager::TraceText(const string &Content)
 {
 	if (!this->File.is_open()) {
 		return;
@@ -29,20 +29,20 @@ void LoggerManager::TraceText(string Content)
 	GetLocalTime(&LocalTime);
 	sprintf_s(TimeBuffer, "[%d.%02d.%02d-%02d:%02d:%02d] ", LocalTime.wYear, LocalTime.wMonth, LocalTime.wDay, LocalTime.wHour, LocalTime.wMinute, LocalTime.wSecond);
 
-	Content = Text::SubReplaceA(Content, "\n", "[\\n]");
+	string Result = Text::SubReplaceA(Content, "\n", "[\\n]");
 
 	Safe::Mutex(this->hMutex, [&]()
 	{
-		this->File << string(TimeBuffer) + Content << endl;
+		this->File << string(TimeBuffer) + Result << endl;
 	});
 }
 
-void LoggerManager::TraceInfo(string Content)
+void LoggerManager::TraceInfo(const string &Content)
 {
 	TraceText("[Info]  " + Content);
 }
 
-void LoggerManager::TraceWarn(string Content)
+void LoggerManager::TraceWarn(const string &Content)
 {
 	TraceText("[Warn]  " + Content);
 #ifdef _DEBUG
@@ -50,7 +50,7 @@ void LoggerManager::TraceWarn(string Content)
 #endif
 }
 
-void LoggerManager::TraceError(string Content, BOOLEAN bReport)
+void LoggerManager::TraceError(const string &Content, BOOLEAN bReport)
 {
 	TraceText("[Error] " + Content);
 	Close();

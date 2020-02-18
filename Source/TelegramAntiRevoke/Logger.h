@@ -9,10 +9,10 @@ public:
 	LoggerManager();
 	~LoggerManager();
 
-	void TraceText(std::string Content);
-	void TraceInfo(std::string Content);
-	void TraceWarn(std::string Content);
-	void TraceError(std::string Content, BOOLEAN bReport = TRUE);
+	void TraceText(const std::string &Content);
+	void TraceInfo(const std::string &Content);
+	void TraceWarn(const std::string &Content);
+	void TraceError(const std::string &Content, BOOLEAN bReport = TRUE);
 
 	void Close();
 
