@@ -29,7 +29,7 @@ void LoggerManager::TraceText(const string &Content)
 	GetLocalTime(&LocalTime);
 	sprintf_s(TimeBuffer, "[%d.%02d.%02d-%02d:%02d:%02d] ", LocalTime.wYear, LocalTime.wMonth, LocalTime.wDay, LocalTime.wHour, LocalTime.wMinute, LocalTime.wSecond);
 
-	string Result = Text::SubReplaceA(Content, "\n", "[\\n]");
+	string Result = Text::SubReplace(Content, "\n", "[\\n]");
 
 	Safe::Mutex(this->hMutex, [&]()
 	{

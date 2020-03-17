@@ -8,6 +8,7 @@
 #include <wininet.h>
 
 #pragma comment(lib, "wininet.lib")
+#pragma comment(lib, "Version.lib")
 
 #define TO_STRING(v)							# v
 #define PAGE_SIZE								( 0x1000 )
@@ -15,12 +16,17 @@
 #define VEC_FIND(iter, vec, val)				( (iter = std::find(vec.begin(), vec.end(), val)) != vec.end() )
 #define MAP_FIND(iter, map, val)				( (iter = map.find(val)) != map.end() )
 
+namespace File
+{
+	ULONG				GetCurrentVersion();
+}
+
 namespace Text
 {
-	std::string			ToLowerA(const std::string &String);
-	std::string			SubReplaceA(const std::string &Source, const std::string &Target, const std::string &New);
-	std::vector<std::string> SplitByFlagA(const std::string &Source, const std::string &Flag);
-	std::string			StringFormatA(const CHAR *Format, ...);
+	std::string			ToLower(const std::string &String);
+	std::string			SubReplace(const std::string &Source, const std::string &Target, const std::string &New);
+	std::vector<std::string> SplitByFlag(const std::string &Source, const std::string &Flag);
+	std::string			Format(const CHAR *Format, ...);
 }
 
 namespace Convert

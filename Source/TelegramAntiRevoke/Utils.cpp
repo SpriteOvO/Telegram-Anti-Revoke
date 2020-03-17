@@ -3,16 +3,53 @@
 using namespace std;
 
 
+namespace File
+{
+	string			GetCurrentFilePathNameA()
+	{
+		CHAR Buffer[MAX_PATH] = { 0 };
+		if (GetModuleFileNameA(NULL, Buffer, MAX_PATH) == 0) {
+			return "";
+		}
+
+		return string(Buffer);
+	}
+
+	ULONG			GetCurrentVersion()
+	{
+		string FilePathName = GetCurrentFilePathNameA();
+
+		DWORD InfoSize = GetFileVersionInfoSizeA(FilePathName.c_str(), NULL);
+		if (!InfoSize) {
+			return 0;
+		}
+
+		unique_ptr<CHAR[]> Buffer(new CHAR[InfoSize]);
+		if (!GetFileVersionInfoA(FilePathName.c_str(), 0, InfoSize, Buffer.get())) {
+			return 0;
+		}
+
+		VS_FIXEDFILEINFO *pVsInfo = NULL;
+		UINT VsInfoSize = sizeof(VS_FIXEDFILEINFO);
+		if (!VerQueryValueA(Buffer.get(), "\\", (PVOID*)&pVsInfo, &VsInfoSize)) {
+			return 0;
+		}
+
+		string TelegramVersion = Text::Format("%03hu%03hu%03hu", HIWORD(pVsInfo->dwFileVersionMS), LOWORD(pVsInfo->dwFileVersionMS), HIWORD(pVsInfo->dwFileVersionLS));
+		return stoul(TelegramVersion);
+	}
+}
+
 namespace Text
 {
-	string			ToLowerA(const string &String)
+	string			ToLower(const string &String)
 	{
 		string Result = String;
 		transform(Result.begin(), Result.end(), Result.begin(), tolower);
 		return Result;
 	}
 
-	string			SubReplaceA(const string &Source, const string &Target, const string &New)
+	string			SubReplace(const string &Source, const string &Target, const string &New)
 	{
 		string Result = Source;
 		while (true)
@@ -26,7 +63,7 @@ namespace Text
 		return Result;
 	}
 
-	vector<string>	SplitByFlagA(const string &Source, const string &Flag)
+	vector<string>	SplitByFlag(const string &Source, const string &Flag)
 	{
 		vector<string> Result;
 		SIZE_T BeginPos = 0, EndPos = Source.find(Flag);
@@ -46,7 +83,7 @@ namespace Text
 		return Result;
 	}
 
-	string			StringFormatA(const CHAR *Format, ...)
+	string			Format(const CHAR *Format, ...)
 	{
 		va_list VaList;
 		CHAR Buffer[0x200] = { 0 };

@@ -8,13 +8,14 @@ namespace g
 {
 	LoggerManager Logger;
 	ULONG_PTR MainModule = NULL;
+	ULONG CurrentVersion = 0;
 
 	fntMalloc fnMalloc = NULL;
 	fntFree fnFree = NULL;
 	fntFree fnOriginalFree = NULL;
 	fntGetEditedIndex fnGetEditedIndex = NULL;
 	// fntGetCurrentInstance fnGetCurrentInstance = NULL;
-	LanguageInstance **pInstance = NULL;
+	LanguageInstance **ppLangInstance = NULL;
 	PVOID RevokeByServer = NULL;
 	PVOID OriginalRevoke = NULL;
 
@@ -94,9 +95,9 @@ namespace g
 
 BOOLEAN HookRevoke(BOOLEAN Status)
 {
-	PVOID			HookAddress = g::RevokeByServer;
-	PVOID			TargetAddress = NULL;
-	vector<BYTE>	Shellcode;
+	PVOID HookAddress = g::RevokeByServer;
+	PVOID TargetAddress = NULL;
+	vector<BYTE> Shellcode;
 
 	if (Status)
 	{
@@ -125,7 +126,7 @@ BOOLEAN HookMemoryFree(BOOLEAN Status)
 	if (Status)
 	{
 		// Enable Hook
-		if (MH_CreateHook(g::fnFree, FakeFree, (PVOID*)&g::fnOriginalFree) != MH_OK) {
+		if (MH_CreateHook(g::fnFree, DetourFree, (PVOID*)&g::fnOriginalFree) != MH_OK) {
 			return FALSE;
 		}
 
@@ -143,20 +144,20 @@ void InitMarkLanguage()
 	Safe::Except([]()
 	{
 		// LanguageInstance *Instance = g::fnGetCurrentInstance();
-		LanguageInstance *Instance = *g::pInstance;
-		if (Instance == NULL) {
+		LanguageInstance *pLangInstance = *g::ppLangInstance;
+		if (pLangInstance == NULL) {
 			g::Logger.TraceWarn("Get language instance failed.");
 			return;
 		}
 
-		//printf("Instance: %p\n", Instance);
+		//printf("pLangInstance : %p\n", pLangInstance);
 		//printf("GetId         : %ws\n", Instance->GetId()->GetText());
 		//printf("GetPluralId   : %ws\n", Instance->GetPluralId()->GetText());
 		//printf("GetName       : %ws\n", Instance->GetName()->GetText());
 		//printf("GetNativeName : %ws\n", Instance->GetNativeName()->GetText());
 
-		wstring CurrentPluralId = Instance->GetPluralId()->GetText();
-		wstring CurrentName = Instance->GetName()->GetText();
+		wstring CurrentPluralId = pLangInstance->GetPluralId()->GetText();
+		wstring CurrentName = pLangInstance->GetName()->GetText();
 		map<wstring, vector<MARK_INFO>>::iterator Iterator;
 
 		// find language
@@ -185,7 +186,7 @@ void InitMarkLanguage()
 
 	}, [](ULONG ExceptionCode)
 	{
-		g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::StringFormatA("0x%x", ExceptionCode) + "]");
+		g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "]");
 	});
 }
 
@@ -296,15 +297,38 @@ BOOLEAN SearchSigns()
 		.text:008CD90A EB 54                                   jmp     short loc_8CD960
 
 		8B 71 ?? 89 08 85 C9 0F 84 ?? ?? ?? ?? ?? ?? ?? E8
+
+		==========
+
+		1.9.15 new :
+		51 8B C4 89 08 8B CE E8 ?? ?? ?? ?? 80
 	*/
-	vector<PVOID> vCallDestroyMessage = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x71\x00\x89\x08\x85\xC9\x0F\x84\x00\x00\x00\x00\x00\x00\x00\xE8", "xx?xxxxxx???????x");
-	if (vCallDestroyMessage.size() != 1) {
-		g::Logger.TraceWarn("Search DestroyMessage falied.");
-		return FALSE;
+
+	// ver <= 1.9.14
+	if (g::CurrentVersion <= 1009014)
+	{
+		vector<PVOID> vCallDestroyMessage = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x71\x00\x89\x08\x85\xC9\x0F\x84\x00\x00\x00\x00\x00\x00\x00\xE8", "xx?xxxxxx???????x");
+		if (vCallDestroyMessage.size() != 1) {
+			g::Logger.TraceWarn("Search DestroyMessage falied.");
+			return FALSE;
+		}
+
+		ULONG_PTR CallDestroyMessage = (ULONG_PTR)vCallDestroyMessage[0];
+		g::RevokeByServer = (PVOID)(CallDestroyMessage + 16);
+	}
+	// ver >= 1.9.15
+	else if (g::CurrentVersion >= 1009015)
+	{
+		vector<PVOID> vCallDestroyMessage = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x51\x8B\xC4\x89\x08\x8B\xCE\xE8\x00\x00\x00\x00\x80", "xxxxxxxx????x");
+		if (vCallDestroyMessage.size() != 1) {
+			g::Logger.TraceWarn("Search new DestroyMessage falied.");
+			return FALSE;
+		}
+
+		ULONG_PTR CallDestroyMessage = (ULONG_PTR)vCallDestroyMessage[0];
+		g::RevokeByServer = (PVOID)(CallDestroyMessage + 7);
 	}
 
-	ULONG_PTR CallDestroyMessage = (ULONG_PTR)vCallDestroyMessage[0];
-	g::RevokeByServer = (PVOID)(CallDestroyMessage + 16);
 
 	/*
 		void __thiscall HistoryMessage::applyEdition(HistoryMessage *this, MTPDmessage *message)
@@ -470,8 +494,8 @@ BOOLEAN SearchSigns()
 	}
 
 	BYTE Offset = *(BYTE*)((ULONG_PTR)vCallCurrent[0] + 21);
-	g::pInstance = (LanguageInstance**)(*(ULONG_PTR*)(*(ULONG_PTR*)((ULONG_PTR)vCallCurrent[0] + 2)) + Offset);
-	if (g::pInstance == NULL) {
+	g::ppLangInstance = (LanguageInstance**)(*(ULONG_PTR*)(*(ULONG_PTR*)((ULONG_PTR)vCallCurrent[0] + 2)) + Offset);
+	if (g::ppLangInstance == NULL) {
 		g::Logger.TraceWarn("Language Instance invalid.");
 		return FALSE;
 	}
@@ -517,16 +541,16 @@ void CheckUpdate()
 	}
 
 
-	vector<string> vLocal = Text::SplitByFlagA(AR_VERSION, ".");
-	vector<string> vLatest = Text::SplitByFlagA(LatestVersion, ".");
+	vector<string> vLocal = Text::SplitByFlag(AR_VERSION, ".");
+	vector<string> vLatest = Text::SplitByFlag(LatestVersion, ".");
 	if (vLocal.size() != 3 || vLatest.size() != 3) {
 		g::Logger.TraceWarn("Update check failed. Vector size is bad. Local: " + string(AR_VERSION) + " Latest: " + LatestVersion);
 		return;
 	}
 
 	// 将 1.21.3 格式化为 001021003，然后转为整数，对比版本
-	string LocalString = Text::StringFormatA("%03d%03d%03d", stoul(vLocal[0]), stoul(vLocal[1]), stoul(vLocal[2]));
-	string LatestString = Text::StringFormatA("%03d%03d%03d", stoul(vLatest[0]), stoul(vLatest[1]), stoul(vLatest[2]));
+	string LocalString = Text::Format("%03d%03d%03d", stoul(vLocal[0]), stoul(vLocal[1]), stoul(vLocal[2]));
+	string LatestString = Text::Format("%03d%03d%03d", stoul(vLatest[0]), stoul(vLatest[1]), stoul(vLatest[2]));
 	ULONG LocalNumber = stoul(LocalString);
 	ULONG LatestNumber = stoul(LatestString);
 
@@ -561,11 +585,17 @@ void CheckUpdate()
 
 DWORD WINAPI Initialize(PVOID pParameter)
 {
-	g::MainModule = (ULONG_PTR)GetModuleHandle(L"Telegram.exe");
-	g::hMutex = CreateMutex(NULL, FALSE, NULL);
+	g::MainModule = (ULONG_PTR)GetModuleHandleW(L"Telegram.exe");
+	g::CurrentVersion = File::GetCurrentVersion();
+	g::hMutex = CreateMutexW(NULL, FALSE, NULL);
+
+	if (g::MainModule == NULL || g::CurrentVersion == 0 || g::hMutex == NULL) {
+		g::Logger.TraceError("Initialize failed.");
+		return 0;
+	}
 
 	CheckUpdate();
-
+	
 	if (!SearchSigns()) {
 		g::Logger.TraceError("SearchSigns() failed.");
 		return 0;
@@ -597,8 +627,8 @@ DWORD WINAPI Initialize(PVOID pParameter)
 BOOLEAN CheckProcess()
 {
 	string CurrentName = Process::GetCurrentName();
-	if (Text::ToLowerA(CurrentName) != "telegram.exe") {
-		g::Logger.TraceError("This is not a Telegram process. [" + CurrentName + "]", FALSE);
+	if (Text::ToLower(CurrentName) != "telegram.exe") {
+		g::Logger.TraceWarn("This is not a Telegram process. [" + CurrentName + "]");
 		return FALSE;
 	}
 	return TRUE;

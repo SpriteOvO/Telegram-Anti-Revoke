@@ -12,22 +12,20 @@ void Session::ProcessRevoke(HistoryMessage* pMessage)
 		}
 
 		QtString *pTimeText = pMessage->GetTimeText();
-		if (pTimeText->IsValidTime())
-		{
-			Safe::Mutex(g::hMutex, [&]()
-			{
-				g::RevokedMessages.push_back(pMessage);
-			});
+		if (!pTimeText->IsValidTime()) {
+			g::Logger.TraceWarn("A bad TimeText. Address: [" + Text::Format("0x%x", pMessage) + "] Content: [" + Convert::UnicodeToAnsi(pTimeText->GetText()) + "]");
+			return;
+		}
 
-			// g::Logger.TraceInfo("Successful push_back. Address: [" + Text::StringFormatA("0x%x", pMessage) + "]");
-		}
-		else {
-			g::Logger.TraceWarn("A bad TimeText. Address: [" + Text::StringFormatA("0x%x", pMessage) + "]");
-		}
+		Safe::Mutex(g::hMutex, [&]() {
+			g::RevokedMessages.push_back(pMessage);
+		});
+
+		// g::Logger.TraceInfo("Successful push_back. Address: [" + Text::FormatA("0x%x", pMessage) + "]");
 
 	}, [](ULONG ExceptionCode)
 	{
-		g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::StringFormatA("0x%x", ExceptionCode) + "]");
+		g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "]");
 	});
 }
 
@@ -80,20 +78,20 @@ void ProcessItems()
 						}
 						else {
 							// (For sticker) This may not be possible, but it takes time to prove.
-							g::Logger.TraceWarn("Function: [" __FUNCTION__ "] MainView is nullptr. Address: [" + Text::StringFormatA("0x%x", pMessage) + "]");
+							g::Logger.TraceWarn("Function: [" __FUNCTION__ "] MainView is nullptr. Address: [" + Text::Format("0x%x", pMessage) + "]");
 						}
 					}
 
 				}, [&](ULONG ExceptionCode)
 				{
-					g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::StringFormatA("0x%x", ExceptionCode) + "] Address: [" + Text::StringFormatA("0x%x", pMessage) + "]");
+					g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "] Address: [" + Text::Format("0x%x", pMessage) + "]");
 				});
 			}
 		});
 	}
 }
 
-void __cdecl FakeFree(void *block)
+void __cdecl DetourFree(void *block)
 {
 	Safe::Mutex(g::hMutex, [&]()
 	{

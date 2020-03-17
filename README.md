@@ -4,6 +4,7 @@
 [![Version](https://img.shields.io/badge/beta-v0.1.3-blue.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/pulls)
 -->
+[![Platform](https://img.shields.io/badge/platform-windows-orange.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke)
 [![Version](https://img.shields.io/github/v/release/SpriteOvO/Telegram-Anti-Revoke)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
 [![Downloads](https://img.shields.io/github/downloads/SpriteOvO/Telegram-Anti-Revoke/total.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
@@ -25,7 +26,7 @@ Automatic recognition is currently supported:
 * You can still actively delete messages.
 
 ## :tomato: Compatibility
-Currently only compatible with Windows Telegram 1.8.0 ~ 1.9.14 or higher.
+Currently only compatible with Windows Telegram 1.9.0 ~ 1.9.21 or higher.
 
 ## :hamburger: Usage
 1. Close the running Telegram process.  

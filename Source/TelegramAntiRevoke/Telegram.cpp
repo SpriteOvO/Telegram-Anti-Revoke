@@ -79,7 +79,7 @@ HistoryMessageEdited* HistoryMessage::GetEdited()
 
 	}, [&](ULONG ExceptionCode)
 	{
-		g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::StringFormatA("0x%x", ExceptionCode) + "] Address: [" + Text::StringFormatA("0x%x", this) + "]");
+		g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "] Address: [" + Text::Format("0x%x", this) + "]");
 	});
 
 	return Result;
