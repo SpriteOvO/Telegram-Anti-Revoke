@@ -514,7 +514,7 @@ BOOLEAN SearchSigns()
 
 void CheckUpdate()
 {
-	string LatestData = Internet::RequestGetA("api.github.com", 80, AR_URL_RELEASE);
+	string LatestData = Internet::HttpGet("api.github.com", 80, AR_URL_RELEASE);
 	if (LatestData.empty()) {
 		g::Logger.TraceWarn("Check Update failed. LatestData is empty.");
 		return;

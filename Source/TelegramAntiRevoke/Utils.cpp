@@ -116,7 +116,7 @@ namespace Convert
 
 namespace Internet
 {
-	string			RequestGetA(const string &HostName, INTERNET_PORT Port, const string &ObjectName, const string &AdditionalHeader)
+	string			HttpGet(const string &HostName, INTERNET_PORT Port, const string &ObjectName, const string &AdditionalHeader)
 	{
 #define ONCE_READ_SIZE	( 0x100 )
 
@@ -124,7 +124,7 @@ namespace Internet
 		string Buffer;
 
 		// 打开句柄
-		hInternet = InternetOpenA("Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
+		hInternet = InternetOpenA("Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
 		if (hInternet == NULL) {
 			goto EXIT;
 		}
