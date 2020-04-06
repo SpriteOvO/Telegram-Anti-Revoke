@@ -56,7 +56,7 @@ Telegram 本地消息防撤回插件。
 
 ## :beer: 鸣谢
 * 感谢 [采蘑菇的小蘑菇] 提供编译 Telegram 的帮助。
-* 感谢 [dummycatz] 指出跨模块 malloc/free 内存出错的原因。
+* 感谢 [dummycatz] 指出跨模块 malloc/free 内存崩溃的原因。
 
 ## :warning: 警告
 此开源项目及插件是非官方的，且仅用于教育目的。

@@ -18,7 +18,7 @@ Telegram local message anti-revoke plugin.
 
 ## :sparkles: Features
 * Prevent local messages from being revoked by the server.
-* Messages that are revoked will be marked as "deleted".
+* Revoked messages will be marked as "deleted".
 * The plugin has excellent compatibility.
 * Mark content supports multi-language automatic recognition.  
 Automatic recognition is currently supported:   
@@ -47,7 +47,7 @@ If a crash occurs, please provide the following information when reporting a pro
 -->
 
 If Telegram releases a new version update and the change is large, the plugin may go wrong or cause a crash.  
-Please report the issue and wait for the plugin to update.
+Please report an issue and wait for plugin update.
 <!--Don't repeat reports on reported issues, thank you!-->
 
 ## :gem: ThirdParty
@@ -56,7 +56,7 @@ Please report the issue and wait for the plugin to update.
 
 ## :beer: Acknowledgments
 * Thanks to [采蘑菇的小蘑菇] for providing help with compiling Telegram.
-* Thanks to [dummycatz] for pointing out the reason for the error in malloc/free memory across modules.
+* Thanks to [dummycatz] for pointing out the cause of cross-module malloc/free memory crashes.
 
 ## :warning: Warning
 This open source project and plugin is unofficial and is for educational purposes only.
