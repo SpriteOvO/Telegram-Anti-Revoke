@@ -21,7 +21,7 @@ void Session::ProcessRevoke(HistoryMessage* pMessage)
 			g::RevokedMessages.push_back(pMessage);
 		});
 
-		// g::Logger.TraceInfo("Successful push_back. Address: [" + Text::FormatA("0x%x", pMessage) + "]");
+		// g::Logger.TraceInfo("Successful cache. Address: [" + Text::FormatA("0x%x", pMessage) + "]");
 
 	}, [](ULONG ExceptionCode)
 	{
@@ -49,7 +49,7 @@ void ProcessItems()
 					}
 					else {
 						// Edited msg
-						// 编辑过的消息时间字符串不在 Item 内，而是由 EditedComponent 单独管理
+						// The edited message time string is not in Item, but is managed by EditedComponent
 						pTimeText = pEdited->GetTimeText();
 					}
 
@@ -68,8 +68,8 @@ void ProcessItems()
 					pMainView->SetWidth(pMainView->GetWidth() + g::CurrentMark.Width);
 					pMessage->SetTimeWidth(pMessage->GetTimeWidth() + g::CurrentMark.Width);
 
-					// 贴纸 和 LargeEmoji 的宽度是相对右对齐的
-					// 所以需要多修改一个宽度，否则会导致消息整体左移。
+					// The width of the Sticker and LargeEmoji are aligned to the right
+					// So we need to modify one more width, otherwise it will cause the message as a whole to move to the left.
 					if (pMessage->IsSticker() || pMessage->IsLargeEmoji())
 					{
 						Media *pMainViewMedia = pMainView->GetMedia();
@@ -95,8 +95,8 @@ void __cdecl DetourFree(void *block)
 {
 	Safe::Mutex(g::hMutex, [&]()
 	{
-		// when we delete a msg by ourselves, tg will free this memory block.
-		// so, we will earse this msg from the vector.
+		// When we delete a msg by ourselves, Telegram will free this memory block.
+		// So, we will earse this msg from the vector.
 
 		vector<HistoryMessage*>::iterator Iterator;
 

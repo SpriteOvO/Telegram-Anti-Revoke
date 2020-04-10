@@ -192,7 +192,7 @@ void InitMarkLanguage()
 
 BOOLEAN SearchSigns()
 {
-	// 以下的部分汇编取自 1.8.8 版本
+	// Some of the following instructions are taken from version 1.8.8
 	// Thanks to [采蘑菇的小蘑菇] for providing help with compiling Telegram.
 
 	MODULEINFO MainModuleInfo = { 0 };
@@ -548,7 +548,7 @@ void CheckUpdate()
 		return;
 	}
 
-	// 将 1.21.3 格式化为 001021003，然后转为整数，对比版本
+	// Format 1.21.3 as 001021003, then convert to integer, compare version
 	string LocalString = Text::Format("%03d%03d%03d", stoul(vLocal[0]), stoul(vLocal[1]), stoul(vLocal[2]));
 	string LatestString = Text::Format("%03d%03d%03d", stoul(vLatest[0]), stoul(vLatest[1]), stoul(vLatest[2]));
 	ULONG LocalNumber = stoul(LocalString);

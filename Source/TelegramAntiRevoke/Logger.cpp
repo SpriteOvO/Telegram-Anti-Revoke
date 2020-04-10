@@ -95,8 +95,8 @@ void LoggerManager::TraceError(const string &Content, BOOLEAN bReport)
 	if (bReport) {
 		// Pop up Github issues tracker
 
-		// 这里用 ShellExecute 会导致阻塞卡死，猜测可能和跨模块 malloc/free 一样，不同的 Runtime 库导致的。
-		// 所以用 system 代替了，反正效果一样。
+		// Using ShellExecute will cause freezing. I guess it may be caused by different Runtime libraries like cross-module malloc/free.
+		// So replace ShellExecute with system, there is not much difference anyway.
 
 		// ShellExecute(NULL, L"open", L"https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues", NULL, NULL, SW_SHOWNORMAL);
 		system("start " AR_URL_ISSUES);

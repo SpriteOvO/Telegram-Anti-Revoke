@@ -7,6 +7,9 @@
 	由于直接引用 Qt 静态库，注入会出现找不到 DLL 文件的情况。
 	将 Qt 和 VC Runtime 相关 DLL 都放到 根目录 或 SysWOW64 下依旧找不到（雾
 	所以自己实现了一个简单的 QString 类
+
+	Direct reference to the Qt static library will cause the problem that the DLL file cannot be found after injection.
+	So I implemented a simple QString class.
 */
 
 struct QtArrayData
