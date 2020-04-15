@@ -9,7 +9,7 @@ LoggerManager::LoggerManager()
 	this->File.open("ArLog.txt", ios::app);
 
 	TraceInfo("");
-	TraceInfo("Running. Version: [" + string(AR_VERSION) + "]");
+	TraceInfo("Running. Version: [" AR_VERSION "]");
 }
 
 LoggerManager::~LoggerManager()

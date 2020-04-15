@@ -19,8 +19,8 @@ namespace g
 	PVOID RevokeByServer = NULL;
 	PVOID OriginalRevoke = NULL;
 
-	HANDLE hMutex = 0;
-	vector<HistoryMessage*> RevokedMessages;
+	HANDLE hMutex = NULL;
+	set<HistoryMessage*> RevokedMessages;
 
 	/*
 		English
@@ -158,10 +158,9 @@ void InitMarkLanguage()
 
 		wstring CurrentPluralId = pLangInstance->GetPluralId()->GetText();
 		wstring CurrentName = pLangInstance->GetName()->GetText();
-		map<wstring, vector<MARK_INFO>>::iterator Iterator;
 
 		// find language
-		if (!MAP_FIND(Iterator, g::MultiLanguageMarks, CurrentPluralId)) {
+		if (g::MultiLanguageMarks.count(CurrentPluralId) == 0) {
 			g::Logger.TraceWarn(string("An unadded language. PluralId: [") + Convert::UnicodeToAnsi(CurrentPluralId + wstring(L"] Name: [") + CurrentName) + string("]"));
 			return;
 		}
@@ -174,7 +173,7 @@ void InitMarkLanguage()
 		// multiple sublanguages
 		if (Sublanguages.size() > 1)
 		{
-			for (MARK_INFO Language : Sublanguages)
+			for (const MARK_INFO &Language : Sublanguages)
 			{
 				if (CurrentName.find(Language.LangName) != wstring::npos) {
 					// found sub language

@@ -70,14 +70,14 @@ namespace Text
 
 		while (EndPos != string::npos)
 		{
-			Result.push_back(Source.substr(BeginPos, EndPos - BeginPos));
+			Result.emplace_back(Source.substr(BeginPos, EndPos - BeginPos));
 
 			BeginPos = EndPos + Flag.size();
 			EndPos = Source.find(Flag, BeginPos);
 		}
 
 		if (BeginPos != Source.length()) {
-			Result.push_back(Source.substr(BeginPos));
+			Result.emplace_back(Source.substr(BeginPos));
 		}
 
 		return Result;
@@ -269,7 +269,7 @@ namespace Memory
 						if (Mask[InSign + 1] == '\0')
 						{
 							// 表示定位到符合的特征码地址 push头地址
-							Result.push_back((PVOID)(MatchAddress + InPage - InSign - Header));
+							Result.emplace_back((PVOID)(MatchAddress + InPage - InSign - Header));
 							goto ROLLBACK;
 						}
 						else {

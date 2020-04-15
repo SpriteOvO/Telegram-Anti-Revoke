@@ -13,8 +13,6 @@
 #define TO_STRING(v)							# v
 #define PAGE_SIZE								( 0x1000 )
 #define FORCE_EXIT()							{ TerminateProcess((HANDLE)-1, 0); ExitProcess(0); }
-#define VEC_FIND(iter, vec, val)				( (iter = std::find(vec.begin(), vec.end(), val)) != vec.end() )
-#define MAP_FIND(iter, map, val)				( (iter = map.find(val)) != map.end() )
 
 namespace File
 {

@@ -5,6 +5,7 @@
 #include <Psapi.h>
 #include <vector>
 #include <map>
+#include <set>
 #include <memory>
 
 #include "../ThirdParty/MinHook/MinHook.h"

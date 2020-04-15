@@ -18,7 +18,7 @@ void Session::ProcessRevoke(HistoryMessage* pMessage)
 		}
 
 		Safe::Mutex(g::hMutex, [&]() {
-			g::RevokedMessages.push_back(pMessage);
+			g::RevokedMessages.insert(pMessage);
 		});
 
 		// g::Logger.TraceInfo("Successful cache. Address: [" + Text::FormatA("0x%x", pMessage) + "]");
@@ -98,11 +98,7 @@ void __cdecl DetourFree(void *block)
 		// When we delete a msg by ourselves, Telegram will free this memory block.
 		// So, we will earse this msg from the vector.
 
-		vector<HistoryMessage*>::iterator Iterator;
-
-		if (VEC_FIND(Iterator, g::RevokedMessages, block)) {
-			g::RevokedMessages.erase(Iterator);
-		}
+		g::RevokedMessages.erase((HistoryMessage*)block);
 	});
 
 	g::fnOriginalFree(block);
