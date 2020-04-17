@@ -146,13 +146,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\TelegramAntiRevoke\AntiRevoke.cpp" />
-    <ClCompile Include="..\Source\TelegramAntiRevoke\DllMain.cpp" />
-    <ClCompile Include="..\Source\TelegramAntiRevoke\Logger.cpp" />
-    <ClCompile Include="..\Source\TelegramAntiRevoke\QtString.cpp" />
-    <ClCompile Include="..\Source\TelegramAntiRevoke\RealMain.cpp" />
-    <ClCompile Include="..\Source\TelegramAntiRevoke\Telegram.cpp" />
-    <ClCompile Include="..\Source\TelegramAntiRevoke\Utils.cpp" />
+    <ClCompile Include="..\Source\AntiRevoke.cpp" />
+    <ClCompile Include="..\Source\DllMain.cpp" />
+    <ClCompile Include="..\Source\Logger.cpp" />
+    <ClCompile Include="..\Source\QtString.cpp" />
+    <ClCompile Include="..\Source\RealMain.cpp" />
+    <ClCompile Include="..\Source\Telegram.cpp" />
+    <ClCompile Include="..\Source\Utils.cpp" />
     <ClCompile Include="..\Source\ThirdParty\jsoncpp\src\json_reader.cpp" />
     <ClCompile Include="..\Source\ThirdParty\jsoncpp\src\json_value.cpp" />
     <ClCompile Include="..\Source\ThirdParty\jsoncpp\src\json_writer.cpp" />
@@ -168,14 +168,14 @@
     <ClCompile Include="..\Source\ThirdParty\MinHook\src\trampoline.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Source\TelegramAntiRevoke\AntiRevoke.h" />
-    <ClInclude Include="..\Source\TelegramAntiRevoke\Global.h" />
-    <ClInclude Include="..\Source\TelegramAntiRevoke\Header.h" />
-    <ClInclude Include="..\Source\TelegramAntiRevoke\Logger.h" />
-    <ClInclude Include="..\Source\TelegramAntiRevoke\QtString.h" />
-    <ClInclude Include="..\Source\TelegramAntiRevoke\Telegram.h" />
-    <ClInclude Include="..\Source\TelegramAntiRevoke\Utils.h" />
-    <ClInclude Include="..\Source\TelegramAntiRevoke\Resource.h" />
+    <ClInclude Include="..\Source\AntiRevoke.h" />
+    <ClInclude Include="..\Source\Global.h" />
+    <ClInclude Include="..\Source\Header.h" />
+    <ClInclude Include="..\Source\Logger.h" />
+    <ClInclude Include="..\Source\QtString.h" />
+    <ClInclude Include="..\Source\Resource.h" />
+    <ClInclude Include="..\Source\Telegram.h" />
+    <ClInclude Include="..\Source\Utils.h" />
     <ClInclude Include="..\Source\ThirdParty\jsoncpp\allocator.h" />
     <ClInclude Include="..\Source\ThirdParty\jsoncpp\assertions.h" />
     <ClInclude Include="..\Source\ThirdParty\jsoncpp\autolink.h" />
@@ -198,7 +198,7 @@
     <ClInclude Include="..\Source\ThirdParty\MinHook\src\trampoline.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\Source\TelegramAntiRevoke\TelegramAntiRevoke.rc" />
+    <ResourceCompile Include="..\Source\TelegramAntiRevoke.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Source\ThirdParty\jsoncpp\src\json_valueiterator.inl" />

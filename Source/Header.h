@@ -8,8 +8,8 @@
 #include <set>
 #include <memory>
 
-#include "../ThirdParty/MinHook/MinHook.h"
-#include "../ThirdParty/jsoncpp/json.h"
+#include "ThirdParty/MinHook/MinHook.h"
+#include "ThirdParty/jsoncpp/json.h"
 
 #include "Utils.h"
 #include "Logger.h"
