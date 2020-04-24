@@ -26,11 +26,11 @@ Telegram 本地消息防撤回插件。
 * 您仍然可以主动删除消息。
 
 ## :tomato: 兼容性
-目前仅兼容 Windows Telegram 1.9.0 ~ 2.0.1 或更高。
+目前仅兼容 Windows Telegram 1.9.0 ~ 2.1.0 或更高。
 
 ## :hamburger: 用法
 1、关闭正在运行的 Telegram 进程。  
-2、将 *version.dll* 文件复制进 Telegram 根目录。  
+2、复制 *version.dll* 文件到 Telegram 根目录。  
 3、运行 Telegram 程序。
 
 ## :bug: 报告
