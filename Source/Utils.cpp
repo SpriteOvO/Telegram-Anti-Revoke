@@ -98,19 +98,13 @@ namespace Text
 
 namespace Convert
 {
-	string			UnicodeToAnsi(const wstring &UnicodeString)
+	string			UnicodeToAnsi(const wstring &String)
 	{
-		INT Length = WideCharToMultiByte(CP_ACP, 0, UnicodeString.c_str(), -1, NULL, 0, NULL, NULL);
-
-		CHAR *AnsiBuffer = (CHAR*)malloc((Length + 1));
-		RtlZeroMemory(AnsiBuffer, Length + 1);
-
-		Length = WideCharToMultiByte(CP_ACP, 0, UnicodeString.c_str(), -1, AnsiBuffer, Length, NULL, NULL);
-
-		string Out = string(AnsiBuffer);
-		free(AnsiBuffer);
-
-		return Out;
+		string Result;
+		INT Length = WideCharToMultiByte(CP_ACP, 0, String.c_str(), (INT)String.length(), NULL, 0, NULL, NULL);
+		Result.resize(Length);
+		WideCharToMultiByte(CP_ACP, 0, String.c_str(), (INT)String.length(), (CHAR*)Result.data(), Length, NULL, NULL);
+		return Result;
 	}
 }
 
