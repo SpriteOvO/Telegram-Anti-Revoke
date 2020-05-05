@@ -77,7 +77,7 @@ void LoggerManager::TraceError(const string &Content, BOOLEAN bReport)
 			"\n"
 			"--------------------------------------------------\n"
 			"Click \"Abort\" or \"Ignore\" will pop up GitHub issue tracker page.\n"
-			"You can submit this problem to us there.\n"
+			"You can submit this information to us there.\n"
 			"Thank you very much.";
 	}
 	else {
