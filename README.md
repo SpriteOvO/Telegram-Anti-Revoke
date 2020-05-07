@@ -29,12 +29,13 @@ Automatic recognition is currently supported:
 Currently only compatible with Windows Telegram 1.9.0 ~ 2.1.2 or higher.
 
 ## :hamburger: Usage
-1. Close the running Telegram process.  
-2. Copy *version.dll* file into the Telegram root directory.  
-3. Run the Telegram program.
+1. Go to the [Release Page](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases) to download the latest version of the plugin.  
+2. Close the running Telegram process.  
+3. Copy *version.dll* file into the Telegram root directory.  
+4. Run the Telegram program.
 
 ## :bug: Report
-Please use the [GitHub issue tracker](https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues) for reporting problems or suggesting new features.
+Please use the [Issue Tracker](https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues) for reporting problems or suggesting new features.
 
 <!--
 If a crash occurs, please provide the following information when reporting a problem:
