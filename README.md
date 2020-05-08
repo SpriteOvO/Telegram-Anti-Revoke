@@ -26,7 +26,7 @@ Automatic recognition is currently supported:
 * You can still actively delete messages.
 
 ## :tomato: Compatibility
-Currently only compatible with Windows Telegram 1.9.0 ~ 2.1.2 or higher.
+Currently only compatible with Windows Telegram 1.9.0 ~ 2.1.3 or higher.
 
 ## :hamburger: Usage
 1. Go to the [Release Page](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases) to download the latest version of the plugin.  
