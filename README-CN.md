@@ -26,13 +26,13 @@ Telegram 本地消息防撤回插件。
 * 您仍然可以主动删除消息。
 
 ## :tomato: 兼容性
-目前仅兼容 Windows Telegram 1.9.0 ~ 2.1.3 或更高。
+目前仅兼容 Windows Telegram 1.9.0 ~ 2.1.4 或更高。
 
 ## :hamburger: 用法
-1、前往 [发行页面](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases) 下载最新版本插件。  
-2、关闭正在运行的 Telegram 进程。  
-3、复制 *version.dll* 文件到 Telegram 根目录。  
-4、运行 Telegram 程序。
+1. 前往 [发行页面](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases) 下载最新版本插件。  
+2. 关闭正在运行的 Telegram 进程。  
+3. 复制 *version.dll* 文件到 Telegram 根目录。  
+4. 运行 Telegram 程序。
 
 ## :bug: 报告
 请使用 [问题跟踪器](https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues) 报告问题或提出新功能。
