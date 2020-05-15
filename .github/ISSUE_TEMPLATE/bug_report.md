@@ -25,5 +25,5 @@ Tell us what happens instead
 
 <details><summary><b>Logs</b></summary>
 Insert ArLog.txt here. (if necessary)<br>
-It's in the same directory as the avrt.dll file.
+It's in the same directory as the version.dll file.
 </details>
