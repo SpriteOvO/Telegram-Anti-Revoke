@@ -7,6 +7,7 @@
 #include <map>
 #include <set>
 #include <memory>
+#include <mutex>
 
 #include "ThirdParty/MinHook/MinHook.h"
 #include "ThirdParty/jsoncpp/json.h"

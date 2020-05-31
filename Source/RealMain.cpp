@@ -19,7 +19,7 @@ namespace g
 	PVOID RevokeByServer = NULL;
 	PVOID OriginalRevoke = NULL;
 
-	HANDLE hMutex = NULL;
+	mutex Mutex;
 	set<HistoryMessage*> RevokedMessages;
 
 	/*
@@ -586,9 +586,8 @@ DWORD WINAPI Initialize(PVOID pParameter)
 {
 	g::MainModule = (ULONG_PTR)GetModuleHandleW(L"Telegram.exe");
 	g::CurrentVersion = File::GetCurrentVersion();
-	g::hMutex = CreateMutexW(NULL, FALSE, NULL);
 
-	if (g::MainModule == NULL || g::CurrentVersion == 0 || g::hMutex == NULL) {
+	if (g::MainModule == NULL || g::CurrentVersion == 0) {
 		g::Logger.TraceError("Initialize failed.");
 		return 0;
 	}

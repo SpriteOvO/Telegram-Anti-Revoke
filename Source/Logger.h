@@ -17,7 +17,7 @@ public:
 	void Close();
 
 private:
-	HANDLE hMutex;
+	std::mutex Mutex;
 	std::ofstream File;
 
 };

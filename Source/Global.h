@@ -24,7 +24,7 @@ namespace g
 	extern fntMalloc fnMalloc;
 	extern fntFree fnOriginalFree;
 	extern fntGetEditedIndex fnGetEditedIndex;
-	extern HANDLE hMutex;
+	extern mutex Mutex;
 	extern set<HistoryMessage*> RevokedMessages;
 	extern BOOLEAN IsDetach;
 	extern MARK_INFO CurrentMark;

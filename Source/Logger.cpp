@@ -5,7 +5,6 @@
 
 LoggerManager::LoggerManager()
 {
-	this->hMutex = CreateMutex(NULL, FALSE, NULL);
 	this->File.open("ArLog.txt", ios::app);
 
 	TraceInfo("");
@@ -31,10 +30,8 @@ void LoggerManager::TraceText(const string &Content)
 
 	string Result = Text::SubReplace(Content, "\n", "[\\n]");
 
-	Safe::Mutex(this->hMutex, [&]()
-	{
-		this->File << string(TimeBuffer) + Result << endl;
-	});
+	std::lock_guard<std::mutex> Lock(this->Mutex);
+	this->File << string(TimeBuffer) + Result << endl;
 }
 
 void LoggerManager::TraceInfo(const string &Content)

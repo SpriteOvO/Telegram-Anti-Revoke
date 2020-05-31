@@ -52,8 +52,6 @@ namespace Safe
 			return FALSE;
 		}
 	}
-
-	void				Mutex(HANDLE hMutex, std::function<void()> Callback);
 }
 
 namespace Thread
