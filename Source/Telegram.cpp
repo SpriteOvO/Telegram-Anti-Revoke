@@ -87,7 +87,7 @@ HistoryMessageEdited* HistoryMessage::GetEdited()
 
 Media* HistoryMessage::GetMedia()
 {
-	return *(Media**)((ULONG_PTR)this + 0x54);
+	return *(Media**)((ULONG_PTR)this + g::Offsets::Media);
 }
 
 BOOLEAN HistoryMessage::IsSticker()
@@ -120,21 +120,21 @@ BOOLEAN HistoryMessage::IsLargeEmoji()
 
 HistoryViewElement* HistoryMessage::GetMainView()
 {
-	return *(HistoryViewElement**)((ULONG_PTR)this + 0x5C);
+	return *(HistoryViewElement**)((ULONG_PTR)this + g::Offsets::MainView);
 }
 
 QtString* HistoryMessage::GetTimeText()
 {
-	return (QtString*)((ULONG_PTR)this + 0x98);
+	return (QtString*)((ULONG_PTR)this + g::Offsets::TimeText);
 }
 
 INT HistoryMessage::GetTimeWidth()
 {
-	return *(INT*)((ULONG_PTR)this + 0x9C);
+	return *(INT*)((ULONG_PTR)this + g::Offsets::TimeWidth);
 }
 void HistoryMessage::SetTimeWidth(INT Value)
 {
-	*(INT*)((ULONG_PTR)this + 0x9C) = Value;
+	*(INT*)((ULONG_PTR)this + g::Offsets::TimeWidth) = Value;
 }
 
 //////////////////////////////////////////////////

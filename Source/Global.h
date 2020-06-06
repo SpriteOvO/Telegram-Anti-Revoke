@@ -26,7 +26,13 @@ namespace g
 	extern fntGetEditedIndex fnGetEditedIndex;
 	extern mutex Mutex;
 	extern set<HistoryMessage*> RevokedMessages;
-	extern BOOLEAN IsDetach;
+	namespace Offsets
+	{
+		extern ULONG TimeText;
+		extern ULONG TimeWidth;
+		extern ULONG MainView;
+		extern ULONG Media;
+	}
 	extern MARK_INFO CurrentMark;
 };
 

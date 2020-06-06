@@ -22,6 +22,14 @@ namespace g
 	mutex Mutex;
 	set<HistoryMessage*> RevokedMessages;
 
+	namespace Offsets
+	{
+		ULONG TimeText;
+		ULONG TimeWidth;
+		ULONG MainView;
+		ULONG Media;
+	}
+
 	/*
 		English
 			GetId         : en
@@ -511,6 +519,24 @@ BOOLEAN SearchSigns()
 	return TRUE;
 }
 
+void InitOffsets()
+{
+	// ver <= 2.1.7
+	if (g::CurrentVersion <= 2001007) {
+		g::Offsets::TimeText = 0x98;
+		g::Offsets::TimeWidth = 0x9C;
+		g::Offsets::MainView = 0x5C;
+		g::Offsets::Media = 0x54;
+	}
+	// ver > 2.1.7
+	else if (g::CurrentVersion > 2001007) {
+		g::Offsets::TimeText = 0x88;
+		g::Offsets::TimeWidth = 0x8C;
+		g::Offsets::MainView = 0x54;
+		g::Offsets::Media = 0x4C;
+	}
+}
+
 void CheckUpdate()
 {
 	string LatestData = Internet::HttpGet("api.github.com", 80, AR_URL_RELEASE);
@@ -594,6 +620,8 @@ DWORD WINAPI Initialize(PVOID pParameter)
 
 	CheckUpdate();
 	
+	InitOffsets();
+
 	if (!SearchSigns()) {
 		g::Logger.TraceError("SearchSigns() failed.");
 		return 0;
