@@ -23,7 +23,6 @@ Telegram local message anti-revoke plugin.
 * Mark content supports multi-language automatic recognition.  
 Automatic recognition is currently supported:   
 *English, Simplified Chinese, Traditional Chinese, Japanese, Korean*
-* You can still actively delete messages.
 
 ## :tomato: Compatibility
 Currently only compatible with Windows Telegram 1.9.0 ~ 2.1.10 or higher.
