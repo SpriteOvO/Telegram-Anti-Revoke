@@ -25,7 +25,7 @@ Automatic recognition is currently supported:
 *English, Simplified Chinese, Traditional Chinese, Japanese, Korean*
 
 ## :tomato: Compatibility
-Currently only compatible with Windows Telegram 1.9.0 ~ 2.1.12 or higher.
+Currently only compatible with Windows Telegram 1.9.0 ~ 2.1.13 or higher.
 
 ## :hamburger: Usage
 1. Go to the [Release Page](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases) to download the latest version of the plugin.  
