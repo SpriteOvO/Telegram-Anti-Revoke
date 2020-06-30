@@ -16,30 +16,32 @@
 
 namespace File
 {
-	ULONG				GetCurrentVersion();
+	ULONG GetCurrentVersion();
+	std::string GetCurrentName();
 }
 
 namespace Text
 {
-	std::string			ToLower(const std::string &String);
-	std::string			SubReplace(const std::string &Source, const std::string &Target, const std::string &New);
+	std::string ToLower(const std::string &String);
+	std::string SubReplace(const std::string &Source, const std::string &Target, const std::string &New);
 	std::vector<std::string> SplitByFlag(const std::string &Source, const std::string &Flag);
-	std::string			Format(const CHAR *Format, ...);
+	std::string Format(const CHAR *Format, ...);
 }
 
 namespace Convert
 {
-	std::string			UnicodeToAnsi(const std::wstring &String);
+	std::string UnicodeToAnsi(const std::wstring &String);
 }
 
 namespace Internet
 {
-	std::string			HttpGet(const std::string &HostName, INTERNET_PORT Port, const std::string &ObjectName, const std::string &AdditionalHeader = "Accept: */*\r\nAccept-Language: *\r\n");
+	std::string HttpGet(const std::string &HostName, INTERNET_PORT Port, const std::string &ObjectName, const std::string &AdditionalHeader = "Accept: */*\r\nAccept-Language: *\r\n");
 }
 
 namespace Safe
 {
-	template <typename T1, typename T2> BOOLEAN Except(T1 TryCallback, T2 ExceptCallback)
+	template<typename T1, typename T2>
+	BOOLEAN Except(T1 TryCallback, T2 ExceptCallback)
 	{
 		__try
 		{
@@ -56,7 +58,8 @@ namespace Safe
 
 namespace Thread
 {
-	template <typename T> void TimedExecute(DWORD Time, T ExecuteCallback)
+	template<typename T>
+	void TimedExecute(DWORD Time, T ExecuteCallback)
 	{
 		static DWORD SaveCount = 0;
 		DWORD TickCount = GetTickCount();
@@ -73,25 +76,21 @@ namespace Thread
 	}
 }
 
-namespace Process
-{
-	std::string			GetCurrentName();
-}
-
 namespace Memory
 {
-	void				ReadProcess(HANDLE hProcess, PVOID TargetAddress, PVOID LocalBuffer, SIZE_T Size);
-	std::vector<PVOID>	FindPatternEx(HANDLE hProcess, PVOID StartAddress, SIZE_T SearchSize, const CHAR Pattern[], const CHAR Mask[], DWORD Protect = PAGE_EXECUTE_READ);
-	BOOLEAN				ForceOperate(PVOID Address, SIZE_T Size, const std::function<void()> &fnOperateCallback);
-	std::vector<BYTE>	MakeCall(PVOID HookAddress, PVOID CallAddress);
-	std::vector<BYTE>	MakeJmp(PVOID HookAddress, PVOID JmpAddress);
+	void ReadProcess(HANDLE hProcess, PVOID TargetAddress, PVOID LocalBuffer, SIZE_T Size);
+	std::vector<PVOID> FindPatternEx(HANDLE hProcess, PVOID StartAddress, SIZE_T SearchSize, const CHAR Pattern[], const CHAR Mask[], DWORD Protect = PAGE_EXECUTE_READ);
+	BOOLEAN ForceOperate(PVOID Address, SIZE_T Size, const std::function<void()> &fnOperateCallback);
+	std::vector<BYTE> MakeCall(PVOID HookAddress, PVOID CallAddress);
+	std::vector<BYTE> MakeJmp(PVOID HookAddress, PVOID JmpAddress);
 }
 
 namespace Utils
 {
-	void				CreateConsole();
+	void CreateConsole();
 
-	template <typename T> PVOID GetFunctionAddress(T Function)
+	template<typename T>
+	PVOID GetFunctionAddress(T Function)
 	{
 		static_assert(sizeof(T) == sizeof(PVOID), "This parameter only accepts function.");
 
@@ -104,7 +103,8 @@ namespace Utils
 		return Data.Address;
 	}
 
-	template <typename T> T CallVirtual(PVOID Base, ULONG Index)
+	template <typename T>
+	T CallVirtual(PVOID Base, ULONG Index)
 	{
 		return (T)(((PVOID**)Base)[0][Index]);
 	}

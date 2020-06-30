@@ -2,10 +2,9 @@
 
 using namespace std;
 
-
 namespace File
 {
-	string			GetCurrentFilePathNameA()
+	string GetCurrentFullNameA()
 	{
 		CHAR Buffer[MAX_PATH] = { 0 };
 		if (GetModuleFileNameA(NULL, Buffer, MAX_PATH) == 0) {
@@ -15,17 +14,33 @@ namespace File
 		return string(Buffer);
 	}
 
-	ULONG			GetCurrentVersion()
+	string GetCurrentName()
 	{
-		string FilePathName = GetCurrentFilePathNameA();
+		string FullName = File::GetCurrentFullNameA();
+		if (FullName.empty()) {
+			return "";
+		}
 
-		DWORD InfoSize = GetFileVersionInfoSizeA(FilePathName.c_str(), NULL);
+		SIZE_T Position = FullName.rfind("\\");
+		if (Position == string::npos) {
+			return "";
+		}
+
+		Position++;
+		return FullName.substr(Position, FullName.size() - Position);
+	}
+
+	ULONG GetCurrentVersion()
+	{
+		string FullName = GetCurrentFullNameA();
+
+		DWORD InfoSize = GetFileVersionInfoSizeA(FullName.c_str(), NULL);
 		if (!InfoSize) {
 			return 0;
 		}
 
 		unique_ptr<CHAR[]> Buffer(new CHAR[InfoSize]);
-		if (!GetFileVersionInfoA(FilePathName.c_str(), 0, InfoSize, Buffer.get())) {
+		if (!GetFileVersionInfoA(FullName.c_str(), 0, InfoSize, Buffer.get())) {
 			return 0;
 		}
 
@@ -38,18 +53,19 @@ namespace File
 		string TelegramVersion = Text::Format("%03hu%03hu%03hu", HIWORD(pVsInfo->dwFileVersionMS), LOWORD(pVsInfo->dwFileVersionMS), HIWORD(pVsInfo->dwFileVersionLS));
 		return stoul(TelegramVersion);
 	}
-}
+
+} // namespace File
 
 namespace Text
 {
-	string			ToLower(const string &String)
+	string ToLower(const string &String)
 	{
 		string Result = String;
 		transform(Result.begin(), Result.end(), Result.begin(), tolower);
 		return Result;
 	}
 
-	string			SubReplace(const string &Source, const string &Target, const string &New)
+	string SubReplace(const string &Source, const string &Target, const string &New)
 	{
 		string Result = Source;
 		while (true)
@@ -63,7 +79,7 @@ namespace Text
 		return Result;
 	}
 
-	vector<string>	SplitByFlag(const string &Source, const string &Flag)
+	vector<string> SplitByFlag(const string &Source, const string &Flag)
 	{
 		vector<string> Result;
 		SIZE_T BeginPos = 0, EndPos = Source.find(Flag);
@@ -83,7 +99,7 @@ namespace Text
 		return Result;
 	}
 
-	string			Format(const CHAR *Format, ...)
+	string Format(const CHAR *Format, ...)
 	{
 		va_list VaList;
 		CHAR Buffer[0x200] = { 0 };
@@ -94,11 +110,12 @@ namespace Text
 
 		return string(Buffer);
 	}
-}
+
+} // namespace Text
 
 namespace Convert
 {
-	string			UnicodeToAnsi(const wstring &String)
+	string UnicodeToAnsi(const wstring &String)
 	{
 		string Result;
 		INT Length = WideCharToMultiByte(CP_ACP, 0, String.c_str(), (INT)String.length(), NULL, 0, NULL, NULL);
@@ -106,11 +123,12 @@ namespace Convert
 		WideCharToMultiByte(CP_ACP, 0, String.c_str(), (INT)String.length(), (CHAR*)Result.data(), Length, NULL, NULL);
 		return Result;
 	}
-}
+
+} // namespace Convert
 
 namespace Internet
 {
-	string			HttpGet(const string &HostName, INTERNET_PORT Port, const string &ObjectName, const string &AdditionalHeader)
+	string HttpGet(const string &HostName, INTERNET_PORT Port, const string &ObjectName, const string &AdditionalHeader)
 	{
 #define ONCE_READ_SIZE	( 0x100 )
 
@@ -169,37 +187,18 @@ namespace Internet
 
 		return Buffer;
 	}
-}
 
-namespace Process
-{
-	string			GetCurrentName()
-	{
-		CHAR Buffer[MAX_PATH] = { 0 };
-		if (GetModuleFileNameA(NULL, Buffer, MAX_PATH) == 0) {
-			return "";
-		}
-
-		string FileName = Buffer;
-		SIZE_T Position = FileName.rfind("\\");
-		if (Position == string::npos) {
-			return "";
-		}
-
-		Position++;
-		return FileName.substr(Position, FileName.size() - Position);
-	}
-}
+} // namespace Internet
 
 namespace Memory
 {
-	void			ReadProcess(HANDLE hProcess, PVOID TargetAddress, PVOID LocalBuffer, SIZE_T Size)
+	void ReadProcess(HANDLE hProcess, PVOID TargetAddress, PVOID LocalBuffer, SIZE_T Size)
 	{
 		SIZE_T Bytes;
 		ReadProcessMemory(hProcess, TargetAddress, LocalBuffer, Size, &Bytes);
 	}
 
-	vector<PVOID>	FindPatternEx(HANDLE hProcess, PVOID StartAddress, SIZE_T SearchSize, const CHAR Pattern[], const CHAR Mask[], DWORD Protect)
+	vector<PVOID> FindPatternEx(HANDLE hProcess, PVOID StartAddress, SIZE_T SearchSize, const CHAR Pattern[], const CHAR Mask[], DWORD Protect)
 	{
 		vector<PVOID> Result;
 
@@ -286,7 +285,7 @@ namespace Memory
 		return Result;
 	}
 
-	BOOLEAN			ForceOperate(PVOID Address, SIZE_T Size, const function<void()> &fnOperateCallback)
+	BOOLEAN ForceOperate(PVOID Address, SIZE_T Size, const function<void()> &fnOperateCallback)
 	{
 		ULONG SaveProtect;
 
@@ -299,27 +298,29 @@ namespace Memory
 		return VirtualProtect(Address, Size, SaveProtect, &SaveProtect);
 	}
 
-	vector<BYTE>	MakeCall(PVOID HookAddress, PVOID CallAddress)
+	vector<BYTE> MakeCall(PVOID HookAddress, PVOID CallAddress)
 	{
 		vector<BYTE> MakeCode = { 0xE8, 0x00, 0x00, 0x00, 0x00 };
 		*(ULONG*)(MakeCode.data() + 1) = (ULONG)((ULONG_PTR)CallAddress - (ULONG_PTR)HookAddress - 5);
 		return MakeCode;
 	}
 
-	vector<BYTE>	MakeJmp(PVOID HookAddress, PVOID JmpAddress)
+	vector<BYTE> MakeJmp(PVOID HookAddress, PVOID JmpAddress)
 	{
 		vector<BYTE> MakeCode = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
 		*(ULONG*)(MakeCode.data() + 1) = (ULONG)((ULONG_PTR)JmpAddress - (ULONG_PTR)HookAddress - 5);
 		return MakeCode;
 	}
-}
+
+} // namespace Memory
 
 namespace Utils
 {
-	void			CreateConsole()
+	void CreateConsole()
 	{
 		FILE *hStream = NULL;
 		AllocConsole();
 		freopen_s(&hStream, "CONOUT$", "w", stdout);
 	}
-}
+
+} // namespace Utils

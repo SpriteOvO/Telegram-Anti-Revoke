@@ -458,6 +458,19 @@ BOOLEAN SearchSigns()
 		Telegram.exe+6A74CE - 8B 49 54              - mov ecx,[ecx+54]
 
 		8B 0D ?? ?? ?? ?? 03 C6 0F B7 C0 85 C9 0F 84 ?? ?? ?? ?? 8B 49
+
+		//////////////////////////////////////////////////
+
+		2020.6.30 - 2.1.14 beta
+
+		Telegram.exe+193CFC - 8B 0D 68687304        - mov ecx,[Telegram.exe+3C36868] { (04D45818) }
+		Telegram.exe+193D02 - 03 C6                 - add eax,esi
+		Telegram.exe+193D04 - 0FB7 C0               - movzx eax,ax
+		Telegram.exe+193D07 - 85 C9                 - test ecx,ecx
+		Telegram.exe+193D09 - 0F84 5F010000         - je Telegram.exe+193E6E
+		Telegram.exe+193D0F - 8B 89 B4020000        - mov ecx,[ecx+000002B4]
+
+		8B 0D ?? ?? ?? ?? 03 C6 0F B7 C0 85 C9 0F 84 ?? ?? ?? ?? 8B
 	*/
 
 	//vector<PVOID> vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x51\xA1\x00\x00\x00\x00\x85\xC0\x74\x05\x8B\x40\x00\x59\xC3", "xx????xxxxxx?xx");
@@ -494,27 +507,37 @@ BOOLEAN SearchSigns()
 
 	//////////////////////////////////////////////////
 
-	vector<PVOID> vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x0D\x00\x00\x00\x00\x03\xC6\x0F\xB7\xC0\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B\x49", "xx????xxxxxxxxx????xx");
-	if (vCallCurrent.empty()) {
-		g::Logger.TraceWarn("Search Instance falied.");
-		return FALSE;
+	vector<PVOID> vCallCurrent;
+	ULONG Offset;
+
+	// ver <= 2.1.13
+	if (g::CurrentVersion <= 2001013)
+	{
+		vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x0D\x00\x00\x00\x00\x03\xC6\x0F\xB7\xC0\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B\x49", "xx????xxxxxxxxx????xx");
+		if (vCallCurrent.empty()) {
+			g::Logger.TraceWarn("Search Instance falied.");
+			return FALSE;
+		}
+
+		Offset = *(BYTE*)((ULONG_PTR)vCallCurrent[0] + 21);
+	}
+	// ver > 2.1.13
+	else if (g::CurrentVersion > 2001013)
+	{
+		vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x0D\x00\x00\x00\x00\x03\xC6\x0F\xB7\xC0\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B", "xx????xxxxxxxxx????x");
+		if (vCallCurrent.empty()) {
+			g::Logger.TraceWarn("Search Instance falied.");
+			return FALSE;
+		}
+
+		Offset = *(ULONG*)((ULONG_PTR)vCallCurrent[0] + 21);
 	}
 
-	BYTE Offset = *(BYTE*)((ULONG_PTR)vCallCurrent[0] + 21);
 	g::ppLangInstance = (LanguageInstance**)(*(ULONG_PTR*)(*(ULONG_PTR*)((ULONG_PTR)vCallCurrent[0] + 2)) + Offset);
 	if (g::ppLangInstance == NULL) {
 		g::Logger.TraceWarn("Language Instance invalid.");
 		return FALSE;
 	}
-
-	//printf("Call_Malloc: %p\n", (PVOID)Call_Malloc);
-	//printf("Call_Free  : %p\n", (PVOID)Call_Free);
-	//printf("fnMalloc   : %p\n", g::fnMalloc);
-	//printf("fnFree     : %p\n", g::fnFree);
-	//printf("RevokeByServer : %p\n", g::RevokeByServer);
-	//printf("fnGetIndex : %p\n", g::fnGetIndex);
-	//printf("fnGetValue : %p\n", g::fnGetLanguageValue);
-	//printf("---------------\n");
 
 	return TRUE;
 }
@@ -610,6 +633,10 @@ void CheckUpdate()
 
 DWORD WINAPI Initialize(PVOID pParameter)
 {
+#ifdef _DEBUG
+	MessageBoxW(NULL, L"Initialize", L"Anti-Revoke Plugin", MB_ICONINFORMATION);
+#endif
+
 	g::MainModule = (ULONG_PTR)GetModuleHandleW(L"Telegram.exe");
 	g::CurrentVersion = File::GetCurrentVersion();
 
@@ -652,7 +679,7 @@ DWORD WINAPI Initialize(PVOID pParameter)
 
 BOOLEAN CheckProcess()
 {
-	string CurrentName = Process::GetCurrentName();
+	string CurrentName = File::GetCurrentName();
 	if (Text::ToLower(CurrentName) != "telegram.exe") {
 		g::Logger.TraceWarn("This is not a Telegram process. [" + CurrentName + "]");
 		return FALSE;
