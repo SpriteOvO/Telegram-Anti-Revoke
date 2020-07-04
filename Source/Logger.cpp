@@ -61,7 +61,7 @@ void LoggerManager::TraceError(const string &Content, BOOLEAN bReport)
 
 		--------------------------------------------------
 		Click "Abort" or "Ignore" will pop up GitHub issue tracker page.
-		You can submit this problem to us there.
+		You can submit this information to us there.
 		Thank you very much.
 	*/
 	string Msg;

@@ -10,9 +10,8 @@
 #pragma comment(lib, "wininet.lib")
 #pragma comment(lib, "Version.lib")
 
-#define TO_STRING(v)							# v
-#define PAGE_SIZE								( 0x1000 )
-#define FORCE_EXIT()							{ TerminateProcess((HANDLE)-1, 0); ExitProcess(0); }
+#define PAGE_SIZE       ( 0x1000 )
+#define FORCE_EXIT()    { TerminateProcess((HANDLE)-1, 0); ExitProcess(0); }
 
 namespace File
 {
