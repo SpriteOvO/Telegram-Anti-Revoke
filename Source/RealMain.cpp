@@ -581,6 +581,7 @@ void CheckUpdate()
 	string Message = Root["message"].asString();
 	string LatestVersion = Root["tag_name"].asString();	// like "1.3.0"
 	string LatestUrl = Root["html_url"].asString();
+	string Body = Root["body"].asString();
 
 	if (!Message.empty() || LatestVersion.empty() || LatestUrl.empty()) {
 		// if falied, message is "Not Found".
@@ -610,11 +611,35 @@ void CheckUpdate()
 
 	g::Logger.TraceInfo("Need to update. Local: [" + LocalString + "] Latest: [" + LatestString + "]");
 
+
+	string ChangeLog;
+	SIZE_T ClBeginPos = Body.find("Change log");
+
+	if (ClBeginPos != string::npos)
+	{
+		// Find end of ChangeLog
+		SIZE_T ClEndPos = Body.find("\r\n\r\n", ClBeginPos), ClCount;
+
+		// If found, calc the count
+		if (ClEndPos != string::npos) {
+			ClCount = ClEndPos - ClBeginPos;
+		}
+		else {
+			ClCount = string::npos;
+		}
+
+		ChangeLog = Body.substr(ClBeginPos, ClCount) + "\n\n";
+	}
+
 	/*
 		A new version has been released.
 
-		Current version: 1.2.3
-		Latest version: 1.3.0
+		Current version: x.x.x
+		Latest version: x.x.x
+
+		Change log:
+		* xxxxxxxxxx
+		* xxxxxxxxxxxxxxxxxxxx
 
 		Do you want to go to GitHub to download the latest version?
 	*/
@@ -623,7 +648,8 @@ void CheckUpdate()
 		"\n"
 		"Current version: " + string(AR_VERSION) + "\n"
 		"Latest version: " + LatestVersion + "\n"
-		"\n"
+		"\n" + 
+		ChangeLog + 
 		"Do you want to go to GitHub to download the latest version?\n";
 
 	if (MessageBoxA(NULL, Msg.c_str(), "Anti-Revoke Plugin", MB_ICONQUESTION | MB_YESNO) == IDYES) {
