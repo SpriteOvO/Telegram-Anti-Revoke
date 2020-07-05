@@ -515,7 +515,7 @@ BOOLEAN SearchSigns()
 	{
 		vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x0D\x00\x00\x00\x00\x03\xC6\x0F\xB7\xC0\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B\x49", "xx????xxxxxxxxx????xx");
 		if (vCallCurrent.empty()) {
-			g::Logger.TraceWarn("Search Instance falied.");
+			g::Logger.TraceWarn("Search LangInstance falied.");
 			return FALSE;
 		}
 
@@ -526,7 +526,7 @@ BOOLEAN SearchSigns()
 	{
 		vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x0D\x00\x00\x00\x00\x03\xC6\x0F\xB7\xC0\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B", "xx????xxxxxxxxx????x");
 		if (vCallCurrent.empty()) {
-			g::Logger.TraceWarn("Search Instance falied.");
+			g::Logger.TraceWarn("Search LangInstance falied.");
 			return FALSE;
 		}
 
@@ -535,7 +535,7 @@ BOOLEAN SearchSigns()
 
 	g::ppLangInstance = (LanguageInstance**)(*(ULONG_PTR*)(*(ULONG_PTR*)((ULONG_PTR)vCallCurrent[0] + 2)) + Offset);
 	if (g::ppLangInstance == NULL) {
-		g::Logger.TraceWarn("Language Instance invalid.");
+		g::Logger.TraceWarn("LangInstance is null.");
 		return FALSE;
 	}
 
