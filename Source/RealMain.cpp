@@ -311,8 +311,8 @@ BOOLEAN SearchSigns()
 		51 8B C4 89 08 8B CE E8 ?? ?? ?? ?? 80
 	*/
 
-	// ver <= 1.9.14
-	if (g::CurrentVersion <= 1009014)
+	// ver < 1.9.15
+	if (g::CurrentVersion < 1009015)
 	{
 		vector<PVOID> vCallDestroyMessage = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x71\x00\x89\x08\x85\xC9\x0F\x84\x00\x00\x00\x00\x00\x00\x00\xE8", "xx?xxxxxx???????x");
 		if (vCallDestroyMessage.size() != 1) {
@@ -510,8 +510,8 @@ BOOLEAN SearchSigns()
 	vector<PVOID> vCallCurrent;
 	ULONG Offset;
 
-	// ver <= 2.1.13
-	if (g::CurrentVersion <= 2001013)
+	// ver < 2.1.14
+	if (g::CurrentVersion < 2001014)
 	{
 		vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x0D\x00\x00\x00\x00\x03\xC6\x0F\xB7\xC0\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B\x49", "xx????xxxxxxxxx????xx");
 		if (vCallCurrent.empty()) {
@@ -521,8 +521,8 @@ BOOLEAN SearchSigns()
 
 		Offset = *(BYTE*)((ULONG_PTR)vCallCurrent[0] + 21);
 	}
-	// ver > 2.1.13
-	else if (g::CurrentVersion > 2001013)
+	// ver >= 2.1.14
+	else if (g::CurrentVersion >= 2001014)
 	{
 		vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x0D\x00\x00\x00\x00\x03\xC6\x0F\xB7\xC0\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B", "xx????xxxxxxxxx????x");
 		if (vCallCurrent.empty()) {
@@ -544,19 +544,26 @@ BOOLEAN SearchSigns()
 
 void InitOffsets()
 {
-	// ver <= 2.1.7
-	if (g::CurrentVersion <= 2001007) {
+	// ver < 2.1.8
+	if (g::CurrentVersion < 2001008) {
 		g::Offsets::TimeText = 0x98;
 		g::Offsets::TimeWidth = 0x9C;
 		g::Offsets::MainView = 0x5C;
 		g::Offsets::Media = 0x54;
 	}
-	// ver > 2.1.7
-	else if (g::CurrentVersion > 2001007) {
+	// ver >= 2.1.8, ver < 2.1.21
+	else if (g::CurrentVersion >= 2001008 && g::CurrentVersion < 2001021) {
 		g::Offsets::TimeText = 0x88;
 		g::Offsets::TimeWidth = 0x8C;
 		g::Offsets::MainView = 0x54;
 		g::Offsets::Media = 0x4C;
+	}
+	// ver >= 2.1.21
+	else if (g::CurrentVersion >= 2001021) {
+		g::Offsets::TimeText = 0x90;
+		g::Offsets::TimeWidth = 0x94;
+		g::Offsets::MainView = 0x5C;
+		g::Offsets::Media = 0x54;
 	}
 }
 
