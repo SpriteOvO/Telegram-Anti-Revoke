@@ -57,7 +57,7 @@ Please report an issue and wait for plugin update.
 
 ## :beer: Acknowledgments
 * Thanks to [采蘑菇的小蘑菇] for providing help with compiling Telegram.
-* Thanks to [dummycatz] for pointing out the cause of cross-module malloc/free memory crashes.
+* Thanks to [dummycatz] for pointing out the cause of cross-module malloc/free crash.
 
 ## :warning: Warning
 This open source project and plugin is unofficial and is for educational purposes only.
