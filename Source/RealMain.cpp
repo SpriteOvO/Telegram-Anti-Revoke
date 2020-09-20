@@ -13,7 +13,8 @@ namespace g
 	fntMalloc fnMalloc = NULL;
 	fntFree fnFree = NULL;
 	fntFree fnOriginalFree = NULL;
-	fntGetEditedIndex fnGetEditedIndex = NULL;
+	fntIndex fnEditedIndex = NULL;
+	fntIndex fnSignedIndex = NULL;
 	// fntGetCurrentInstance fnGetCurrentInstance = NULL;
 	LanguageInstance **ppLangInstance = NULL;
 	PVOID RevokeByServer = NULL;
@@ -386,7 +387,74 @@ BOOLEAN SearchSigns()
 	}
 
 	ULONG_PTR CallApplyEdition = (ULONG_PTR)vCallApplyEdition[0];
-	g::fnGetEditedIndex = (fntGetEditedIndex)(CallApplyEdition + 5 + *(INT*)(CallApplyEdition + 1));
+	g::fnEditedIndex = (fntIndex)(CallApplyEdition + 5 + *(INT*)(CallApplyEdition + 1));
+	
+	/*
+		HistoryView__Message__refreshEditedBadge
+
+		.text:009F109D                         loc_9F109D:                             ; CODE XREF: HistoryView__Message__refreshEditedBadge+69↑j
+		.text:009F109D 8D 47 28                                lea     eax, [edi+28h]
+		.text:009F10A0 50                                      push    eax
+		.text:009F10A1 8D 4D E8                                lea     ecx, [ebp-18h]
+		.text:009F10A4 E8 07 2E FC 00                          call    QDateTime__QDateTime
+		.text:009F10A9 68 8C 88 3D 03                          push    offset gTimeFormat
+		.text:009F10AE 8D 45 F0                                lea     eax, [ebp-10h]
+		.text:009F10B1 C7 45 FC 00 00 00 00                    mov     dword ptr [ebp-4], 0
+		.text:009F10B8 50                                      push    eax
+		.text:009F10B9 8D 4D E8                                lea     ecx, [ebp-18h]
+		.text:009F10BC E8 DF 91 FC 00                          call    QDateTime__toString
+		.text:009F10C1 8D 4D E8                                lea     ecx, [ebp-18h]
+		.text:009F10C4 C6 45 FC 02                             mov     byte ptr [ebp-4], 2
+		.text:009F10C8 E8 43 31 FC 00                          call    QDateTime___QDateTime
+		.text:009F10CD 8B 4D EC                                mov     ecx, [ebp-14h]
+		.text:009F10D0 85 C9                                   test    ecx, ecx
+		.text:009F10D2 74 12                                   jz      short loc_9F10E6
+		.text:009F10D4 85 DB                                   test    ebx, ebx
+		.text:009F10D6 0F 95 C0                                setnz   al
+		.text:009F10D9 0F B6 C0                                movzx   eax, al
+		.text:009F10DC 50                                      push    eax
+		.text:009F10DD 8D 45 F0                                lea     eax, [ebp-10h]
+		.text:009F10E0 50                                      push    eax
+		.text:009F10E1 E8 AA BA 03 00                          call    HistoryMessageEdited__refresh
+		.text:009F10E6
+		.text:009F10E6                         loc_9F10E6:                             ; CODE XREF: HistoryView__Message__refreshEditedBadge+A2↑j
+		.text:009F10E6 8B 46 08                                mov     eax, [esi+8]
+		.text:009F10E9 8B 38                                   mov     edi, [eax]
+
+		// find this (RuntimeComponent<HistoryMessageSigned,HistoryItem>::Index()
+		.text:009F10EB E8 30 62 FA FF                          call    RuntimeComponent_HistoryMessageSigned_HistoryItem___Index
+
+		.text:009F10F0 8B 44 87 08                             mov     eax, [edi+eax*4+8]
+		.text:009F10F4 83 CF FF                                or      edi, 0FFFFFFFFh
+		.text:009F10F7 83 F8 04                                cmp     eax, 4
+		.text:009F10FA 0F 82 F2 00 00 00                       jb      loc_9F11F2
+		.text:009F1100 8B 76 08                                mov     esi, [esi+8]
+		.text:009F1103 03 F0                                   add     esi, eax
+		.text:009F1105 0F 84 E7 00 00 00                       jz      loc_9F11F2
+		.text:009F110B 8B 45 EC                                mov     eax, [ebp-14h]
+		.text:009F110E 85 C0                                   test    eax, eax
+		.text:009F1110 74 1D                                   jz      short loc_9F112F
+		.text:009F1112 85 DB                                   test    ebx, ebx
+		.text:009F1114 74 19                                   jz      short loc_9F112F
+		.text:009F1116 FF 35 74 3C C4 02                       push    ds:AllTextSelection_7
+		.text:009F111C 8D 48 04                                lea     ecx, [eax+4]
+		.text:009F111F 8D 45 E0                                lea     eax, [ebp-20h]
+		.text:009F1122 50                                      push    eax
+		.text:009F1123 E8 68 26 3F 00                          call    Ui__Text__String__toString
+		.text:009F1128 8D 5F 06                                lea     ebx, [edi+6]
+		.text:009F112B 8B 08                                   mov     ecx, [eax]
+		.text:009F112D EB 1C                                   jmp     short loc_9F114B
+
+		E8 ?? ?? ?? ?? 8B 44 87 08 83 CF FF
+	*/
+	vector<PVOID> vCallSignedIndex = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\xE8\x00\x00\x00\x00\x8B\x44\x87\x08\x83\xCF\xFF", "x????xxxxxxx");
+	if (vCallSignedIndex.size() != 1) {
+		g::Logger.TraceWarn("Search SignedIndex falied.");
+		return FALSE;
+	}
+
+	ULONG_PTR CallSignedIndex = (ULONG_PTR)vCallSignedIndex[0];
+	g::fnSignedIndex = (fntIndex)(CallSignedIndex + 5 + *(INT*)(CallSignedIndex + 1));
 
 
 	/*

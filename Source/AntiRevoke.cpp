@@ -42,14 +42,21 @@ void ProcessItems()
 			{
 				QtString *pTimeText = NULL;
 				HistoryMessageEdited *pEdited = pMessage->GetEdited();
-				if (pEdited == NULL) {
-					// Normal msg
-					pTimeText = pMessage->GetTimeText();
+				HistoryMessageSigned *pSigned = pMessage->GetSigned();
+
+				// Signed msg take precedence over Edited msg, and TG uses the Signed text when both exist.
+				if (pSigned != NULL) {
+					// Signed msg
+					pTimeText = pSigned->GetTimeText();
 				}
-				else {
+				else if (pEdited != NULL) {
 					// Edited msg
 					// The edited message time string is not in Item, but is managed by EditedComponent
 					pTimeText = pEdited->GetTimeText();
+				}
+				else {
+					// Normal msg
+					pTimeText = pMessage->GetTimeText();
 				}
 
 				if (pTimeText->IsEmpty() || pTimeText->Find(g::CurrentMark.Content) != wstring::npos) {
@@ -59,7 +66,24 @@ void ProcessItems()
 				}
 
 				// Mark deleted
-				wstring MarkedTime = g::CurrentMark.Content + pTimeText->GetText();
+				wstring MarkedTime;
+
+				if (pSigned != NULL)
+				{
+					// Signed msg text: "<author>, <time>" ("xxx, 10:20")
+					//
+					wstring OriginalString = pTimeText->GetText();
+					size_t Pos = OriginalString.rfind(L", ");
+					if (Pos == wstring::npos) {
+						return;
+					}
+
+					MarkedTime = OriginalString.substr(0, Pos + 2) + g::CurrentMark.Content + OriginalString.substr(Pos + 2);
+				}
+				else {
+					MarkedTime = g::CurrentMark.Content + pTimeText->GetText();
+				}
+
 				pTimeText->Replace(MarkedTime.c_str());
 
 				// Modify width

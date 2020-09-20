@@ -53,6 +53,12 @@ public:
 	QtString* GetTimeText();
 };
 
+class HistoryMessageSigned
+{
+public:
+	QtString* GetTimeText();
+};
+
 //class HistoryItem
 //{
 //public:
@@ -64,6 +70,7 @@ class HistoryMessage /* : public HistoryItem */
 public:
 	BOOLEAN IsMessage();
 	HistoryMessageEdited* GetEdited();
+	HistoryMessageSigned* GetSigned();
 	Media* GetMedia();
 	BOOLEAN IsSticker();
 	BOOLEAN IsLargeEmoji();

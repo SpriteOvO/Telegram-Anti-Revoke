@@ -7,7 +7,7 @@ class LanguageInstance;
 
 typedef LPVOID(__cdecl *fntMalloc)(unsigned int size);
 typedef void(__cdecl *fntFree)(void *block);
-typedef INT(__cdecl *fntGetEditedIndex)();
+typedef INT(__cdecl *fntIndex)();
 typedef LanguageInstance*(__cdecl *fntGetCurrentInstance)();
 
 
@@ -23,7 +23,8 @@ namespace g
 	extern LoggerManager Logger;
 	extern fntMalloc fnMalloc;
 	extern fntFree fnOriginalFree;
-	extern fntGetEditedIndex fnGetEditedIndex;
+	extern fntIndex fnEditedIndex;
+	extern fntIndex fnSignedIndex;
 	extern mutex Mutex;
 	extern set<HistoryMessage*> RevokedMessages;
 	namespace Offsets

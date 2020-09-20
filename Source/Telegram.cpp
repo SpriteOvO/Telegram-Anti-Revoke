@@ -51,6 +51,13 @@ QtString* HistoryMessageEdited::GetTimeText()
 
 //////////////////////////////////////////////////
 
+QtString* HistoryMessageSigned::GetTimeText()
+{
+	return (QtString*)((ULONG_PTR)this + 0x14);
+}
+
+//////////////////////////////////////////////////
+
 BOOLEAN HistoryMessage::IsMessage()
 {
 	// HistoryMessage *HistoryItem::toHistoryMessage()
@@ -69,11 +76,8 @@ HistoryMessageEdited* HistoryMessage::GetEdited()
 	Safe::Except([&]()
 	{
 		PVOID *pData = *(PVOID**)((ULONG_PTR)this + 8);
-		INT Offset = *(INT*)((ULONG_PTR)(*pData) + 4 * g::fnGetEditedIndex() + 8);
-		if (Offset < 4) {
-			Result = NULL;
-		}
-		else {
+		INT Offset = *(INT*)((ULONG_PTR)(*pData) + 4 * g::fnEditedIndex() + 8);
+		if (Offset >= 4) {
 			Result = (HistoryMessageEdited*)((ULONG_PTR)pData + Offset);
 		}
 
@@ -81,6 +85,26 @@ HistoryMessageEdited* HistoryMessage::GetEdited()
 	{
 		g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "] Address: [" + Text::Format("0x%x", this) + "]");
 	});
+
+	return Result;
+}
+
+HistoryMessageSigned* HistoryMessage::GetSigned()
+{
+	HistoryMessageSigned* Result = NULL;
+
+	Safe::Except([&]()
+		{
+			PVOID *pData = *(PVOID**)((ULONG_PTR)this + 8);
+			INT Offset = *(INT*)((ULONG_PTR)(*pData) + 4 * g::fnSignedIndex() + 8);
+			if (Offset >= 4) {
+				Result = (HistoryMessageSigned*)((ULONG_PTR)pData + Offset);
+			}
+
+		}, [&](ULONG ExceptionCode)
+		{
+			g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "] Address: [" + Text::Format("0x%x", this) + "]");
+		});
 
 	return Result;
 }
