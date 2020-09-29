@@ -88,6 +88,9 @@ void ProcessItems()
 
 				// Modify width
 				HistoryViewElement *pMainView = pMessage->GetMainView();
+				if (pMainView == NULL) {
+					return;
+				}
 				pMainView->SetWidth(pMainView->GetWidth() + g::CurrentMark.Width);
 				pMessage->SetTimeWidth(pMessage->GetTimeWidth() + g::CurrentMark.Width);
 
