@@ -25,7 +25,7 @@ Telegram 本地消息防撤回插件。
 *英语、简体中文语、繁体中文语、日语、韩语*
 
 ## :tomato: 兼容性
-目前仅兼容 **Windows Telegram v1.9.0 ~ v2.3.1** 或更高。  
+目前仅兼容 **Windows Telegram v1.9.0 ~ v2.4.0** 或更高。  
 如果您正在使用 **Telegram beta**，请下载最新预览版本。
 
 ## :hamburger: 用法
