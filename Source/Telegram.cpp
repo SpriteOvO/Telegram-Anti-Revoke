@@ -66,7 +66,7 @@ BOOLEAN HistoryMessage::IsMessage()
 	// It will cause a memory access crash, so we need to filter it out.
 
 	typedef HistoryMessage*(*fntToHistoryMessage)(HistoryMessage *This, ULONG a);
-	return Utils::CallVirtual<fntToHistoryMessage>(this, 33)(this, 1) != NULL;
+	return Utils::CallVirtual<fntToHistoryMessage>(this, g::Offsets::Index_toHistoryMessage)(this, 1) != NULL;
 }
 
 HistoryMessageEdited* HistoryMessage::GetEdited()

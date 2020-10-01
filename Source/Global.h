@@ -33,6 +33,8 @@ namespace g
 		extern ULONG TimeWidth;
 		extern ULONG MainView;
 		extern ULONG Media;
+
+		extern ULONG Index_toHistoryMessage;
 	}
 	extern MARK_INFO CurrentMark;
 };

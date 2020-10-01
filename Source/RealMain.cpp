@@ -29,6 +29,8 @@ namespace g
 		ULONG TimeWidth;
 		ULONG MainView;
 		ULONG Media;
+
+		ULONG Index_toHistoryMessage;
 	}
 
 	/*
@@ -309,7 +311,16 @@ BOOLEAN SearchSigns()
 		==========
 
 		1.9.15 new :
-		51 8B C4 89 08 8B CE E8 ?? ?? ?? ?? 80
+
+		Telegram.exe+54069F - 51                    - push ecx
+		Telegram.exe+5406A0 - 8B C4                 - mov eax,esp
+		Telegram.exe+5406A2 - 89 08                 - mov [eax],ecx
+		Telegram.exe+5406A4 - 8B CE                 - mov ecx,esi
+		Telegram.exe+5406A6 - E8 D5751B00           - call Telegram.exe+6F7C80
+		Telegram.exe+5406AB - 80 BE 58010000 00     - cmp byte ptr [esi+00000158],00 { 0 }
+		Telegram.exe+5406B2 - 75 13                 - jne Telegram.exe+5406C7
+
+		51 8B C4 89 08 8B CE E8 ?? ?? ?? ?? 80 BE ?? ?? ?? ?? 00
 	*/
 
 	// ver < 1.9.15
@@ -327,7 +338,7 @@ BOOLEAN SearchSigns()
 	// ver >= 1.9.15
 	else if (g::CurrentVersion >= 1009015)
 	{
-		vector<PVOID> vCallDestroyMessage = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x51\x8B\xC4\x89\x08\x8B\xCE\xE8\x00\x00\x00\x00\x80", "xxxxxxxx????x");
+		vector<PVOID> vCallDestroyMessage = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x51\x8B\xC4\x89\x08\x8B\xCE\xE8\x00\x00\x00\x00\x80\xBE\x00\x00\x00\x00\x00", "xxxxxxxx????xx????x");
 		if (vCallDestroyMessage.size() != 1) {
 			g::Logger.TraceWarn("Search new DestroyMessage falied.");
 			return FALSE;
@@ -618,6 +629,7 @@ void InitOffsets()
 		g::Offsets::TimeWidth = 0x9C;
 		g::Offsets::MainView = 0x5C;
 		g::Offsets::Media = 0x54;
+		g::Offsets::Index_toHistoryMessage = 33;
 	}
 	// ver >= 2.1.8, ver < 2.1.21
 	else if (g::CurrentVersion >= 2001008 && g::CurrentVersion < 2001021) {
@@ -625,13 +637,23 @@ void InitOffsets()
 		g::Offsets::TimeWidth = 0x8C;
 		g::Offsets::MainView = 0x54;
 		g::Offsets::Media = 0x4C;
+		g::Offsets::Index_toHistoryMessage = 33;
 	}
-	// ver >= 2.1.21
-	else if (g::CurrentVersion >= 2001021) {
+	// ver >= 2.1.21, ver < 2.4
+	else if (g::CurrentVersion >= 2001021 && g::CurrentVersion < 2004000) {
 		g::Offsets::TimeText = 0x90;
 		g::Offsets::TimeWidth = 0x94;
 		g::Offsets::MainView = 0x5C;
 		g::Offsets::Media = 0x54;
+		g::Offsets::Index_toHistoryMessage = 33;
+	}
+	// ver >= 2.4
+	else if (g::CurrentVersion >= 2004000) {
+		g::Offsets::TimeText = 0x70;
+		g::Offsets::TimeWidth = 0x74;
+		g::Offsets::MainView = 0x5C;
+		g::Offsets::Media = 0x54;
+		g::Offsets::Index_toHistoryMessage = 51;
 	}
 }
 
