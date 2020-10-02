@@ -65,8 +65,8 @@ BOOLEAN HistoryMessage::IsMessage()
 	// Join channel msg is HistoryItem, that's not an inheritance class.
 	// It will cause a memory access crash, so we need to filter it out.
 
-	typedef HistoryMessage*(*fntToHistoryMessage)(HistoryMessage *This, ULONG a);
-	return Utils::CallVirtual<fntToHistoryMessage>(this, g::Offsets::Index_toHistoryMessage)(this, 1) != NULL;
+	typedef HistoryMessage*(*fntToHistoryMessage)(HistoryMessage *This);
+	return Utils::CallVirtual<fntToHistoryMessage>(this, g::Offsets::Index_toHistoryMessage)(this) != NULL;
 }
 
 HistoryMessageEdited* HistoryMessage::GetEdited()

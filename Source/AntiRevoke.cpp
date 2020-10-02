@@ -13,7 +13,7 @@ void Session::ProcessRevoke(HistoryMessage* pMessage)
 
 		QtString *pTimeText = pMessage->GetTimeText();
 		if (!pTimeText->IsValidTime()) {
-			g::Logger.TraceWarn("A bad TimeText. Address: [" + Text::Format("0x%x", pMessage) + "] Content: [" + Convert::UnicodeToAnsi(pTimeText->GetText()) + "]");
+			g::Logger.TraceWarn("A bad TimeText. Address: [" + Text::Format("0x%x", pMessage) + "]");
 			return;
 		}
 

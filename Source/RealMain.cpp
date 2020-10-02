@@ -647,14 +647,22 @@ void InitOffsets()
 		g::Offsets::Media = 0x54;
 		g::Offsets::Index_toHistoryMessage = 33;
 	}
-	// ver >= 2.4
-	else if (g::CurrentVersion >= 2004000) {
+	// ver >= 2.4.0, ver < 2.4.1
+	else if (g::CurrentVersion >= 2004000 && g::CurrentVersion < 2004001) {
 		g::Offsets::TimeText = 0x70;
 		g::Offsets::TimeWidth = 0x74;
 		g::Offsets::MainView = 0x5C;
 		g::Offsets::Media = 0x54;
 		g::Offsets::Index_toHistoryMessage = 51;
 	}
+    // ver >= 2.4.1
+    else if (g::CurrentVersion >= 2004001) {
+        g::Offsets::TimeText = 0x70;
+        g::Offsets::TimeWidth = 0x74;
+        g::Offsets::MainView = 0x5C;
+        g::Offsets::Media = 0x54;
+        g::Offsets::Index_toHistoryMessage = 52;
+    }
 }
 
 void CheckUpdate()
