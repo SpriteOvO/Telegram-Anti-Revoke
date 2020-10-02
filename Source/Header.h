@@ -18,6 +18,6 @@
 using namespace std;
 
 // Current version
-#define AR_VERSION        "0.2.4"
+#define AR_VERSION        "0.2.5"
 #define AR_URL_ISSUES     "https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues"
 #define AR_URL_RELEASE    "/repos/SpriteOvO/Telegram-Anti-Revoke/releases/latest"
