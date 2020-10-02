@@ -25,7 +25,7 @@ Automatic recognition is currently supported:
 *English, Simplified Chinese, Traditional Chinese, Japanese, Korean*
 
 ## :tomato: Compatibility
-Currently only compatible with **Windows Telegram v1.9.0 ~ v2.4.0** or higher.  
+Currently only compatible with **Windows Telegram v1.9.0 ~ v2.4.1** or higher.  
 If you are using **Telegram beta**, please download the latest preview version.
 
 ## :hamburger: Usage
