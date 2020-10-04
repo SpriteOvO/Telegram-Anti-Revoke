@@ -79,7 +79,8 @@ namespace g
 			L"zh",
 			{
 				{ L"Simplified", L"已删除 ", 7 * 6 },
-				{ L"Traditional", L"已刪除 ", 7 * 6 }
+				{ L"Traditional", L"已刪除 ", 7 * 6 },
+				{ L"Cantonese", L"刪咗 ", 5 * 6 }			// Thanks @Rongronggg9, #29
 			}
 		},
 
@@ -170,13 +171,19 @@ void InitMarkLanguage()
 		wstring CurrentPluralId = pLangInstance->GetPluralId()->GetText();
 		wstring CurrentName = pLangInstance->GetName()->GetText();
 
+		// Fix for irregularly named language packages
+		if (CurrentPluralId == L"yue" && CurrentName == L"Cantonese") {
+			CurrentPluralId = L"zh";
+		}
+
 		// find language
-		if (g::MultiLanguageMarks.count(CurrentPluralId) == 0) {
+		auto Iterator = g::MultiLanguageMarks.find(CurrentPluralId);
+		if (Iterator == g::MultiLanguageMarks.end()) {
 			g::Logger.TraceWarn(string("An unadded language. PluralId: [") + Convert::UnicodeToAnsi(CurrentPluralId + wstring(L"] Name: [") + CurrentName) + string("]"));
 			return;
 		}
 
-		vector<MARK_INFO> Sublanguages = g::MultiLanguageMarks[CurrentPluralId];
+		const vector<MARK_INFO> &Sublanguages = Iterator->second;
 
 		// default sublanguage
 		g::CurrentMark = Sublanguages[0];
