@@ -5,7 +5,7 @@
 
 LoggerManager::LoggerManager()
 {
-	this->File.open("ArLog.txt", ios::app);
+	this->File.open("ArLog.txt", ofstream::out | ofstream::trunc);
 
 	TraceInfo("");
 	TraceInfo("Running. Version: [" AR_VERSION "]");
