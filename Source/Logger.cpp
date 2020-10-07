@@ -96,7 +96,7 @@ void LoggerManager::TraceError(const string &Content, BOOLEAN bReport)
 		// So replace ShellExecute with system, there is not much difference anyway.
 
 		// ShellExecute(NULL, L"open", L"https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues", NULL, NULL, SW_SHOWNORMAL);
-		system("start " AR_URL_ISSUES);
+		system("start " AR_ISSUES_URL);
 	}
 
 	if (Result == IDABORT) {

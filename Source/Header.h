@@ -18,6 +18,9 @@
 using namespace std;
 
 // Current version
-#define AR_VERSION        "0.2.5"
-#define AR_URL_ISSUES     "https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues"
-#define AR_URL_RELEASE    "/repos/SpriteOvO/Telegram-Anti-Revoke/releases/latest"
+#define AR_VERSION           "0.2.5"
+
+#define AR_OWNER_REPO        "SpriteOvO/Telegram-Anti-Revoke"
+#define AR_REPO_URL          "https://github.com/" AR_OWNER_REPO
+#define AR_ISSUES_URL        AR_REPO_URL "/issues"
+#define AR_LATEST_REQUEST    "/repos/SpriteOvO/Telegram-Anti-Revoke/releases/latest"

@@ -674,7 +674,7 @@ void InitOffsets()
 
 void CheckUpdate()
 {
-	string LatestData = Internet::HttpGet("api.github.com", 80, AR_URL_RELEASE);
+	string LatestData = Internet::HttpGet("api.github.com", 80, AR_LATEST_REQUEST);
 	if (LatestData.empty()) {
 		g::Logger.TraceWarn("Check Update failed. LatestData is empty.");
 		return;
@@ -701,6 +701,10 @@ void CheckUpdate()
 		return;
 	}
 
+	if (LatestUrl.find(AR_REPO_URL) == string::npos) {
+		g::Logger.TraceWarn("Invalid LatestUrl. { html_url: \"" + LatestUrl + "\" }");
+		return;
+	}
 
 	vector<string> vLocal = Text::SplitByFlag(AR_VERSION, ".");
 	vector<string> vLatest = Text::SplitByFlag(LatestVersion, ".");
