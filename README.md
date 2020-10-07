@@ -21,11 +21,9 @@ Telegram local messages anti-revoke plugin.
 * Revoked messages will be marked as "deleted".
 * The plugin has excellent compatibility.
 * Mark content supports multi-language automatic recognition.  
-Automatic recognition is currently supported:   
-*English, Simplified Chinese, Traditional Chinese, Japanese, Korean*
 
 ## :tomato: Compatibility
-Currently only compatible with **Windows Telegram v1.9.0 ~ v2.4.2** or higher.  
+Currently only compatible with **Windows Telegram v1.9.0 ~ v2.4.3** or higher.  
 If you are using **Telegram beta**, please download the latest preview version.
 
 ## :hamburger: Usage
