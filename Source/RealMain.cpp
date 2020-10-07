@@ -666,7 +666,7 @@ BOOLEAN SearchSigns()
 			}
 		}
 
-		g::Offsets::Index_toHistoryMessage = (Offset / 4) - 1 /* Start from 0 */;
+		g::Offsets::Index_toHistoryMessage = (Offset / sizeof(PVOID)) - 1 /* Start from 0 */;
 	}
 
 	return TRUE;
