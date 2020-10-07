@@ -633,6 +633,42 @@ BOOLEAN SearchSigns()
 		}
 	}
 
+	{
+		/*
+			Telegram.exe+724503 - 8B 49 20              - mov ecx,[ecx+20]
+			Telegram.exe+724506 - 85 C9                 - test ecx,ecx
+			Telegram.exe+724508 - 0F84 F2000000         - je Telegram.exe+724600
+			Telegram.exe+72450E - 8B 01                 - mov eax,[ecx]
+			Telegram.exe+724510 - FF 90 D8000000        - call dword ptr [eax+000000D8]
+			Telegram.exe+724516 - 85 C0                 - test eax,eax
+
+			8B 49 ?? 85 C9 0F 84 ?? ?? ?? ?? 8B 01 FF 90 ?? ?? ?? ?? 85 C0
+		*/
+		vector<PVOID> vCallToHistoryMessage = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x49\x00\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B\x01\xFF\x90\x00\x00\x00\x00\x85\xC0", "xx?xxxx????xxxx????xx");
+		if (vCallToHistoryMessage.empty()) {
+			g::Logger.TraceWarn("Search toHistoryMessage index falied. (1)");
+			return FALSE;
+		}
+
+		ULONG Offset = *(ULONG*)((ULONG_PTR)vCallToHistoryMessage[0] + 15);
+
+		if (Offset % sizeof(PVOID) != 0) {
+			g::Logger.TraceWarn("Search toHistoryMessage index falied. (2)");
+			return FALSE;
+		}
+
+		// Check each result
+		for (PVOID Address : vCallToHistoryMessage)
+		{
+			if (*(ULONG*)((ULONG_PTR)Address + 15) != Offset) {
+				g::Logger.TraceWarn("Search toHistoryMessage index falied. (3)");
+				return FALSE;
+			}
+		}
+
+		g::Offsets::Index_toHistoryMessage = (Offset / 4) - 1 /* Start from 0 */;
+	}
+
 	return TRUE;
 }
 
@@ -644,7 +680,6 @@ void InitOffsets()
 		g::Offsets::TimeWidth = 0x9C;
 		g::Offsets::MainView = 0x5C;
 		g::Offsets::Media = 0x54;
-		g::Offsets::Index_toHistoryMessage = 33;
 	}
 	// ver >= 2.1.8, ver < 2.1.21
 	else if (g::CurrentVersion >= 2001008 && g::CurrentVersion < 2001021) {
@@ -652,7 +687,6 @@ void InitOffsets()
 		g::Offsets::TimeWidth = 0x8C;
 		g::Offsets::MainView = 0x54;
 		g::Offsets::Media = 0x4C;
-		g::Offsets::Index_toHistoryMessage = 33;
 	}
 	// ver >= 2.1.21, ver < 2.4
 	else if (g::CurrentVersion >= 2001021 && g::CurrentVersion < 2004000) {
@@ -660,23 +694,13 @@ void InitOffsets()
 		g::Offsets::TimeWidth = 0x94;
 		g::Offsets::MainView = 0x5C;
 		g::Offsets::Media = 0x54;
-		g::Offsets::Index_toHistoryMessage = 33;
 	}
-	// ver >= 2.4.0, ver < 2.4.1
-	else if (g::CurrentVersion >= 2004000 && g::CurrentVersion < 2004001) {
+	// ver >= 2.4.0
+	else if (g::CurrentVersion >= 2004000) {
 		g::Offsets::TimeText = 0x70;
 		g::Offsets::TimeWidth = 0x74;
 		g::Offsets::MainView = 0x5C;
 		g::Offsets::Media = 0x54;
-		g::Offsets::Index_toHistoryMessage = 51;
-	}
-	// ver >= 2.4.1
-	else if (g::CurrentVersion >= 2004001) {
-		g::Offsets::TimeText = 0x70;
-		g::Offsets::TimeWidth = 0x74;
-		g::Offsets::MainView = 0x5C;
-		g::Offsets::Media = 0x54;
-		g::Offsets::Index_toHistoryMessage = 52;
 	}
 }
 
