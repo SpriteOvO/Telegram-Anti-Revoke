@@ -15,7 +15,7 @@ QtString::QtString(const WCHAR *String)
 BOOLEAN QtString::IsValidTime()
 {
 	// Check valid
-	return !IsBadReadPtr(d, sizeof(PVOID)) && !IsBadReadPtr((PVOID)((ULONG_PTR)d + d->offset), sizeof(QtArrayData) + 12) &&
+	return d != NULL && !IsBadReadPtr(d, sizeof(PVOID)) && !IsBadReadPtr((PVOID)((ULONG_PTR)d + d->offset), sizeof(QtArrayData) + 12) &&
 		GetRefCount() <= 1 &&
 		wcslen(GetText()) <= 8; // Fixed for 12h format. ("12:34 AM" / "12:34 PM")
 }

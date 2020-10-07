@@ -59,7 +59,8 @@ void ProcessItems()
 					pTimeText = pMessage->GetTimeText();
 				}
 
-				if (pTimeText->IsEmpty() || pTimeText->Find(g::CurrentMark.Content) != wstring::npos) {
+				//  vvvvvvvvvvvvvvvvvvvvvvvvvvvv TODO: This is temp code, hook HistoryMessage's destructor function to improve.
+				if (!pTimeText->IsValidTime() || pTimeText->IsEmpty() || pTimeText->Find(g::CurrentMark.Content) != wstring::npos) {
 					// [Empty] This message isn't the current channel or group. 
 					// [Found] This message is marked.
 					return;
