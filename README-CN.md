@@ -23,7 +23,7 @@ Telegram 本地消息防撤回插件。
 * 标记的内容支持多语言自动识别。  
 
 ## :tomato: 兼容性
-目前仅兼容 **Windows Telegram v1.9.0 ~ v2.4.3** 或更高。  
+目前仅兼容 **Windows Telegram v1.9.0 ~ v2.4.4** 或更高。  
 如果您正在使用 **Telegram beta**，请下载最新预览版本。
 
 ## :hamburger: 用法
