@@ -1,13 +1,9 @@
 # Telegram-Anti-Revoke
 
-<!--
-[![Version](https://img.shields.io/badge/beta-v0.1.3-blue.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/pulls)
--->
-[![Platform](https://img.shields.io/badge/platform-windows-orange.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke)
-[![Version](https://img.shields.io/github/v/release/SpriteOvO/Telegram-Anti-Revoke)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
-[![Downloads](https://img.shields.io/github/downloads/SpriteOvO/Telegram-Anti-Revoke/total.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
-[![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
+[![](https://img.shields.io/badge/platform-windows-orange.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke)
+[![](https://img.shields.io/github/v/release/SpriteOvO/Telegram-Anti-Revoke)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
+[![](https://img.shields.io/github/downloads/SpriteOvO/Telegram-Anti-Revoke/total.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
+[![](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
 :earth_americas: [English](/README.md) | :earth_asia: 简体中文
 
@@ -35,19 +31,8 @@ Telegram 本地消息防撤回插件。
 ## :bug: 报告
 请使用 [问题跟踪器](https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues) 报告问题或提出新功能。
 
-<!--
-如果发生崩溃，请在报告问题时提供以下信息：
-* *ArLog.txt* 文件。（与 *version.dll* 文件同于一个目录）
-* 您正在使用 Telegram 的哪个版本？
-* 您正在使用哪个操作系统？
-* 崩溃时您是否做了什么操作？
-* 复现崩溃的步骤？（可选）
-* 更多有用的信息？
--->
-
 如 Telegram 发布了新版本更新且变动较大，插件可能会出错或导致崩溃。  
 请报告该问题并等待插件更新。
-<!--勿重复报告已报告的问题，谢谢！-->
 
 ## :gem: 第三方
 * JsonCpp ([MIT License](https://github.com/open-source-parsers/jsoncpp/blob/master/LICENSE))

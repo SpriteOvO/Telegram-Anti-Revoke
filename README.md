@@ -1,13 +1,9 @@
 # Telegram-Anti-Revoke
 
-<!--
-[![Version](https://img.shields.io/badge/beta-v0.1.3-blue.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/pulls)
--->
-[![Platform](https://img.shields.io/badge/platform-windows-orange.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke)
-[![Version](https://img.shields.io/github/v/release/SpriteOvO/Telegram-Anti-Revoke)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
-[![Downloads](https://img.shields.io/github/downloads/SpriteOvO/Telegram-Anti-Revoke/total.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
-[![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
+[![](https://img.shields.io/badge/platform-windows-orange.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke)
+[![](https://img.shields.io/github/v/release/SpriteOvO/Telegram-Anti-Revoke)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
+[![](https://img.shields.io/github/downloads/SpriteOvO/Telegram-Anti-Revoke/total.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases)
+[![](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
 :earth_americas: English | :earth_asia: [简体中文](/README-CN.md)
 
@@ -33,21 +29,10 @@ If you are using **Telegram beta**, please download the latest preview version.
 4. Run the Telegram program.
 
 ## :bug: Report
-Please use the [Issue Tracker](https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues) for reporting problems or suggesting new features.
-
-<!--
-If a crash occurs, please provide the following information when reporting a problem:
-* *ArLog.txt* file. (In the same directory as the *version.dll* file.)
-* Which version of Telegram are you using?
-* Which operating system are you using?
-* Did you do anything when it crashed?
-* Reproduce the steps of the crash? (optional)
-* More useful information?
--->
+Please use the [Issue Tracker](https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues) to report problems or suggest new features.
 
 If Telegram releases a new version update and the change is large, the plugin may go wrong or cause a crash.  
 Please report an issue and wait for plugin update.
-<!--Don't repeat reports on reported issues, thank you!-->
 
 ## :gem: ThirdParty
 * JsonCpp ([MIT License](https://github.com/open-source-parsers/jsoncpp/blob/master/LICENSE))
