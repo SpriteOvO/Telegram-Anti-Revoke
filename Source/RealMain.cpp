@@ -2,6 +2,7 @@
 #include "Telegram.h"
 #include "Global.h"
 #include "AntiRevoke.h"
+#include "Updater.h"
 
 
 namespace g
@@ -704,107 +705,6 @@ void InitOffsets()
 	}
 }
 
-void CheckUpdate()
-{
-	string LatestData = Internet::HttpGet("api.github.com", 80, AR_LATEST_REQUEST);
-	if (LatestData.empty()) {
-		g::Logger.TraceWarn("Check Update failed. LatestData is empty.");
-		return;
-	}
-
-	Json::CharReaderBuilder Builder;
-	Json::Value Root;
-	Json::String Errors;
-	unique_ptr<Json::CharReader> pReader(Builder.newCharReader());
-
-	if (!pReader->parse(LatestData.c_str(), LatestData.c_str() + LatestData.size(), &Root, &Errors)) {
-		g::Logger.TraceWarn("Check Update failed. Reader->parse() failed. { " + Errors + " }");
-		return;
-	}
-
-	string Message = Root["message"].asString();
-	string LatestVersion = Root["tag_name"].asString();	// like "1.3.0"
-	string LatestUrl = Root["html_url"].asString();
-	string Body = Root["body"].asString();
-
-	if (!Message.empty() || LatestVersion.empty() || LatestUrl.empty()) {
-		// if falied, message is "Not Found".
-		g::Logger.TraceWarn("Check Update failed. message or tag_name or html_url is bad. { message: [" + Message + "] tag_name: [" + LatestVersion + "] html_url: [" + LatestUrl + "] }");
-		return;
-	}
-
-	if (LatestUrl.find(AR_REPO_URL) == string::npos) {
-		g::Logger.TraceWarn("Invalid LatestUrl. { html_url: \"" + LatestUrl + "\" }");
-		return;
-	}
-
-	vector<string> vLocal = Text::SplitByFlag(AR_VERSION, ".");
-	vector<string> vLatest = Text::SplitByFlag(LatestVersion, ".");
-	if (vLocal.size() != 3 || vLatest.size() != 3) {
-		g::Logger.TraceWarn("Update check failed. Vector size is bad. Local: " + string(AR_VERSION) + " Latest: " + LatestVersion);
-		return;
-	}
-
-	// Format 1.21.3 as 001021003, then convert to integer, compare version
-	string LocalString = Text::Format("%03d%03d%03d", stoul(vLocal[0]), stoul(vLocal[1]), stoul(vLocal[2]));
-	string LatestString = Text::Format("%03d%03d%03d", stoul(vLatest[0]), stoul(vLatest[1]), stoul(vLatest[2]));
-	ULONG LocalNumber = stoul(LocalString);
-	ULONG LatestNumber = stoul(LatestString);
-
-	if (LocalNumber >= LatestNumber) {
-		// no need to update.
-		g::Logger.TraceInfo("No need to update. Local: [" + LocalString + "] Latest: [" + LatestString + "]");
-		return;
-	}
-
-	g::Logger.TraceInfo("Need to update. Local: [" + LocalString + "] Latest: [" + LatestString + "]");
-
-
-	string ChangeLog;
-	SIZE_T ClBeginPos = Body.find("Change log");
-
-	if (ClBeginPos != string::npos)
-	{
-		// Find end of ChangeLog
-		SIZE_T ClEndPos = Body.find("\r\n\r\n", ClBeginPos), ClCount;
-
-		// If found, calc the count
-		if (ClEndPos != string::npos) {
-			ClCount = ClEndPos - ClBeginPos;
-		}
-		else {
-			ClCount = string::npos;
-		}
-
-		ChangeLog = Body.substr(ClBeginPos, ClCount) + "\n\n";
-	}
-
-	/*
-		A new version has been released.
-
-		Current version: x.x.x
-		Latest version: x.x.x
-
-		Change log:
-		* xxxxxxxxxx
-		* xxxxxxxxxxxxxxxxxxxx
-
-		Do you want to go to GitHub to download the latest version?
-	*/
-	string Msg = 
-		"A new version has been released.\n"
-		"\n"
-		"Current version: " + string(AR_VERSION) + "\n"
-		"Latest version: " + LatestVersion + "\n"
-		"\n" + 
-		ChangeLog + 
-		"Do you want to go to GitHub to download the latest version?\n";
-
-	if (MessageBoxA(NULL, Msg.c_str(), "Anti-Revoke Plugin", MB_ICONQUESTION | MB_YESNO) == IDYES) {
-		system(("start " + LatestUrl).c_str());
-	}
-}
-
 DWORD WINAPI Initialize(PVOID pParameter)
 {
 #ifdef _DEBUG
@@ -819,7 +719,7 @@ DWORD WINAPI Initialize(PVOID pParameter)
 		return 0;
 	}
 
-	CheckUpdate();
+	Updater::GetInstance().CheckUpdate();
 	
 	InitOffsets();
 

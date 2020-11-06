@@ -128,51 +128,79 @@ namespace Convert
 
 namespace Internet
 {
-	string HttpGet(const string &HostName, INTERNET_PORT Port, const string &ObjectName, const string &AdditionalHeader)
+	BOOLEAN HttpRequest(string &Response, ULONG &Status, const string &HttpVerb, const string &HostName, const string &ObjectName, const vector<pair<string, string>> &Headers, const string &PostData)
 	{
-#define ONCE_READ_SIZE	( 0x100 )
+		if (HttpVerb != "GET" && HttpVerb != "POST") {
+			return FALSE;
+		}
 
+		if (HttpVerb != "POST" && !PostData.empty()) {
+			return FALSE;
+		}
+
+		BOOLEAN Result = FALSE;
 		HINTERNET hInternet = NULL, hConnect = NULL, hRequest = NULL;
-		string Buffer;
 
-		// 打开句柄
-		hInternet = InternetOpenA("Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
-		if (hInternet == NULL) {
-			goto EXIT;
-		}
-
-		// 连接主机
-		hConnect = InternetConnectA(hInternet, HostName.c_str(), Port, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0);
-		if (hConnect == NULL) {
-			goto EXIT;
-		}
-
-		// 创建请求
-		hRequest = HttpOpenRequestA(hConnect, "GET", ObjectName.c_str(), "HTTP/1.1", NULL, NULL, INTERNET_FLAG_RELOAD, 0);
-		if (hRequest == NULL) {
-			goto EXIT;
-		}
-
-		// 发送请求
-		if (!HttpSendRequestA(hRequest, AdditionalHeader.c_str(), (DWORD)AdditionalHeader.size(), NULL, 0)) {
-			goto EXIT;
-		}
-
-		// 读取数据
-		while (true)
+		do
 		{
-			DWORD BytesRead = 0;
-			CHAR TempBuffer[ONCE_READ_SIZE + 1];
-			RtlZeroMemory(TempBuffer, sizeof(TempBuffer));
-
-			InternetReadFile(hRequest, TempBuffer, ONCE_READ_SIZE, &BytesRead);
-			if (BytesRead == 0) {
+			hInternet = InternetOpenA("Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
+			if (hInternet == NULL) {
 				break;
 			}
 
-			TempBuffer[BytesRead] = '\0';
-			Buffer += TempBuffer;
-		}
+			hConnect = InternetConnectA(hInternet, HostName.c_str(), INTERNET_DEFAULT_HTTPS_PORT, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0);
+			if (hConnect == NULL) {
+				break;
+			}
+
+			hRequest = HttpOpenRequestA(hConnect, HttpVerb.c_str(), ObjectName.c_str(), "HTTP/1.1", NULL, NULL, INTERNET_FLAG_NO_CACHE_WRITE | INTERNET_FLAG_RELOAD | INTERNET_FLAG_SECURE, 0);
+			if (hRequest == NULL) {
+				break;
+			}
+
+			string HeadersText;
+			for (const auto &[HeaderName, HeaderValue] : Headers) {
+				HeadersText += HeaderName + ": " + HeaderValue + "\r\n";
+			}
+
+			if (!HttpSendRequestA(hRequest, HeadersText.c_str(), -1, (PVOID)PostData.c_str(), (ULONG)PostData.size())) {
+				break;
+			}
+
+			ULONG StatusSize = sizeof(Status), Index = 0;
+			if (!HttpQueryInfoA(hRequest, HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER, &Status, &StatusSize, &Index)) {
+				break;
+			}
+
+			Response.clear();
+
+			while (TRUE)
+			{
+#define ONCE_READ_SIZE	( 0x100 )
+				ULONG BytesRead = 0;
+				CHAR TempBuffer[ONCE_READ_SIZE + 1];
+				RtlZeroMemory(TempBuffer, sizeof(TempBuffer));
+
+				if (!InternetReadFile(hRequest, TempBuffer, ONCE_READ_SIZE, &BytesRead)) {
+					goto EXIT;
+				}
+
+				if (BytesRead == 0) {
+					break;
+				}
+
+				// We must fill a zero ending here.
+				// Because the `InternetReadFile` API will write more data than `BytesRead` if the buffer is large enough!
+				TempBuffer[BytesRead] = '\0';
+
+				Response += TempBuffer;
+#undef ONCE_READ_SIZE
+			}
+
+			Result = TRUE;
+
+		} while (FALSE);
+
 
 	EXIT:
 		if (hRequest != NULL) {
@@ -185,7 +213,7 @@ namespace Internet
 			InternetCloseHandle(hInternet);
 		}
 
-		return Buffer;
+		return Result;
 	}
 
 } // namespace Internet

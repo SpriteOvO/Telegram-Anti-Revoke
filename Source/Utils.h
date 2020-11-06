@@ -35,7 +35,7 @@ namespace Convert
 
 namespace Internet
 {
-	std::string HttpGet(const std::string &HostName, INTERNET_PORT Port, const std::string &ObjectName, const std::string &AdditionalHeader = "Accept: */*\r\nAccept-Language: *\r\n");
+	BOOLEAN HttpRequest(std::string &Response, ULONG &Status, const std::string &HttpVerb, const std::string &HostName, const std::string &ObjectName, const std::vector<std::pair<std::string, std::string>> &Headers, const std::string &PostData = std::string{});
 }
 
 namespace Safe
