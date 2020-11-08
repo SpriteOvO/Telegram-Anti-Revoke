@@ -124,7 +124,7 @@ BOOLEAN Updater::GetDataByBridge(string &ReturnedResponse)
 {
 	BOOLEAN Result = FALSE;
 
-	Safe::Except(
+	Safe::TryExcept(
 		[&]()
 		{
 			string Response;

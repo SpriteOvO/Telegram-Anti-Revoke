@@ -74,7 +74,7 @@ CompT* HistoryMessage::GetComponent(ULONG Index)
 {
 	CompT* Result = NULL;
 
-	Safe::Except(
+	Safe::TryExcept(
 		[&]()
 		{
 			PVOID *pData = *(PVOID**)((ULONG_PTR)this + 8);

@@ -5,7 +5,7 @@
 
 void Session::ProcessRevoke(HistoryMessage* pMessage)
 {
-	Safe::Except([&]()
+	Safe::TryExcept([&]()
 	{
 		if (!pMessage->IsMessage()) {
 			return;
@@ -38,7 +38,7 @@ void ProcessItems()
 
 		for (HistoryMessage *pMessage : g::RevokedMessages)
 		{
-			Safe::Except([&]()
+			Safe::TryExcept([&]()
 			{
 				QtString *pTimeText = NULL;
 				HistoryMessageEdited *pEdited = pMessage->GetEdited();

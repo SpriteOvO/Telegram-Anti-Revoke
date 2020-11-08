@@ -156,7 +156,7 @@ BOOLEAN HookMemoryFree(BOOLEAN Status)
 
 void InitMarkLanguage()
 {
-	Safe::Except([]()
+	Safe::TryExcept([]()
 	{
 		// LanguageInstance *Instance = g::fnGetCurrentInstance();
 		LanguageInstance *pLangInstance = *g::ppLangInstance;

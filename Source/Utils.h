@@ -41,7 +41,7 @@ namespace Internet
 namespace Safe
 {
 	template<typename T1, typename T2>
-	BOOLEAN Except(T1 TryCallback, T2 ExceptCallback)
+	BOOLEAN TryExcept(T1 TryCallback, T2 ExceptCallback)
 	{
 		__try
 		{
