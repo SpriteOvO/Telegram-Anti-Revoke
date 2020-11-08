@@ -537,63 +537,9 @@ BOOLEAN SearchSigns()
 		/*
 			Lang::Instance *__cdecl Lang::Current()
 
-			.text:00B6FBD0 51                                      push    ecx
-			.text:00B6FBD1 A1 44 1F 3B 03                          mov     eax, ?Instance@Application@Core@@0PAV12@A.ptr_ ; Core::Application * Core::Application::Instance
-			.text:00B6FBD6 85 C0                                   test    eax, eax
-			.text:00B6FBD8 74 05                                   jz      short loc_B6FBDF
-			.text:00B6FBDA 8B 40 54                                mov     eax, [eax+54h]
-			.text:00B6FBDD 59                                      pop     ecx
-			.text:00B6FBDE C3                                      retn
-			.text:00B6FBDF                         ; ---------------------------------------------------------------------------
-			.text:00B6FBDF
-			.text:00B6FBDF                         loc_B6FBDF:                             ; CODE XREF: Lang::Current(void)+8↑j
-			.text:00B6FBDF 68 58 03 00 00                          push    358h            ; line
-			.text:00B6FBE4 BA 49 00 00 00                          mov     edx, 49h        ; size
-			.text:00B6FBE9 B9 B0 EB C7 02                          mov     ecx, offset aDMyprojectTele_25 ; "D:\\MyProject\\Telegram\\tdesktop\\Tele"...
-			.text:00B6FBEE E8 2D F7 9C FF                          call    ?extract_basename@assertion@base@@YAPBDPBDI@Z ; base::assertion::extract_basename(char const *,uint)
-			.text:00B6FBF3 8B D0                                   mov     edx, eax        ; file
-			.text:00B6FBF5 B9 00 ED C7 02                          mov     ecx, offset aApplicationIns ; "\"Application::Instance != nullptr\""
-			.text:00B6FBFA E8 41 F7 9C FF                          call    ?fail@assertion@base@@YAXPBD0H@Z ; base::assertion::fail(char const *,char const *,int)
-
-			51 A1 ?? ?? ?? ?? 85 C0 74 05 8B 40 ?? 59 C3
-
-			//////////////////////////////////////////////////
-
-			this sign has changed on 1.9.1, so we use the following.
-
-			.text:00B48E94 25 00 04 00 00                          and     eax, 400h
-			.text:00B48E99 0F 84 8D 01 00 00                       jz      loc_B4902C
-			.text:00B48E9F 8B CB                                   mov     this, ebx       ; this
-			.text:00B48EA1 E8 EA 07 56 00                          call    ?c_user@MTPuser@@QBEABVMTPDuser@@XZ ; MTPuser::c_user(void)
-			.text:00B48EA6 83 78 0C 00                             cmp     dword ptr [eax+0Ch], 0
-			.text:00B48EAA 0F 84 7C 01 00 00                       jz      loc_B4902C
-			.text:00B48EB0 E8 1B 6D 02 00                          call    ?Current@Lang@@YAAAVInstance@1@XZ ; Lang::Current(void)
-
-			25 00 04 00 00 0F 84 ?? ?? ?? ?? 8B CB E8 ?? ?? ?? ?? 83 78 ?? 00 0F 84 ?? ?? ?? ?? E8
-
-			//////////////////////////////////////////////////
-
-			2020.1.1
-			changed again (on 1.9.3
-			new:
-
-			std::_Deque_iterator<std::_Deque_val<std::_Deque_simple_types<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap> > > > *__thiscall std::deque<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap>,std::allocator<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap>>>::erase(std::deque<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap>,std::allocator<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap> > > *this, std::_Deque_iterator<std::_Deque_val<std::_Deque_simple_types<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap> > > > *result, std::_Deque_const_iterator<std::_Deque_val<std::_Deque_simple_types<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap> > > > _First_arg, std::_Deque_const_iterator<std::_Deque_val<std::_Deque_simple_types<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap> > > > _Last_arg)
-
-			.text:005D611E                         loc_5D611E:                             ; CODE XREF: std::deque<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap>,std::allocator<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap>>>::erase(std::_Deque_const_iterator<std::_Deque_val<std::_Deque_simple_types<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap>>>>,std::_Deque_const_iterator<std::_Deque_val<std::_Deque_simple_types<base::flat_multi_set_const_wrap<MTP::Sender::RequestWrap>>>>)+9A↑j
-			.text:005D611E 8B 3D 44 1F 3B 03                       mov     edi, ?Instance@Application@Core@@0PAV12@A.ptr_ ; Core::Application * Core::Application::Instance
-			.text:005D6124 89 45 E8                                mov     [ebp+var_18], eax
-			.text:005D6127 39 55 E4                                cmp     [ebp+var_1C], edx
-			.text:005D612A 0F 84 A1 00 00 00                       jz      loc_5D61D1
-			.text:005D6130 8B 5D D4                                mov     ebx, [ebp+var_2C]
-			.text:005D6133 8B 75 EC                                mov     esi, [ebp+var_14]
-
-			8B 3D ?? ?? ?? ?? 89 45 ?? 39 55 ?? 0F 84
-
-
 			//////////////////////////////////////////////////
 
 			2020.1.18 - 1.9.4
-			new
 
 			Telegram.exe+6A74BB - 8B 0D 24A95B03        - mov ecx,[Telegram.exe+31FA924]
 			Telegram.exe+6A74C1 - 03 C6                 - add eax,esi
@@ -602,6 +548,7 @@ BOOLEAN SearchSigns()
 			Telegram.exe+6A74C8 - 0F84 35010000         - je Telegram.exe+6A7603
 			Telegram.exe+6A74CE - 8B 49 54              - mov ecx,[ecx+54]
 
+			(byte)
 			8B 0D ?? ?? ?? ?? 03 C6 0F B7 C0 85 C9 0F 84 ?? ?? ?? ?? 8B 49
 
 			//////////////////////////////////////////////////
@@ -615,42 +562,9 @@ BOOLEAN SearchSigns()
 			Telegram.exe+193D09 - 0F84 5F010000         - je Telegram.exe+193E6E
 			Telegram.exe+193D0F - 8B 89 B4020000        - mov ecx,[ecx+000002B4]
 
+			(uint32)
 			8B 0D ?? ?? ?? ?? 03 C6 0F B7 C0 85 C9 0F 84 ?? ?? ?? ?? 8B
 		*/
-
-		//vector<PVOID> vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x51\xA1\x00\x00\x00\x00\x85\xC0\x74\x05\x8B\x40\x00\x59\xC3", "xx????xxxxxx?xx");
-		//if (vCallCurrent.size() != 1) {
-		//	g::Logger.TraceWarn("Search GetCurrentInstance falied.");
-		//	return FALSE;
-		//}
-
-		//g::fnGetCurrentInstance = (fntGetCurrentInstance)vCallCurrent[0];
-
-		//////////////////////////////////////////////////
-
-		//vector<PVOID> vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x25\x00\x04\x00\x00\x0F\x84\x00\x00\x00\x00\x8B\xCB\xE8\x00\x00\x00\x00\x83\x78\x00\x00\x0F\x84\x00\x00\x00\x00\xE8", "xxxxxxx????xxx????xx?xxx????x");
-		//if (vCallCurrent.size() != 1) {
-		//	g::Logger.TraceWarn("Search GetCurrentInstance falied.");
-		//	return FALSE;
-		//}
-
-		//g::fnGetCurrentInstance = (fntGetCurrentInstance)(PVOID)((ULONG_PTR)vCallCurrent[0] + 33 + *(INT*)((ULONG_PTR)vCallCurrent[0] + 29));
-
-		//////////////////////////////////////////////////
-
-		//vector<PVOID> vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x3D\x00\x00\x00\x00\x89\x45\x00\x39\x55\x00\x0F\x84", "xx????xx?xx?xx");
-		//if (vCallCurrent.size() != 1) {
-		//	g::Logger.TraceWarn("Search Instance falied.");
-		//	return FALSE;
-		//}
-
-		//g::pInstance = (LanguageInstance**)(*(ULONG_PTR*)(*(ULONG_PTR*)((ULONG_PTR)vCallCurrent[0] + 2)) + 0x54);
-		//if (g::pInstance == NULL) {
-		//	g::Logger.TraceWarn("Language Instance invalid.");
-		//	return FALSE;
-		//}
-
-		//////////////////////////////////////////////////
 
 		vector<PVOID> vCallCurrent;
 		ULONG Offset;
