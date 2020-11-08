@@ -97,7 +97,7 @@ void ProcessItems()
 
 				// The width of the Sticker and LargeEmoji are aligned to the right
 				// So we need to modify one more width, otherwise it will cause the message as a whole to move to the left.
-				if (pMessage->IsSticker() || pMessage->IsLargeEmoji())
+				if ((pMessage->IsSticker() || pMessage->IsLargeEmoji()) && !pMessage->IsReply())
 				{
 					Media *pMainViewMedia = pMainView->GetMedia();
 					if (pMainViewMedia != NULL) {

@@ -25,6 +25,7 @@ namespace g
 	extern fntFree fnOriginalFree;
 	extern fntIndex fnEditedIndex;
 	extern fntIndex fnSignedIndex;
+	extern fntIndex fnReplyIndex;
 	extern mutex Mutex;
 	extern set<HistoryMessage*> RevokedMessages;
 	namespace Offsets

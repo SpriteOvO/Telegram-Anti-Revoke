@@ -69,49 +69,52 @@ BOOLEAN HistoryMessage::IsMessage()
 	return Utils::CallVirtual<fntToHistoryMessage>(this, g::Offsets::Index_toHistoryMessage)(this) != NULL;
 }
 
-HistoryMessageEdited* HistoryMessage::GetEdited()
+template <class CompT>
+CompT* HistoryMessage::GetComponent(ULONG Index)
 {
-	HistoryMessageEdited* Result = NULL;
+	CompT* Result = NULL;
 
-	Safe::Except([&]()
-	{
-		PVOID *pData = *(PVOID**)((ULONG_PTR)this + 8);
-		INT Offset = *(INT*)((ULONG_PTR)(*pData) + 4 * g::fnEditedIndex() + 8);
-		if (Offset >= 4) {
-			Result = (HistoryMessageEdited*)((ULONG_PTR)pData + Offset);
-		}
-
-	}, [&](ULONG ExceptionCode)
-	{
-		g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "] Address: [" + Text::Format("0x%x", this) + "]");
-	});
-
-	return Result;
-}
-
-HistoryMessageSigned* HistoryMessage::GetSigned()
-{
-	HistoryMessageSigned* Result = NULL;
-
-	Safe::Except([&]()
+	Safe::Except(
+		[&]()
 		{
 			PVOID *pData = *(PVOID**)((ULONG_PTR)this + 8);
-			INT Offset = *(INT*)((ULONG_PTR)(*pData) + 4 * g::fnSignedIndex() + 8);
+			INT Offset = *(INT*)((ULONG_PTR)(*pData) + 4 * Index + 8);
 			if (Offset >= 4) {
-				Result = (HistoryMessageSigned*)((ULONG_PTR)pData + Offset);
+				Result = (CompT*)((ULONG_PTR)pData + Offset);
 			}
 
 		}, [&](ULONG ExceptionCode)
 		{
 			g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "] Address: [" + Text::Format("0x%x", this) + "]");
-		});
+		}
+	);
 
 	return Result;
+}
+
+HistoryMessageEdited* HistoryMessage::GetEdited()
+{
+	return GetComponent<HistoryMessageEdited>(g::fnEditedIndex());
+}
+
+HistoryMessageSigned* HistoryMessage::GetSigned()
+{
+	return GetComponent<HistoryMessageSigned>(g::fnSignedIndex());
+}
+
+HistoryMessageReply* HistoryMessage::GetReply()
+{
+	return GetComponent<HistoryMessageReply>(g::fnReplyIndex());
 }
 
 Media* HistoryMessage::GetMedia()
 {
 	return *(Media**)((ULONG_PTR)this + g::Offsets::Media);
+}
+
+BOOLEAN HistoryMessage::IsReply()
+{
+	return GetReply() != NULL;
 }
 
 BOOLEAN HistoryMessage::IsSticker()

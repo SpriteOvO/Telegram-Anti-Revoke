@@ -16,6 +16,7 @@ namespace g
 	fntFree fnOriginalFree = NULL;
 	fntIndex fnEditedIndex = NULL;
 	fntIndex fnSignedIndex = NULL;
+	fntIndex fnReplyIndex = NULL;
 	// fntGetCurrentInstance fnGetCurrentInstance = NULL;
 	LanguageInstance **ppLangInstance = NULL;
 	PVOID RevokeByServer = NULL;
@@ -481,6 +482,55 @@ BOOLEAN SearchSigns()
 
 		ULONG_PTR CallSignedIndex = (ULONG_PTR)vCallSignedIndex[0];
 		g::fnSignedIndex = (fntIndex)(CallSignedIndex + 5 + *(INT*)(CallSignedIndex + 1));
+	}
+
+	{
+		/*
+			HistoryView__Message__updatePressed
+
+			.text:009EE632                         loc_9EE632:                             ; CODE XREF: HistoryView__Message__updatePressed+100↑j
+			.text:009EE632 8B CF                                   mov     ecx, edi
+			.text:009EE634 E8 27 13 00 00                          call    HistoryView__Message__displayFromName
+			.text:009EE639 8B CF                                   mov     ecx, edi
+			.text:009EE63B E8 00 14 00 00                          call    HistoryView__Message__displayForwardedFrom
+			.text:009EE640 84 C0                                   test    al, al
+			.text:009EE642 74 0E                                   jz      short loc_9EE652
+			.text:009EE644 8D 4C 24 18                             lea     ecx, [esp+18h]
+			.text:009EE648 E8 A3 75 BE FF                          call    gsl__not_null_Calls__Call__Delegate_____operator__
+			.text:009EE64D E8 AE DF EE FF                          call    RuntimeComponent_HistoryMessageForwarded_HistoryItem___Index
+			.text:009EE652
+			.text:009EE652                         loc_9EE652:                             ; CODE XREF: HistoryView__Message__updatePressed+122↑j
+
+			// find this (RuntimeComponent<HistoryMessageReply,HistoryItem>::Index()
+			.text:009EE652 E8 B9 52 FB FF                          call    RuntimeComponent_HistoryMessageReply_HistoryItem___Index
+
+			.text:009EE657 8B 46 08                                mov     eax, [esi+8]
+			.text:009EE65A 8B 38                                   mov     edi, [eax]
+			.text:009EE65C E8 BF 53 FB FF                          call    RuntimeComponent_HistoryMessageVia_HistoryItem___Index
+			.text:009EE661 8B 4C 87 08                             mov     ecx, [edi+eax*4+8]
+			.text:009EE665 83 F9 04                                cmp     ecx, 4
+			.text:009EE668 72 1D                                   jb      short loc_9EE687
+			.text:009EE66A 8B 46 08                                mov     eax, [esi+8]
+			.text:009EE66D 03 C1                                   add     eax, ecx
+			.text:009EE66F 74 16                                   jz      short loc_9EE687
+			.text:009EE671 8B 74 24 14                             mov     esi, [esp+14h]
+			.text:009EE675 8B CE                                   mov     ecx, esi
+			.text:009EE677 E8 E4 12 00 00                          call    HistoryView__Message__displayFromName
+			.text:009EE67C 84 C0                                   test    al, al
+			.text:009EE67E 75 07                                   jnz     short loc_9EE687
+			.text:009EE680 8B CE                                   mov     ecx, esi
+			.text:009EE682 E8 B9 13 00 00                          call    HistoryView__Message__displayForwardedFrom
+
+			E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 8B 46 08 8B 38
+		*/
+		vector<PVOID> vResult = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\xE8\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x46\x08\x8B\x38", "x????x????xxxxx");
+		if (vResult.size() != 1) {
+			g::Logger.TraceWarn("Search ReplyIndex falied.");
+			return FALSE;
+		}
+
+		ULONG_PTR CallReplyIndex = (ULONG_PTR)vResult[0] + 5;
+		g::fnReplyIndex = (fntIndex)(CallReplyIndex + 5 + *(INT*)(CallReplyIndex + 1));
 	}
 	
 	{

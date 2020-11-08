@@ -59,6 +59,11 @@ public:
 	QtString* GetTimeText();
 };
 
+class HistoryMessageReply
+{
+public:
+};
+
 //class HistoryItem
 //{
 //public:
@@ -69,9 +74,16 @@ class HistoryMessage /* : public HistoryItem */
 {
 public:
 	BOOLEAN IsMessage();
+
+	template <class CompT>
+	CompT* GetComponent(ULONG Index);
+
 	HistoryMessageEdited* GetEdited();
 	HistoryMessageSigned* GetSigned();
+	HistoryMessageReply* GetReply();
+
 	Media* GetMedia();
+	BOOLEAN IsReply();
 	BOOLEAN IsSticker();
 	BOOLEAN IsLargeEmoji();
 	HistoryViewElement* GetMainView();
