@@ -53,7 +53,7 @@ QtString* HistoryMessageEdited::GetTimeText()
 
 QtString* HistoryMessageSigned::GetTimeText()
 {
-	return (QtString*)((ULONG_PTR)this + 0x14);
+	return (QtString*)((ULONG_PTR)this + g::Offsets::SignedTimeText);
 }
 
 //////////////////////////////////////////////////

@@ -30,6 +30,7 @@ namespace g
 		ULONG TimeWidth;
 		ULONG MainView;
 		ULONG Media;
+		ULONG SignedTimeText;
 
 		ULONG Index_toHistoryMessage;
 	}
@@ -681,27 +682,39 @@ void InitOffsets()
 		g::Offsets::TimeWidth = 0x9C;
 		g::Offsets::MainView = 0x5C;
 		g::Offsets::Media = 0x54;
+		g::Offsets::SignedTimeText = 0x14;
 	}
 	// ver >= 2.1.8, ver < 2.1.21
 	else if (g::CurrentVersion >= 2001008 && g::CurrentVersion < 2001021) {
-		g::Offsets::TimeText = 0x88;
-		g::Offsets::TimeWidth = 0x8C;
-		g::Offsets::MainView = 0x54;
-		g::Offsets::Media = 0x4C;
+		g::Offsets::TimeText = 0x88;          // changed
+		g::Offsets::TimeWidth = 0x8C;         // changed
+		g::Offsets::MainView = 0x54;          // changed
+		g::Offsets::Media = 0x4C;             // changed
+		g::Offsets::SignedTimeText = 0x14;
 	}
 	// ver >= 2.1.21, ver < 2.4
 	else if (g::CurrentVersion >= 2001021 && g::CurrentVersion < 2004000) {
-		g::Offsets::TimeText = 0x90;
-		g::Offsets::TimeWidth = 0x94;
+		g::Offsets::TimeText = 0x90;          // changed
+		g::Offsets::TimeWidth = 0x94;         // changed
+		g::Offsets::MainView = 0x5C;          // changed
+		g::Offsets::Media = 0x54;             // changed
+		g::Offsets::SignedTimeText = 0x14;
+	}
+	// ver >= 2.4.0, ver < 2.4.1
+	else if (g::CurrentVersion >= 2004000 && g::CurrentVersion < 2004001) {
+		g::Offsets::TimeText = 0x70;          // changed
+		g::Offsets::TimeWidth = 0x74;         // changed
 		g::Offsets::MainView = 0x5C;
 		g::Offsets::Media = 0x54;
+		g::Offsets::SignedTimeText = 0x14;
 	}
-	// ver >= 2.4.0
-	else if (g::CurrentVersion >= 2004000) {
+	// ver >= 2.4.1
+	else if (g::CurrentVersion >= 2004001) {
 		g::Offsets::TimeText = 0x70;
 		g::Offsets::TimeWidth = 0x74;
 		g::Offsets::MainView = 0x5C;
 		g::Offsets::Media = 0x54;
+		g::Offsets::SignedTimeText = 0x10;    // changed
 	}
 }
 

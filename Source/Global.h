@@ -33,6 +33,7 @@ namespace g
 		extern ULONG TimeWidth;
 		extern ULONG MainView;
 		extern ULONG Media;
+		extern ULONG SignedTimeText;
 
 		extern ULONG Index_toHistoryMessage;
 	}
