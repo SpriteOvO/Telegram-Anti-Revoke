@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+
+
 class Updater
 {
 public:
@@ -8,7 +11,7 @@ public:
     bool CheckUpdate();
 
 private:
-    bool GetDataByBridge(string &ReturnedResponse);
-    bool GetDataDirectly(string &ReturnedResponse);
+    bool GetDataByBridge(std::string &ReturnedResponse);
+    bool GetDataDirectly(std::string &ReturnedResponse);
 
 };

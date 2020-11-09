@@ -1,21 +1,23 @@
-#include "Header.h"
-#include "Global.h"
 #include "Updater.h"
-#include "ILogger.h"
 
+#include <Windows.h>
 #include <wininet.h>
+#include "ThirdParty/jsoncpp/json.h"
+#include "Config.h"
+#include "Utils.h"
+#include "ILogger.h"
 
 
 Updater& Updater::GetInstance()
 {
-    static Updater Instance;
-    return Instance;
+    static Updater i;
+    return i;
 }
 
 bool Updater::CheckUpdate()
 {
     auto &Logger = ILogger::GetInstance();
-    string Response;
+    std::string Response;
 
     // Get releases data
     //
@@ -34,7 +36,7 @@ bool Updater::CheckUpdate()
     Json::CharReaderBuilder Builder;
     Json::Value Root;
     Json::String Errors;
-    unique_ptr<Json::CharReader> pReader(Builder.newCharReader());
+    std::unique_ptr<Json::CharReader> pReader(Builder.newCharReader());
 
     if (!pReader->parse(Response.c_str(), Response.c_str() + Response.size(), &Root, &Errors)) {
         Logger.TraceWarn("[Updater] Parse response failed. JsonError: " + Errors + " Response: " + Response);
@@ -64,18 +66,18 @@ bool Updater::CheckUpdate()
         return false;
     }
 
-    vector<string> vLocal = Text::SplitByFlag(AR_VERSION, ".");
-    vector<string> vLatest = Text::SplitByFlag(TagNameContent, ".");
+    std::vector<std::string> vLocal = Text::SplitByFlag(AR_VERSION, ".");
+    std::vector<std::string> vLatest = Text::SplitByFlag(TagNameContent, ".");
 
     if (vLocal.size() != 3 || vLatest.size() != 3) {
         Logger.TraceWarn("[Updater] Version format invalid. Local: " AR_VERSION " Latest: " + TagNameContent);
         return false;
     }
 
-    string LocalString = Text::Format("%03d%03d%03d", stoul(vLocal[0]), stoul(vLocal[1]), stoul(vLocal[2]));
-    string LatestString = Text::Format("%03d%03d%03d", stoul(vLatest[0]), stoul(vLatest[1]), stoul(vLatest[2]));
-    ULONG LocalNumber = stoul(LocalString);
-    ULONG LatestNumber = stoul(LatestString);
+    std::string LocalString = Text::Format("%03d%03d%03d", stoul(vLocal[0]), stoul(vLocal[1]), stoul(vLocal[2]));
+    std::string LatestString = Text::Format("%03d%03d%03d", stoul(vLatest[0]), stoul(vLatest[1]), stoul(vLatest[2]));
+    uint32_t LocalNumber = stoul(LocalString);
+    uint32_t LatestNumber = stoul(LatestString);
 
     if (LocalNumber >= LatestNumber) {
         Logger.TraceInfo("[Updater] No need to update. Local: " + LocalString + " Latest: " + LatestString);
@@ -87,20 +89,20 @@ bool Updater::CheckUpdate()
     // Get Changelog
     //
 
-    string ChangeLog;
-    SIZE_T ClBeginPos = BodyContent.find("Change log");
+    std::string ChangeLog;
+    size_t ClBeginPos = BodyContent.find("Change log");
 
-    if (ClBeginPos != string::npos)
+    if (ClBeginPos != std::string::npos)
     {
         // Find end of ChangeLog
-        SIZE_T ClEndPos = BodyContent.find("\r\n\r\n", ClBeginPos), ClCount;
+        size_t ClEndPos = BodyContent.find("\r\n\r\n", ClBeginPos), ClCount;
 
         // If found, calc the size
-        if (ClEndPos != string::npos) {
+        if (ClEndPos != std::string::npos) {
             ClCount = ClEndPos - ClBeginPos;
         }
         else {
-            ClCount = string::npos;
+            ClCount = std::string::npos;
         }
 
         ChangeLog = BodyContent.substr(ClBeginPos, ClCount) + "\n\n";
@@ -109,7 +111,7 @@ bool Updater::CheckUpdate()
     // Pop up the update message
     //
 
-    string Msg =
+    std::string Msg =
         "A new version has been released.\n"
         "\n"
         "Current version: " AR_VERSION "\n"
@@ -125,7 +127,7 @@ bool Updater::CheckUpdate()
     return true;
 }
 
-bool Updater::GetDataByBridge(string &ReturnedResponse)
+bool Updater::GetDataByBridge(std::string &ReturnedResponse)
 {
     auto &Logger = ILogger::GetInstance();
     bool Result = false;
@@ -133,7 +135,7 @@ bool Updater::GetDataByBridge(string &ReturnedResponse)
     Safe::TryExcept(
         [&]()
         {
-            string Response;
+            std::string Response;
             uint32_t Status;
             bool IsSuccessed = Internet::HttpRequest(
                 Response,
@@ -154,14 +156,14 @@ bool Updater::GetDataByBridge(string &ReturnedResponse)
             }
 
             if (Status != HTTP_STATUS_OK) {
-                Logger.TraceWarn("[Updater] Response status is not 200. Status: " + to_string(Status) + " Response: " + Response + " (ByBridge)");
+                Logger.TraceWarn("[Updater] Response status is not 200. Status: " + std::to_string(Status) + " Response: " + Response + " (ByBridge)");
                 return;
             }
 
             Json::CharReaderBuilder Builder;
             Json::Value Root;
             Json::String Errors;
-            unique_ptr<Json::CharReader> pReader(Builder.newCharReader());
+            std::unique_ptr<Json::CharReader> pReader(Builder.newCharReader());
 
             if (!pReader->parse(Response.c_str(), Response.c_str() + Response.size(), &Root, &Errors)) {
                 Logger.TraceWarn("[Updater] Parse response failed. JsonError: " + Errors + " Response: " + Response + " (ByBridge)");
@@ -179,7 +181,7 @@ bool Updater::GetDataByBridge(string &ReturnedResponse)
 
             Logger.TraceInfo("[Updater] Get data by bridge successed.");
         },
-        [&](ULONG ExceptionCode)
+        [&](uint32_t ExceptionCode)
         {
             Logger.TraceWarn("[Updater] An exception was caught. ExceptionCode: " + Text::Format("0x%x", ExceptionCode) + " (ByBridge)");
         }
@@ -188,10 +190,10 @@ bool Updater::GetDataByBridge(string &ReturnedResponse)
     return Result;
 }
 
-bool Updater::GetDataDirectly(string &ReturnedResponse)
+bool Updater::GetDataDirectly(std::string &ReturnedResponse)
 {
     auto &Logger = ILogger::GetInstance();
-    string Response;
+    std::string Response;
     uint32_t Status;
     bool IsSuccessed = Internet::HttpRequest(
         Response,
@@ -210,7 +212,7 @@ bool Updater::GetDataDirectly(string &ReturnedResponse)
     }
 
     if (Status != HTTP_STATUS_OK) {
-        Logger.TraceWarn("[Updater] Response status is not 200. Status: " + to_string(Status) + " Response: " + Response + " (Directly)");
+        Logger.TraceWarn("[Updater] Response status is not 200. Status: " + std::to_string(Status) + " Response: " + Response + " (Directly)");
         return false;
     }
 
