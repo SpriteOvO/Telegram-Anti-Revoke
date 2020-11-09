@@ -153,6 +153,7 @@
     <ClCompile Include="..\Source\AntiRevoke.cpp" />
     <ClCompile Include="..\Source\DllMain.cpp" />
     <ClCompile Include="..\Source\ILogger.cpp" />
+    <ClCompile Include="..\Source\IRuntime.cpp" />
     <ClCompile Include="..\Source\QtString.cpp" />
     <ClCompile Include="..\Source\RealMain.cpp" />
     <ClCompile Include="..\Source\Telegram.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="..\Source\Global.h" />
     <ClInclude Include="..\Source\Header.h" />
     <ClInclude Include="..\Source\ILogger.h" />
+    <ClInclude Include="..\Source\IRuntime.h" />
     <ClInclude Include="..\Source\QtString.h" />
     <ClInclude Include="..\Source\Resource.h" />
     <ClInclude Include="..\Source\Telegram.h" />

@@ -3,6 +3,7 @@
 #include "QtString.h"
 #include "Telegram.h"
 #include "ILogger.h"
+#include "IRuntime.h"
 
 
 //////////////////////////////////////////////////
@@ -54,7 +55,7 @@ QtString* HistoryMessageEdited::GetTimeText()
 
 QtString* HistoryMessageSigned::GetTimeText()
 {
-    return (QtString*)((ULONG_PTR)this + g::Offsets::SignedTimeText);
+    return (QtString*)((ULONG_PTR)this + IRuntime::GetInstance().GetData().Offset.SignedTimeText);
 }
 
 //////////////////////////////////////////////////
@@ -73,7 +74,7 @@ PeerData::PeerId PeerData::GetId()
 
 PeerData* History::GetPeer()
 {
-    return *(PeerData**)((ULONG_PTR)this + g::Offsets::HistoryPeer);
+    return *(PeerData**)((ULONG_PTR)this + IRuntime::GetInstance().GetData().Offset.HistoryPeer);
 }
 
 //////////////////////////////////////////////////
@@ -86,7 +87,7 @@ BOOLEAN HistoryMessage::IsMessage()
     // It will cause a memory access crash, so we need to filter it out.
 
     typedef HistoryMessage*(*fntToHistoryMessage)(HistoryMessage *This);
-    return Utils::CallVirtual<fntToHistoryMessage>(this, g::Offsets::Index_toHistoryMessage)(this) != NULL;
+    return Utils::CallVirtual<fntToHistoryMessage>(this, IRuntime::GetInstance().GetData().Index.ToHistoryMessage)(this) != NULL;
 }
 
 template <class CompT>
@@ -114,17 +115,17 @@ CompT* HistoryMessage::GetComponent(ULONG Index)
 
 HistoryMessageEdited* HistoryMessage::GetEdited()
 {
-    return GetComponent<HistoryMessageEdited>(g::fnEditedIndex());
+    return GetComponent<HistoryMessageEdited>(IRuntime::GetInstance().GetData().Function.EditedIndex());
 }
 
 HistoryMessageSigned* HistoryMessage::GetSigned()
 {
-    return GetComponent<HistoryMessageSigned>(g::fnSignedIndex());
+    return GetComponent<HistoryMessageSigned>(IRuntime::GetInstance().GetData().Function.SignedIndex());
 }
 
 HistoryMessageReply* HistoryMessage::GetReply()
 {
-    return GetComponent<HistoryMessageReply>(g::fnReplyIndex());
+    return GetComponent<HistoryMessageReply>(IRuntime::GetInstance().GetData().Function.ReplyIndex());
 }
 
 History* HistoryMessage::GetHistory()
@@ -134,7 +135,7 @@ History* HistoryMessage::GetHistory()
 
 Media* HistoryMessage::GetMedia()
 {
-    return *(Media**)((ULONG_PTR)this + g::Offsets::Media);
+    return *(Media**)((ULONG_PTR)this + IRuntime::GetInstance().GetData().Offset.Media);
 }
 
 BOOLEAN HistoryMessage::IsReply()
@@ -172,21 +173,21 @@ BOOLEAN HistoryMessage::IsLargeEmoji()
 
 HistoryViewElement* HistoryMessage::GetMainView()
 {
-    return *(HistoryViewElement**)((ULONG_PTR)this + g::Offsets::MainView);
+    return *(HistoryViewElement**)((ULONG_PTR)this + IRuntime::GetInstance().GetData().Offset.MainView);
 }
 
 QtString* HistoryMessage::GetTimeText()
 {
-    return (QtString*)((ULONG_PTR)this + g::Offsets::TimeText);
+    return (QtString*)((ULONG_PTR)this + IRuntime::GetInstance().GetData().Offset.TimeText);
 }
 
 INT HistoryMessage::GetTimeWidth()
 {
-    return *(INT*)((ULONG_PTR)this + g::Offsets::TimeWidth);
+    return *(INT*)((ULONG_PTR)this + IRuntime::GetInstance().GetData().Offset.TimeWidth);
 }
 void HistoryMessage::SetTimeWidth(INT Value)
 {
-    *(INT*)((ULONG_PTR)this + g::Offsets::TimeWidth) = Value;
+    *(INT*)((ULONG_PTR)this + IRuntime::GetInstance().GetData().Offset.TimeWidth) = Value;
 }
 
 //////////////////////////////////////////////////

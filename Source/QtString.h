@@ -1,7 +1,6 @@
 ﻿#pragma once
 
-//#include <QtCore/qstring.h>
-//#pragma comment(lib, "Qt5Cored.lib")
+#include <string>
 
 /*
     由于直接引用 Qt 静态库，注入会出现找不到 DLL 文件的情况。
@@ -30,7 +29,7 @@ public:
     BOOLEAN IsValidTime();
     WCHAR* GetText();
     BOOLEAN IsEmpty();
-    SIZE_T Find(wstring String);
+    SIZE_T Find(std::wstring String);
     INT GetRefCount();
     void MakeString(const WCHAR *String);
     void Swap(QtString *Dst);

@@ -231,10 +231,10 @@ namespace Memory
         ReadProcessMemory(hProcess, TargetAddress, LocalBuffer, Size, &Bytes);
     }
 
-    std::vector<void*> FindPatternEx(HANDLE hProcess, void* StartAddress, size_t SearchSize, const char Pattern[], const char Mask[], ULONG Protect)
+    std::vector<uintptr_t> FindPatternEx(HANDLE hProcess, void* StartAddress, size_t SearchSize, const char Pattern[], const char Mask[], ULONG Protect)
     {
 #define PAGE_SIZE    ( 0x1000 )
-        std::vector<void*> Result;
+        std::vector<uintptr_t> Result;
 
         if (StartAddress == NULL || SearchSize == 0 || Pattern == NULL || Mask == NULL) {
             return Result;
@@ -248,13 +248,13 @@ namespace Memory
         Pattern += Header;
         Mask += Header;
 
-        void* QueryAddress = StartAddress;
-        void* EndAddress = (void*)((uintptr_t)StartAddress + SearchSize);
+        uintptr_t QueryAddress = (uintptr_t)StartAddress;
+        uintptr_t EndAddress = (uintptr_t)StartAddress + SearchSize;
 
         while (true)
         {
             MEMORY_BASIC_INFORMATION Mbi;
-            if (VirtualQueryEx(hProcess, QueryAddress, &Mbi, sizeof(MEMORY_BASIC_INFORMATION)) != sizeof(MEMORY_BASIC_INFORMATION)) {
+            if (VirtualQueryEx(hProcess, (void*)QueryAddress, &Mbi, sizeof(MEMORY_BASIC_INFORMATION)) != sizeof(MEMORY_BASIC_INFORMATION)) {
                 goto Next;
             }
             if (Mbi.RegionSize == 0) {
@@ -264,17 +264,17 @@ namespace Memory
                 goto Next;
             }
 
-            for (uintptr_t MatchAddress = (uintptr_t)QueryAddress; MatchAddress < (uintptr_t)QueryAddress + Mbi.RegionSize; MatchAddress += PAGE_SIZE)
+            for (uintptr_t MatchAddress = QueryAddress; MatchAddress < QueryAddress + Mbi.RegionSize; MatchAddress += PAGE_SIZE)
             {
                 char PageData[PAGE_SIZE];
 
-                size_t RamainSize = ((ULONG_PTR)EndAddress - MatchAddress);
+                size_t RamainSize = EndAddress - MatchAddress;
                 size_t PageSize = RamainSize < PAGE_SIZE ? RamainSize : PAGE_SIZE;
                 if (PageSize == 0) {
                     return Result;
                 }
 
-                ReadProcess(hProcess, (PVOID)MatchAddress, PageData, PageSize);
+                ReadProcess(hProcess, (void*)MatchAddress, PageData, PageSize);
 
                 for (size_t InSign = 0, InPage = 0; InPage < PageSize; InPage++)
                 {
@@ -285,7 +285,7 @@ namespace Memory
                         if (Mask[InSign + 1] == '\0')
                         {
                             // 表示定位到符合的特征码地址 push头地址
-                            Result.emplace_back((PVOID)(MatchAddress + InPage - InSign - Header));
+                            Result.emplace_back(MatchAddress + InPage - InSign - Header);
                             goto ROLLBACK;
                         }
                         else {
@@ -300,7 +300,7 @@ namespace Memory
                         InSign = 0;
                     }
 
-                    if ((void*)(MatchAddress + InPage) >= EndAddress) {
+                    if (MatchAddress + InPage >= EndAddress) {
                         return Result;
                     }
                 }
@@ -309,7 +309,7 @@ namespace Memory
             }
 
         Next:
-            QueryAddress = (void*)((uintptr_t)QueryAddress + Mbi.RegionSize);
+            QueryAddress = QueryAddress + Mbi.RegionSize;
             if (QueryAddress >= EndAddress) {
                 break;
             }

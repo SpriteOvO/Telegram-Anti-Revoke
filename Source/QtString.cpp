@@ -1,6 +1,7 @@
 ﻿#include "Header.h"
 #include "QtString.h"
 #include "Global.h"
+#include "IRuntime.h"
 
 
 QtString::QtString()
@@ -54,8 +55,9 @@ void QtString::MakeString(const WCHAR *String)
     SIZE_T StrBytes = (Length + 1) * sizeof(WCHAR);
     SIZE_T DataBytes = sizeof(QtArrayData) + StrBytes;
 
-    // Thanks to [dummycatz] for pointing out the reason for the error in malloc/free memory across modules.
-    d = (QtArrayData *)g::fnMalloc(DataBytes);
+    // Thanks to [dummycatz] for pointing out the cause of cross-module malloc/free crash.
+    //
+    d = (QtArrayData *)IRuntime::GetInstance().GetData().Function.Malloc(DataBytes);
     RtlZeroMemory(d, DataBytes);
 
     d->ref = 1;
