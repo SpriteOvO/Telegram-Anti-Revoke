@@ -741,9 +741,9 @@ BOOLEAN CheckProcess()
 	return TRUE;
 }
 
-BOOL WINAPI RealDllMain(HINSTANCE hModule, DWORD dwReason, PVOID pReserved)
+BOOL WINAPI RealDllMain(HMODULE hModule, ULONG Reason, PVOID pReserved)
 {
-	switch (dwReason)
+	switch (Reason)
 	{
 	case DLL_PROCESS_ATTACH:
 		DisableThreadLibraryCalls(hModule);
