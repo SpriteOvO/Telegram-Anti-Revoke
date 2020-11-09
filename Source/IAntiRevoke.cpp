@@ -234,15 +234,18 @@ void IAntiRevoke::ProcessBlockedMessages()
                     if (pMainView == NULL) {
                         return;
                     }
+
                     pMainView->SetWidth(pMainView->GetWidth() + _MarkData.Width);
                     pMessage->SetTimeWidth(pMessage->GetTimeWidth() + _MarkData.Width);
 
-                    if (!pMessage->IsReply() || pMessage->IsReply() && pMessage->GetHistory()->GetPeer()->IsChannel())
-                    {
-                        Media *pMainViewMedia = pMainView->GetMedia();
-                        if (pMainViewMedia != NULL) {
-                            pMainViewMedia->SetWidth(pMainViewMedia->GetWidth() + _MarkData.Width);
-                        }
+                    Media *pMainViewMedia = pMainView->GetMedia();
+                    if (pMainViewMedia != NULL) {
+                        pMainViewMedia->SetWidth(pMainViewMedia->GetWidth() + _MarkData.Width);
+                    }
+
+                    HistoryMessageReply *pReply = pMessage->GetReply();
+                    if (pReply != NULL) {
+                        pReply->SetMaxReplyWidth(pReply->GetMaxReplyWidth() + _MarkData.Width);
                     }
 
                 }, [&](ULONG ExceptionCode)

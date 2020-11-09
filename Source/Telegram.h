@@ -63,6 +63,9 @@ public:
 class HistoryMessageReply
 {
 public:
+    void SetMaxReplyWidth(int32_t Value);
+    int32_t GetMaxReplyWidth();
+
 };
 
 class PeerData
@@ -117,7 +120,6 @@ public:
 
     History* GetHistory();
     Media* GetMedia();
-    bool IsReply();
     bool IsSticker();
     bool IsLargeEmoji();
     HistoryViewElement* GetMainView();

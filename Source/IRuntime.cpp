@@ -28,25 +28,15 @@ bool IRuntime::Initialize()
 
 bool IRuntime::InitFixedData()
 {
-    // ver < 2.1.21
-    if (_FileVersion < 2001021) {
+    // ver < 2.4.0
+    if (_FileVersion < 2004000) {
         return false;
-    }
-    // ver >= 2.1.21, ver < 2.4
-    else if (_FileVersion >= 2001021 && _FileVersion < 2004000)
-    {
-        _Data.Offset.TimeText = 0x90;
-        _Data.Offset.TimeWidth = 0x94;
-        _Data.Offset.MainView = 0x5C;
-        _Data.Offset.Media = 0x54;
-        _Data.Offset.SignedTimeText = 0x14;
-        _Data.Offset.HistoryPeer = 0x7C;
     }
     // ver >= 2.4.0, ver < 2.4.1
     else if (_FileVersion >= 2004000 && _FileVersion < 2004001)
     {
-        _Data.Offset.TimeText = 0x70;          // changed
-        _Data.Offset.TimeWidth = 0x74;         // changed
+        _Data.Offset.TimeText = 0x70;
+        _Data.Offset.TimeWidth = 0x74;
         _Data.Offset.MainView = 0x5C;
         _Data.Offset.Media = 0x54;
         _Data.Offset.SignedTimeText = 0x14;

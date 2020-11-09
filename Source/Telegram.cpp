@@ -72,6 +72,20 @@ QtString* HistoryMessageSigned::GetTimeText()
 }
 
 //////////////////////////////////////////////////
+// HistoryMessageReply
+//
+
+void HistoryMessageReply::SetMaxReplyWidth(int32_t Value)
+{
+    *(int32_t*)((uintptr_t)this + 0x6C) = Value;
+}
+
+int32_t HistoryMessageReply::GetMaxReplyWidth()
+{
+    return *(int32_t*)((uintptr_t)this + 0x6C);
+}
+
+//////////////////////////////////////////////////
 // PeerData
 //
 
@@ -161,11 +175,6 @@ History* HistoryMessage::GetHistory()
 Media* HistoryMessage::GetMedia()
 {
     return *(Media**)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.Media);
-}
-
-bool HistoryMessage::IsReply()
-{
-    return GetReply() != NULL;
 }
 
 bool HistoryMessage::IsSticker()
