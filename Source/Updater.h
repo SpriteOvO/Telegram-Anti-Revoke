@@ -3,12 +3,12 @@
 class Updater
 {
 public:
-	static Updater& GetInstance();
+    static Updater& GetInstance();
 
-	bool CheckUpdate();
+    bool CheckUpdate();
 
 private:
-	bool GetDataByBridge(string &ReturnedResponse);
-	bool GetDataDirectly(string &ReturnedResponse);
+    bool GetDataByBridge(string &ReturnedResponse);
+    bool GetDataDirectly(string &ReturnedResponse);
 
 };
