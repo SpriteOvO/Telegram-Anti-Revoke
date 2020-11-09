@@ -1,7 +1,7 @@
 ﻿#include <Windows.h>
 
 #include "ILogger.h"
-#include "Updater.h"
+#include "IUpdater.h"
 #include "IRuntime.h"
 #include "IAntiRevoke.h"
 #include "Utils.h"
@@ -22,7 +22,7 @@ ULONG WINAPI Initialize(PVOID pParameter)
         return 0;
     }
 
-    Updater::GetInstance().CheckUpdate();
+    IUpdater::GetInstance().CheckUpdate();
     
     if (!Runtime.InitFixedData()) {
         Logger.TraceError("You are using a version of Telegram that is deprecated by the plugin.\nPlease update your Telegram.", false);

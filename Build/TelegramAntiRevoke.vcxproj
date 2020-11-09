@@ -158,7 +158,7 @@
     <ClCompile Include="..\Source\RealMain.cpp" />
     <ClCompile Include="..\Source\Telegram.cpp" />
     <ClCompile Include="..\Source\Utils.cpp" />
-    <ClCompile Include="..\Source\Updater.cpp" />
+    <ClCompile Include="..\Source\IUpdater.cpp" />
     <ClCompile Include="..\Source\ThirdParty\jsoncpp\src\json_reader.cpp" />
     <ClCompile Include="..\Source\ThirdParty\jsoncpp\src\json_value.cpp" />
     <ClCompile Include="..\Source\ThirdParty\jsoncpp\src\json_writer.cpp" />
@@ -182,7 +182,7 @@
     <ClInclude Include="..\Source\Resource.h" />
     <ClInclude Include="..\Source\Telegram.h" />
     <ClInclude Include="..\Source\Utils.h" />
-    <ClInclude Include="..\Source\Updater.h" />
+    <ClInclude Include="..\Source\IUpdater.h" />
     <ClInclude Include="..\Source\ThirdParty\jsoncpp\allocator.h" />
     <ClInclude Include="..\Source\ThirdParty\jsoncpp\assertions.h" />
     <ClInclude Include="..\Source\ThirdParty\jsoncpp\autolink.h" />

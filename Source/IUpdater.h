@@ -3,10 +3,10 @@
 #include <string>
 
 
-class Updater
+class IUpdater
 {
 public:
-    static Updater& GetInstance();
+    static IUpdater& GetInstance();
 
     bool CheckUpdate();
 

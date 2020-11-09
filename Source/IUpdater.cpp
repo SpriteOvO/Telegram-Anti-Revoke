@@ -1,4 +1,4 @@
-#include "Updater.h"
+#include "IUpdater.h"
 
 #include <Windows.h>
 #include <wininet.h>
@@ -8,13 +8,13 @@
 #include "ILogger.h"
 
 
-Updater& Updater::GetInstance()
+IUpdater& IUpdater::GetInstance()
 {
-    static Updater i;
+    static IUpdater i;
     return i;
 }
 
-bool Updater::CheckUpdate()
+bool IUpdater::CheckUpdate()
 {
     auto &Logger = ILogger::GetInstance();
     std::string Response;
@@ -127,7 +127,7 @@ bool Updater::CheckUpdate()
     return true;
 }
 
-bool Updater::GetDataByBridge(std::string &ReturnedResponse)
+bool IUpdater::GetDataByBridge(std::string &ReturnedResponse)
 {
     auto &Logger = ILogger::GetInstance();
     bool Result = false;
@@ -190,7 +190,7 @@ bool Updater::GetDataByBridge(std::string &ReturnedResponse)
     return Result;
 }
 
-bool Updater::GetDataDirectly(std::string &ReturnedResponse)
+bool IUpdater::GetDataDirectly(std::string &ReturnedResponse)
 {
     auto &Logger = ILogger::GetInstance();
     std::string Response;
