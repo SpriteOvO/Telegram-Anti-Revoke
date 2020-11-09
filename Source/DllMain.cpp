@@ -78,7 +78,7 @@ namespace AheadLib
     PVOID FnGetFileVersionInfoSizeExA = NULL;
 #endif
 
-    FARPROC GetAddress(const CHAR *FunctionName)
+    FARPROC GetAddress(const char *FunctionName)
     {
         FARPROC Address = GetProcAddress(hOriginalModule, FunctionName);
         if (Address == NULL) {
@@ -121,7 +121,7 @@ namespace AheadLib
     {
         if (hOriginalModule == NULL)
         {
-            CHAR SystemPath[MAX_PATH];
+            char SystemPath[MAX_PATH];
             GetSystemDirectoryA(SystemPath, MAX_PATH);
 
             hOriginalModule = LoadLibraryA((std::string(SystemPath) + "\\version.dll").c_str());
