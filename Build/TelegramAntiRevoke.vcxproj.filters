@@ -170,6 +170,9 @@
     <ClInclude Include="..\Source\Updater.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Source\ThirdParty\jsoncpp\src\json_valueiterator.inl">
