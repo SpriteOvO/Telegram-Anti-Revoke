@@ -58,6 +58,25 @@ QtString* HistoryMessageSigned::GetTimeText()
 
 //////////////////////////////////////////////////
 
+BOOLEAN PeerData::IsChannel()
+{
+	return (GetId() & PeerIdTypeMask) == PeerIdChannelShift;
+}
+
+PeerData::PeerId PeerData::GetId()
+{
+	return *(PeerId*)((ULONG_PTR)this + 0x8);
+}
+
+//////////////////////////////////////////////////
+
+PeerData* History::GetPeer()
+{
+	return *(PeerData**)((ULONG_PTR)this + g::Offsets::HistoryPeer);
+}
+
+//////////////////////////////////////////////////
+
 BOOLEAN HistoryMessage::IsMessage()
 {
 	// HistoryMessage *HistoryItem::toHistoryMessage()
@@ -105,6 +124,11 @@ HistoryMessageSigned* HistoryMessage::GetSigned()
 HistoryMessageReply* HistoryMessage::GetReply()
 {
 	return GetComponent<HistoryMessageReply>(g::fnReplyIndex());
+}
+
+History* HistoryMessage::GetHistory()
+{
+	return *(History**)((ULONG_PTR)this + 0x10);
 }
 
 Media* HistoryMessage::GetMedia()

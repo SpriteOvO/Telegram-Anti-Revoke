@@ -95,17 +95,11 @@ void ProcessItems()
 				pMainView->SetWidth(pMainView->GetWidth() + g::CurrentMark.Width);
 				pMessage->SetTimeWidth(pMessage->GetTimeWidth() + g::CurrentMark.Width);
 
-				// The width of the Sticker and LargeEmoji are aligned to the right
-				// So we need to modify one more width, otherwise it will cause the message as a whole to move to the left.
-				if ((pMessage->IsSticker() || pMessage->IsLargeEmoji()) && !pMessage->IsReply())
+				if (!pMessage->IsReply() || pMessage->IsReply() && pMessage->GetHistory()->GetPeer()->IsChannel())
 				{
 					Media *pMainViewMedia = pMainView->GetMedia();
 					if (pMainViewMedia != NULL) {
 						pMainViewMedia->SetWidth(pMainViewMedia->GetWidth() + g::CurrentMark.Width);
-					}
-					else {
-						// (For sticker) This may not be possible, but it takes time to prove.
-						g::Logger.TraceWarn("Function: [" __FUNCTION__ "] MainView is nullptr. Address: [" + Text::Format("0x%x", pMessage) + "]");
 					}
 				}
 

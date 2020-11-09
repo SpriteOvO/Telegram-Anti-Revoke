@@ -70,6 +70,32 @@ public:
 //
 //};
 
+class PeerData
+{
+public:
+	BOOLEAN IsChannel();
+
+private:
+	using PeerId = uint64_t;
+
+	static constexpr auto PeerIdMask         = PeerId(0xFFFFFFFFULL);
+	static constexpr auto PeerIdTypeMask     = PeerId(0xF00000000ULL);
+	static constexpr auto PeerIdUserShift    = PeerId(0x000000000ULL);
+	static constexpr auto PeerIdChatShift    = PeerId(0x100000000ULL);
+	static constexpr auto PeerIdChannelShift = PeerId(0x200000000ULL);
+	static constexpr auto PeerIdFakeShift    = PeerId(0xF00000000ULL);
+
+	PeerId GetId();
+
+};
+
+class History
+{
+public:
+	PeerData* GetPeer();
+
+};
+
 class HistoryMessage /* : public HistoryItem */
 {
 public:
@@ -82,6 +108,7 @@ public:
 	HistoryMessageSigned* GetSigned();
 	HistoryMessageReply* GetReply();
 
+	History* GetHistory();
 	Media* GetMedia();
 	BOOLEAN IsReply();
 	BOOLEAN IsSticker();

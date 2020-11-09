@@ -32,6 +32,7 @@ namespace g
 		ULONG MainView;
 		ULONG Media;
 		ULONG SignedTimeText;
+		ULONG HistoryPeer;
 
 		ULONG Index_toHistoryMessage;
 	}
@@ -638,31 +639,20 @@ BOOLEAN SearchSigns()
 	return TRUE;
 }
 
-void InitOffsets()
+BOOLEAN InitOffsets()
 {
-	// ver < 2.1.8
-	if (g::CurrentVersion < 2001008) {
-		g::Offsets::TimeText = 0x98;
-		g::Offsets::TimeWidth = 0x9C;
-		g::Offsets::MainView = 0x5C;
-		g::Offsets::Media = 0x54;
-		g::Offsets::SignedTimeText = 0x14;
-	}
-	// ver >= 2.1.8, ver < 2.1.21
-	else if (g::CurrentVersion >= 2001008 && g::CurrentVersion < 2001021) {
-		g::Offsets::TimeText = 0x88;          // changed
-		g::Offsets::TimeWidth = 0x8C;         // changed
-		g::Offsets::MainView = 0x54;          // changed
-		g::Offsets::Media = 0x4C;             // changed
-		g::Offsets::SignedTimeText = 0x14;
+	// ver < 2.1.21
+	if (g::CurrentVersion < 2001021) {
+		return FALSE;
 	}
 	// ver >= 2.1.21, ver < 2.4
 	else if (g::CurrentVersion >= 2001021 && g::CurrentVersion < 2004000) {
-		g::Offsets::TimeText = 0x90;          // changed
-		g::Offsets::TimeWidth = 0x94;         // changed
-		g::Offsets::MainView = 0x5C;          // changed
-		g::Offsets::Media = 0x54;             // changed
+		g::Offsets::TimeText = 0x90;
+		g::Offsets::TimeWidth = 0x94;
+		g::Offsets::MainView = 0x5C;
+		g::Offsets::Media = 0x54;
 		g::Offsets::SignedTimeText = 0x14;
+		g::Offsets::HistoryPeer = 0x7C;
 	}
 	// ver >= 2.4.0, ver < 2.4.1
 	else if (g::CurrentVersion >= 2004000 && g::CurrentVersion < 2004001) {
@@ -671,6 +661,7 @@ void InitOffsets()
 		g::Offsets::MainView = 0x5C;
 		g::Offsets::Media = 0x54;
 		g::Offsets::SignedTimeText = 0x14;
+		g::Offsets::HistoryPeer = 0x7C;
 	}
 	// ver >= 2.4.1
 	else if (g::CurrentVersion >= 2004001) {
@@ -679,7 +670,10 @@ void InitOffsets()
 		g::Offsets::MainView = 0x5C;
 		g::Offsets::Media = 0x54;
 		g::Offsets::SignedTimeText = 0x10;    // changed
+		g::Offsets::HistoryPeer = 0x7C;
 	}
+
+	return TRUE;
 }
 
 DWORD WINAPI Initialize(PVOID pParameter)
@@ -698,7 +692,10 @@ DWORD WINAPI Initialize(PVOID pParameter)
 
 	Updater::GetInstance().CheckUpdate();
 	
-	InitOffsets();
+	if (!InitOffsets()) {
+		g::Logger.TraceError("You are using a version of Telegram that is deprecated by the plugin.\nPlease update your Telegram.", FALSE);
+		return 0;
+	}
 
 	if (!SearchSigns()) {
 		g::Logger.TraceError("SearchSigns() failed.");
