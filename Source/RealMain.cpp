@@ -46,24 +46,21 @@ bool CheckProcess()
     std::string CurrentName = File::GetCurrentName();
     if (Text::ToLower(CurrentName) != "telegram.exe") {
         ILogger::GetInstance().TraceWarn("This is not a Telegram process. [" + CurrentName + "]");
-        return FALSE;
+        return false;
     }
-    return TRUE;
+    return true;
 }
 
 BOOL WINAPI RealDllMain(HMODULE hModule, ULONG Reason, PVOID pReserved)
 {
-    switch (Reason)
+    if (Reason == DLL_PROCESS_ATTACH)
     {
-    case DLL_PROCESS_ATTACH:
         DisableThreadLibraryCalls(hModule);
         // Utils::CreateConsole();
-        
+
         if (CheckProcess()) {
             CloseHandle(CreateThread(NULL, 0, Initialize, NULL, 0, NULL));
         }
-
-        break;
     }
 
     return TRUE;
