@@ -150,7 +150,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\AntiRevoke.cpp" />
+    <ClCompile Include="..\Source\IAntiRevoke.cpp" />
     <ClCompile Include="..\Source\DllMain.cpp" />
     <ClCompile Include="..\Source\ILogger.cpp" />
     <ClCompile Include="..\Source\IRuntime.cpp" />
@@ -174,10 +174,8 @@
     <ClCompile Include="..\Source\ThirdParty\MinHook\src\trampoline.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Source\AntiRevoke.h" />
+    <ClInclude Include="..\Source\IAntiRevoke.h" />
     <ClInclude Include="..\Source\Config.h" />
-    <ClInclude Include="..\Source\Global.h" />
-    <ClInclude Include="..\Source\Header.h" />
     <ClInclude Include="..\Source\ILogger.h" />
     <ClInclude Include="..\Source\IRuntime.h" />
     <ClInclude Include="..\Source\QtString.h" />

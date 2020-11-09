@@ -1,107 +1,132 @@
-﻿#include "Header.h"
-#include "Global.h"
-#include "QtString.h"
-#include "Telegram.h"
+﻿#include "Telegram.h"
+
+#include "Utils.h"
 #include "ILogger.h"
 #include "IRuntime.h"
+#include "IAntiRevoke.h"
 
 
 //////////////////////////////////////////////////
+// Object
+//
 
-INT Object::GetWidth()
+int32_t Object::GetWidth()
 {
     return this->MaxWidth;
 }
-void Object::SetWidth(INT Value)
+
+void Object::SetWidth(int32_t Value)
 {
     this->MaxWidth = Value;
 }
 
 //////////////////////////////////////////////////
+// DocumentData
+//
 
-ULONG DocumentData::GetType()
+DocumentType DocumentData::GetType()
 {
-    return *(INT*)((ULONG_PTR)this + 8);
+    return *(DocumentType*)((uintptr_t)this + 8);
 }
 
-BOOLEAN DocumentData::IsSticker()
+bool DocumentData::IsSticker()
 {
-    return GetType() == StickerDocument;
+    return GetType() == DocumentType::Sticker;
 }
 
 //////////////////////////////////////////////////
+// Media
+//
 
 DocumentData* Media::GetDocument()
 {
     // DocumentData *Media::document()
-    return *(DocumentData**)((ULONG_PTR)this + 8);
+    return *(DocumentData**)((uintptr_t)this + 8);
 }
 
 //////////////////////////////////////////////////
+// HistoryView::Element
+//
 
 Media* HistoryViewElement::GetMedia()
 {
-    return *(Media**)((ULONG_PTR)this + 0x24);
+    return *(Media**)((uintptr_t)this + 0x24);
 }
 
 //////////////////////////////////////////////////
+// HistoryMessageEdited
+//
 
 QtString* HistoryMessageEdited::GetTimeText()
 {
-    return (QtString*)((ULONG_PTR)this + 0x10);
+    return (QtString*)((uintptr_t)this + 0x10);
 }
 
 //////////////////////////////////////////////////
+// HistoryMessageSigned
+//
 
 QtString* HistoryMessageSigned::GetTimeText()
 {
-    return (QtString*)((ULONG_PTR)this + IRuntime::GetInstance().GetData().Offset.SignedTimeText);
+    return (QtString*)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.SignedTimeText);
 }
 
 //////////////////////////////////////////////////
+// PeerData
+//
 
-BOOLEAN PeerData::IsChannel()
+bool PeerData::IsChannel()
 {
     return (GetId() & PeerIdTypeMask) == PeerIdChannelShift;
 }
 
 PeerData::PeerId PeerData::GetId()
 {
-    return *(PeerId*)((ULONG_PTR)this + 0x8);
+    return *(PeerId*)((uintptr_t)this + 0x8);
 }
 
 //////////////////////////////////////////////////
+// History
+//
 
 PeerData* History::GetPeer()
 {
-    return *(PeerData**)((ULONG_PTR)this + IRuntime::GetInstance().GetData().Offset.HistoryPeer);
+    return *(PeerData**)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.HistoryPeer);
+}
+
+void History::OnDestroyMessage(HistoryMessage* pMessage)
+{
+    IAntiRevoke::GetInstance().OnDestroyMessage(this, pMessage);
 }
 
 //////////////////////////////////////////////////
+// HistoryMessage
+//
 
-BOOLEAN HistoryMessage::IsMessage()
+bool HistoryMessage::IsMessage()
 {
     // HistoryMessage *HistoryItem::toHistoryMessage()
     //
     // Join channel msg is HistoryItem, that's not an inheritance class.
     // It will cause a memory access crash, so we need to filter it out.
+    //
 
-    typedef HistoryMessage*(*fntToHistoryMessage)(HistoryMessage *This);
-    return Utils::CallVirtual<fntToHistoryMessage>(this, IRuntime::GetInstance().GetData().Index.ToHistoryMessage)(this) != NULL;
+    using FnToHistoryMessageT = HistoryMessage*(*)(HistoryMessage *This);
+    return Utils::CallVirtual<FnToHistoryMessageT>(this, IRuntime::GetInstance().GetData().Index.ToHistoryMessage)(this) != NULL;
 }
 
 template <class CompT>
-CompT* HistoryMessage::GetComponent(ULONG Index)
+CompT* HistoryMessage::GetComponent(uint32_t Index)
 {
     CompT* Result = NULL;
 
     Safe::TryExcept(
         [&]()
         {
-            PVOID *pData = *(PVOID**)((ULONG_PTR)this + 8);
-            INT Offset = *(INT*)((ULONG_PTR)(*pData) + 4 * Index + 8);
+            PVOID *pData = *(PVOID**)((uintptr_t)this + 8);
+            INT Offset = *(INT*)((uintptr_t)(*pData) + 4 * Index + 8);
             if (Offset >= 4) {
-                Result = (CompT*)((ULONG_PTR)pData + Offset);
+                Result = (CompT*)((uintptr_t)pData + Offset);
             }
 
         }, [&](ULONG ExceptionCode)
@@ -130,20 +155,20 @@ HistoryMessageReply* HistoryMessage::GetReply()
 
 History* HistoryMessage::GetHistory()
 {
-    return *(History**)((ULONG_PTR)this + 0x10);
+    return *(History**)((uintptr_t)this + 0x10);
 }
 
 Media* HistoryMessage::GetMedia()
 {
-    return *(Media**)((ULONG_PTR)this + IRuntime::GetInstance().GetData().Offset.Media);
+    return *(Media**)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.Media);
 }
 
-BOOLEAN HistoryMessage::IsReply()
+bool HistoryMessage::IsReply()
 {
     return GetReply() != NULL;
 }
 
-BOOLEAN HistoryMessage::IsSticker()
+bool HistoryMessage::IsSticker()
 {
     if (Media *pMedia = GetMedia()) {
         if (DocumentData *pData = pMedia->GetDocument()) {
@@ -153,7 +178,7 @@ BOOLEAN HistoryMessage::IsSticker()
     return FALSE;
 }
 
-BOOLEAN HistoryMessage::IsLargeEmoji()
+bool HistoryMessage::IsLargeEmoji()
 {
     // if it's a LargeEmoji, [Item->Media] is nullptr, and [Item->MainView->Media] isn't nullptr.
     // if it's a Video, then [Item->Media] isn't nullptr.
@@ -173,43 +198,43 @@ BOOLEAN HistoryMessage::IsLargeEmoji()
 
 HistoryViewElement* HistoryMessage::GetMainView()
 {
-    return *(HistoryViewElement**)((ULONG_PTR)this + IRuntime::GetInstance().GetData().Offset.MainView);
+    return *(HistoryViewElement**)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.MainView);
 }
 
 QtString* HistoryMessage::GetTimeText()
 {
-    return (QtString*)((ULONG_PTR)this + IRuntime::GetInstance().GetData().Offset.TimeText);
+    return (QtString*)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.TimeText);
 }
 
-INT HistoryMessage::GetTimeWidth()
+int32_t HistoryMessage::GetTimeWidth()
 {
-    return *(INT*)((ULONG_PTR)this + IRuntime::GetInstance().GetData().Offset.TimeWidth);
+    return *(int32_t*)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.TimeWidth);
 }
-void HistoryMessage::SetTimeWidth(INT Value)
+void HistoryMessage::SetTimeWidth(int32_t Value)
 {
-    *(INT*)((ULONG_PTR)this + IRuntime::GetInstance().GetData().Offset.TimeWidth) = Value;
+    *(int32_t*)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.TimeWidth) = Value;
 }
 
 //////////////////////////////////////////////////
+// LanguageInstance
+//
 
 QtString* LanguageInstance::GetId()
 {
-    return (QtString*)((ULONG_PTR)this + 0x4);
+    return (QtString*)((uintptr_t)this + 0x4);
 }
 
 QtString* LanguageInstance::GetPluralId()
 {
-    return (QtString*)((ULONG_PTR)this + 0x8);
+    return (QtString*)((uintptr_t)this + 0x8);
 }
 
 QtString* LanguageInstance::GetName()
 {
-    return (QtString*)((ULONG_PTR)this + 0x14);
+    return (QtString*)((uintptr_t)this + 0x14);
 }
 
 QtString* LanguageInstance::GetNativeName()
 {
-    return (QtString*)((ULONG_PTR)this + 0x18);
+    return (QtString*)((uintptr_t)this + 0x18);
 }
-
-//////////////////////////////////////////////////

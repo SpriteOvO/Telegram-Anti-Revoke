@@ -13,27 +13,27 @@
 
 struct QtArrayData
 {
-    INT ref;
-    INT size;
-    UINT alloc : 31;
-    UINT capacityReserved : 1;
-    INT offset; // in bytes from beginning of header
+    int32_t ref;
+    int32_t size;
+    uint32_t alloc : 31;
+    uint32_t capacityReserved : 1;
+    ptrdiff_t offset; // in bytes from beginning of header
 };
 
 class QtString
 {
 public:
     QtString();
-    QtString(const WCHAR *String);
+    QtString(const wchar_t *String);
 
-    BOOLEAN IsValidTime();
-    WCHAR* GetText();
-    BOOLEAN IsEmpty();
-    SIZE_T Find(std::wstring String);
-    INT GetRefCount();
-    void MakeString(const WCHAR *String);
+    bool IsValidTime();
+    wchar_t* GetText();
+    bool IsEmpty();
+    size_t Find(const std::wstring &String);
+    int32_t GetRefCount();
+    void MakeString(const wchar_t *String);
     void Swap(QtString *Dst);
-    void Replace(const WCHAR *NewContent);
+    void Replace(const wchar_t *NewContent);
     void Clear();
 
 private:

@@ -45,7 +45,7 @@ namespace File
             return 0;
         }
 
-        std::unique_ptr<CHAR[]> Buffer(new CHAR[InfoSize]);
+        std::unique_ptr<char[]> Buffer(new char[InfoSize]);
         if (!GetFileVersionInfoA(FullName.c_str(), 0, InfoSize, Buffer.get())) {
             return 0;
         }
@@ -125,7 +125,7 @@ namespace Convert
         std::string Result;
         int Length = WideCharToMultiByte(CP_ACP, 0, String.c_str(), (int)String.length(), NULL, 0, NULL, NULL);
         Result.resize(Length);
-        WideCharToMultiByte(CP_ACP, 0, String.c_str(), (int)String.length(), (CHAR*)Result.data(), Length, NULL, NULL);
+        WideCharToMultiByte(CP_ACP, 0, String.c_str(), (int)String.length(), (char*)Result.data(), Length, NULL, NULL);
         return Result;
     }
 
@@ -184,7 +184,7 @@ namespace Internet
 #define ONCE_READ_SIZE	( 0x100 )
                 ULONG BytesRead = 0;
                 char TempBuffer[ONCE_READ_SIZE + 1];
-                RtlZeroMemory(TempBuffer, sizeof(TempBuffer));
+                memset(TempBuffer, 0, sizeof(TempBuffer));
 
                 if (!InternetReadFile(hRequest, TempBuffer, ONCE_READ_SIZE, &BytesRead)) {
                     goto EXIT;

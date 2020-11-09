@@ -3,36 +3,37 @@
 #include "QtString.h"
 
 
-enum DocumentType {
-    FileDocument = 0,
-    VideoDocument = 1,
-    SongDocument = 2,
-    StickerDocument = 3,
-    AnimatedDocument = 4,
-    VoiceDocument = 5,
-    RoundVideoDocument = 6,
-    WallPaperDocument = 7,
+enum class DocumentType : uint32_t
+{
+    File = 0,
+    Video = 1,
+    Song = 2,
+    Sticker = 3,
+    Animated = 4,
+    Voice = 5,
+    RoundVideo = 6,
+    WallPaper = 7,
 };
 
 
 class Object
 {
 public:
-    INT GetWidth();
-    void SetWidth(INT Value);
+    int32_t GetWidth();
+    void SetWidth(int32_t Value);
 
-    PVOID VirtualTable = NULL;
-    INT MaxWidth = 0;
-    INT MinHeight = 0;
-    INT Width = 0;
-    INT Height = 0;
+    void* VirtualTable = NULL;
+    int32_t MaxWidth = 0;
+    int32_t MinHeight = 0;
+    int32_t Width = 0;
+    int32_t Height = 0;
 };
 
 class DocumentData
 {
 public:
-    ULONG GetType();
-    BOOLEAN IsSticker();
+    DocumentType GetType();
+    bool IsSticker();
 };
 
 class Media : public Object
@@ -64,16 +65,10 @@ class HistoryMessageReply
 public:
 };
 
-//class HistoryItem
-//{
-//public:
-//
-//};
-
 class PeerData
 {
 public:
-    BOOLEAN IsChannel();
+    bool IsChannel();
 
 private:
     using PeerId = uint64_t;
@@ -89,20 +84,32 @@ private:
 
 };
 
+class HistoryMessage;
+
+// In older versions of Telegram, the class name was Session
+//
 class History
 {
 public:
     PeerData* GetPeer();
 
+    // Make the function conform to __thiscall rule.
+    void OnDestroyMessage(HistoryMessage* pMessage);
 };
+
+//class HistoryItem
+//{
+//public:
+//
+//};
 
 class HistoryMessage /* : public HistoryItem */
 {
 public:
-    BOOLEAN IsMessage();
+    bool IsMessage();
 
     template <class CompT>
-    CompT* GetComponent(ULONG Index);
+    CompT* GetComponent(uint32_t Index);
 
     HistoryMessageEdited* GetEdited();
     HistoryMessageSigned* GetSigned();
@@ -110,20 +117,13 @@ public:
 
     History* GetHistory();
     Media* GetMedia();
-    BOOLEAN IsReply();
-    BOOLEAN IsSticker();
-    BOOLEAN IsLargeEmoji();
+    bool IsReply();
+    bool IsSticker();
+    bool IsLargeEmoji();
     HistoryViewElement* GetMainView();
     QtString* GetTimeText();
-    INT GetTimeWidth();
-    void SetTimeWidth(INT Value);
-};
-
-class Session
-{
-public:
-    // Make the function conform to __thiscall rule.
-    void ProcessRevoke(HistoryMessage* pMsg);
+    int32_t GetTimeWidth();
+    void SetTimeWidth(int32_t Value);
 };
 
 class LanguageInstance
