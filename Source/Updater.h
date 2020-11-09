@@ -5,10 +5,10 @@ class Updater
 public:
 	static Updater& GetInstance();
 
-	BOOLEAN CheckUpdate();
+	bool CheckUpdate();
 
 private:
-	BOOLEAN GetDataByBridge(string &ReturnedResponse);
-	BOOLEAN GetDataDirectly(string &ReturnedResponse);
+	bool GetDataByBridge(string &ReturnedResponse);
+	bool GetDataDirectly(string &ReturnedResponse);
 
 };

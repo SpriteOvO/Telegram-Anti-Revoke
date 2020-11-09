@@ -3,13 +3,16 @@
 #include "Updater.h"
 #include "ILogger.h"
 
+#include <wininet.h>
+
+
 Updater& Updater::GetInstance()
 {
 	static Updater Instance;
 	return Instance;
 }
 
-BOOLEAN Updater::CheckUpdate()
+bool Updater::CheckUpdate()
 {
 	auto &Logger = ILogger::GetInstance();
 	string Response;
@@ -22,7 +25,7 @@ BOOLEAN Updater::CheckUpdate()
 
 		if (!GetDataDirectly(Response)) {
 			Logger.TraceWarn("[Updater] GetDataDirectly() failed.");
-			return FALSE;
+			return false;
 		}
 	}
 
@@ -35,7 +38,7 @@ BOOLEAN Updater::CheckUpdate()
 
 	if (!pReader->parse(Response.c_str(), Response.c_str() + Response.size(), &Root, &Errors)) {
 		Logger.TraceWarn("[Updater] Parse response failed. JsonError: " + Errors + " Response: " + Response);
-		return FALSE;
+		return false;
 	}
 
 	Json::Value &Message = Root["message"];
@@ -49,7 +52,7 @@ BOOLEAN Updater::CheckUpdate()
 
 	if (!TagName.isString() || !HtmlUrl.isString() || !Body.isString()) {
 		Logger.TraceWarn("[Updater] Response fields invalid.");
-		return FALSE;
+		return false;
 	}
 
 	std::string HtmlUrlContent = HtmlUrl.asString();
@@ -58,7 +61,7 @@ BOOLEAN Updater::CheckUpdate()
 
 	if (HtmlUrlContent.find(AR_REPO_URL) != 0) {
 		Logger.TraceWarn("[Updater] html_url field invalid. html_url: " + HtmlUrlContent);
-		return FALSE;
+		return false;
 	}
 
 	vector<string> vLocal = Text::SplitByFlag(AR_VERSION, ".");
@@ -66,7 +69,7 @@ BOOLEAN Updater::CheckUpdate()
 
 	if (vLocal.size() != 3 || vLatest.size() != 3) {
 		Logger.TraceWarn("[Updater] Version format invalid. Local: " AR_VERSION " Latest: " + TagNameContent);
-		return FALSE;
+		return false;
 	}
 
 	string LocalString = Text::Format("%03d%03d%03d", stoul(vLocal[0]), stoul(vLocal[1]), stoul(vLocal[2]));
@@ -76,7 +79,7 @@ BOOLEAN Updater::CheckUpdate()
 
 	if (LocalNumber >= LatestNumber) {
 		Logger.TraceInfo("[Updater] No need to update. Local: " + LocalString + " Latest: " + LatestString);
-		return TRUE;
+		return true;
 	}
 
 	Logger.TraceInfo("[Updater] Need to update. Local: " + LocalString + " Latest: " + LatestString);
@@ -119,20 +122,20 @@ BOOLEAN Updater::CheckUpdate()
 		system(("start " + HtmlUrlContent).c_str());
 	}
 
-	return TRUE;
+	return true;
 }
 
-BOOLEAN Updater::GetDataByBridge(string &ReturnedResponse)
+bool Updater::GetDataByBridge(string &ReturnedResponse)
 {
 	auto &Logger = ILogger::GetInstance();
-	BOOLEAN Result = FALSE;
+	bool Result = false;
 
 	Safe::TryExcept(
 		[&]()
 		{
 			string Response;
-			ULONG Status;
-			BOOLEAN IsSuccessed = Internet::HttpRequest(
+			uint32_t Status;
+			bool IsSuccessed = Internet::HttpRequest(
 				Response,
 				Status,
 				"POST",
@@ -172,7 +175,7 @@ BOOLEAN Updater::GetDataByBridge(string &ReturnedResponse)
 			}
 
 			ReturnedResponse = Response;
-			Result = TRUE;
+			Result = true;
 
 			Logger.TraceInfo("[Updater] Get data by bridge successed.");
 		},
@@ -185,12 +188,12 @@ BOOLEAN Updater::GetDataByBridge(string &ReturnedResponse)
 	return Result;
 }
 
-BOOLEAN Updater::GetDataDirectly(string &ReturnedResponse)
+bool Updater::GetDataDirectly(string &ReturnedResponse)
 {
 	auto &Logger = ILogger::GetInstance();
 	string Response;
-	ULONG Status;
-	BOOLEAN IsSuccessed = Internet::HttpRequest(
+	uint32_t Status;
+	bool IsSuccessed = Internet::HttpRequest(
 		Response,
 		Status,
 		"GET",
@@ -203,16 +206,16 @@ BOOLEAN Updater::GetDataDirectly(string &ReturnedResponse)
 
 	if (!IsSuccessed) {
 		Logger.TraceWarn("[Updater] Internet::HttpRequest() failed. (Directly)");
-		return FALSE;
+		return false;
 	}
 
 	if (Status != HTTP_STATUS_OK) {
 		Logger.TraceWarn("[Updater] Response status is not 200. Status: " + to_string(Status) + " Response: " + Response + " (Directly)");
-		return FALSE;
+		return false;
 	}
 
 	ReturnedResponse = Response;
 
 	Logger.TraceInfo("[Updater] Get data directly successed.");
-	return TRUE;
+	return true;
 }

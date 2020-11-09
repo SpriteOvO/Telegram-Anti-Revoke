@@ -1,111 +1,89 @@
 ﻿#pragma once
 
-#include <Windows.h>
 #include <string>
 #include <vector>
-#include <memory>
-#include <algorithm>
 #include <functional>
-#include <wininet.h>
-
-#pragma comment(lib, "wininet.lib")
-#pragma comment(lib, "Version.lib")
-
-#define PAGE_SIZE       ( 0x1000 )
-#define FORCE_EXIT()    { TerminateProcess((HANDLE)-1, 0); ExitProcess(0); }
+#include <Windows.h>
 
 namespace File
 {
-	ULONG GetCurrentVersion();
+	uint32_t GetCurrentVersion();
 	std::string GetCurrentName();
-}
+
+} // namespace File
 
 namespace Text
 {
 	std::string ToLower(const std::string &String);
 	std::string SubReplace(const std::string &Source, const std::string &Target, const std::string &New);
 	std::vector<std::string> SplitByFlag(const std::string &Source, const std::string &Flag);
-	std::string Format(const CHAR *Format, ...);
-}
+	std::string Format(const char *Format, ...);
+
+} // namespace Text
 
 namespace Convert
 {
 	std::string UnicodeToAnsi(const std::wstring &String);
-}
+
+} // namespace Convert
 
 namespace Internet
 {
-	BOOLEAN HttpRequest(std::string &Response, ULONG &Status, const std::string &HttpVerb, const std::string &HostName, const std::string &ObjectName, const std::vector<std::pair<std::string, std::string>> &Headers, const std::string &PostData = std::string{});
-}
+	bool HttpRequest(std::string &Response, uint32_t &Status, const std::string &HttpVerb, const std::string &HostName, const std::string &ObjectName, const std::vector<std::pair<std::string, std::string>> &Headers, const std::string &PostData = std::string{});
+
+} // namespace Internet
 
 namespace Safe
 {
 	template<typename T1, typename T2>
-	BOOLEAN TryExcept(T1 TryCallback, T2 ExceptCallback)
+	bool TryExcept(T1 TryCallback, T2 ExceptCallback)
 	{
-		__try
-		{
+		__try {
 			TryCallback();
-			return TRUE;
+			return true;
 		}
-		__except (EXCEPTION_EXECUTE_HANDLER)
-		{
+		__except (EXCEPTION_EXECUTE_HANDLER) {
 			ExceptCallback(GetExceptionCode());
-			return FALSE;
+			return false;
 		}
 	}
-}
 
-namespace Thread
-{
-	template<typename T>
-	void TimedExecute(DWORD Time, T ExecuteCallback)
-	{
-		static DWORD SaveCount = 0;
-		DWORD TickCount = GetTickCount();
-
-		if (SaveCount == 0) {
-			SaveCount = TickCount;
-			return;
-		}
-
-		if (TickCount - SaveCount >= Time) {
-			ExecuteCallback();
-			SaveCount = TickCount;
-		}
-	}
-}
+} // namespace Safe
 
 namespace Memory
 {
-	void ReadProcess(HANDLE hProcess, PVOID TargetAddress, PVOID LocalBuffer, SIZE_T Size);
-	std::vector<PVOID> FindPatternEx(HANDLE hProcess, PVOID StartAddress, SIZE_T SearchSize, const CHAR Pattern[], const CHAR Mask[], DWORD Protect = PAGE_EXECUTE_READ);
-	BOOLEAN ForceOperate(PVOID Address, SIZE_T Size, const std::function<void()> &fnOperateCallback);
-	std::vector<BYTE> MakeCall(PVOID HookAddress, PVOID CallAddress);
-	std::vector<BYTE> MakeJmp(PVOID HookAddress, PVOID JmpAddress);
-}
+	void ReadProcess(HANDLE hProcess, void* TargetAddress, void* LocalBuffer, size_t Size);
+	std::vector<void*> FindPatternEx(HANDLE hProcess, void* StartAddress, size_t SearchSize, const char Pattern[], const char Mask[], ULONG Protect = PAGE_EXECUTE_READ);
+	bool ForceOperate(void* Address, size_t Size, const std::function<void()> &FnCallback);
+	std::vector<uint8_t> MakeCall(void* HookAddress, void* CallAddress);
+	std::vector<uint8_t> MakeJmp(void* HookAddress, void* JmpAddress);
+
+} // namespace Memory
 
 namespace Utils
 {
 	void CreateConsole();
 
-	template<typename T>
-	PVOID GetFunctionAddress(T Function)
+	// HACK for get member function address
+	//
+	template<typename FnT>
+	void* GetFunctionAddress(FnT Function)
 	{
-		static_assert(sizeof(T) == sizeof(PVOID), "This parameter only accepts function.");
+		static_assert(sizeof(FnT) == sizeof(void*), "This parameter only accepts function.");
 
 		union {
-			T Function;
-			PVOID Address;
+			FnT Function;
+			void* Address;
 		} Data;
 
 		Data.Function = Function;
 		return Data.Address;
 	}
 
-	template <typename T>
-	T CallVirtual(PVOID Base, ULONG Index)
+	template <typename FnT>
+	FnT CallVirtual(void* Base, uint32_t Index)
 	{
-		return (T)(((PVOID**)Base)[0][Index]);
+		return (FnT)(((void***)Base)[0][Index]);
 	}
-}
+
+} // namespace Utils
