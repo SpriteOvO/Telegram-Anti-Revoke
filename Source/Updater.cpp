@@ -1,6 +1,7 @@
 #include "Header.h"
 #include "Global.h"
 #include "Updater.h"
+#include "ILogger.h"
 
 Updater& Updater::GetInstance()
 {
@@ -10,16 +11,17 @@ Updater& Updater::GetInstance()
 
 BOOLEAN Updater::CheckUpdate()
 {
+	auto &Logger = ILogger::GetInstance();
 	string Response;
 
 	// Get releases data
 	//
 	if (!GetDataByBridge(Response))
 	{
-		g::Logger.TraceWarn("[Updater] GetDataByBridge() failed, try GetDataDirectly().");
+		Logger.TraceWarn("[Updater] GetDataByBridge() failed, try GetDataDirectly().");
 
 		if (!GetDataDirectly(Response)) {
-			g::Logger.TraceWarn("[Updater] GetDataDirectly() failed.");
+			Logger.TraceWarn("[Updater] GetDataDirectly() failed.");
 			return FALSE;
 		}
 	}
@@ -32,7 +34,7 @@ BOOLEAN Updater::CheckUpdate()
 	unique_ptr<Json::CharReader> pReader(Builder.newCharReader());
 
 	if (!pReader->parse(Response.c_str(), Response.c_str() + Response.size(), &Root, &Errors)) {
-		g::Logger.TraceWarn("[Updater] Parse response failed. JsonError: " + Errors + " Response: " + Response);
+		Logger.TraceWarn("[Updater] Parse response failed. JsonError: " + Errors + " Response: " + Response);
 		return FALSE;
 	}
 
@@ -42,11 +44,11 @@ BOOLEAN Updater::CheckUpdate()
 	Json::Value &Body = Root["body"];
 
 	if (Message.isString()) {
-		g::Logger.TraceWarn("[Updater] Response has a message. message: " + Message.asString());
+		Logger.TraceWarn("[Updater] Response has a message. message: " + Message.asString());
 	}
 
 	if (!TagName.isString() || !HtmlUrl.isString() || !Body.isString()) {
-		g::Logger.TraceWarn("[Updater] Response fields invalid.");
+		Logger.TraceWarn("[Updater] Response fields invalid.");
 		return FALSE;
 	}
 
@@ -55,7 +57,7 @@ BOOLEAN Updater::CheckUpdate()
 	std::string BodyContent = Body.asString();
 
 	if (HtmlUrlContent.find(AR_REPO_URL) != 0) {
-		g::Logger.TraceWarn("[Updater] html_url field invalid. html_url: " + HtmlUrlContent);
+		Logger.TraceWarn("[Updater] html_url field invalid. html_url: " + HtmlUrlContent);
 		return FALSE;
 	}
 
@@ -63,7 +65,7 @@ BOOLEAN Updater::CheckUpdate()
 	vector<string> vLatest = Text::SplitByFlag(TagNameContent, ".");
 
 	if (vLocal.size() != 3 || vLatest.size() != 3) {
-		g::Logger.TraceWarn("[Updater] Version format invalid. Local: " AR_VERSION " Latest: " + TagNameContent);
+		Logger.TraceWarn("[Updater] Version format invalid. Local: " AR_VERSION " Latest: " + TagNameContent);
 		return FALSE;
 	}
 
@@ -73,11 +75,11 @@ BOOLEAN Updater::CheckUpdate()
 	ULONG LatestNumber = stoul(LatestString);
 
 	if (LocalNumber >= LatestNumber) {
-		g::Logger.TraceInfo("[Updater] No need to update. Local: " + LocalString + " Latest: " + LatestString);
+		Logger.TraceInfo("[Updater] No need to update. Local: " + LocalString + " Latest: " + LatestString);
 		return TRUE;
 	}
 
-	g::Logger.TraceInfo("[Updater] Need to update. Local: " + LocalString + " Latest: " + LatestString);
+	Logger.TraceInfo("[Updater] Need to update. Local: " + LocalString + " Latest: " + LatestString);
 
 	// Get Changelog
 	//
@@ -122,6 +124,7 @@ BOOLEAN Updater::CheckUpdate()
 
 BOOLEAN Updater::GetDataByBridge(string &ReturnedResponse)
 {
+	auto &Logger = ILogger::GetInstance();
 	BOOLEAN Result = FALSE;
 
 	Safe::TryExcept(
@@ -143,12 +146,12 @@ BOOLEAN Updater::GetDataByBridge(string &ReturnedResponse)
 			);
 
 			if (!IsSuccessed) {
-				g::Logger.TraceWarn("[Updater] Internet::HttpRequest() failed. (ByBridge)");
+				Logger.TraceWarn("[Updater] Internet::HttpRequest() failed. (ByBridge)");
 				return;
 			}
 
 			if (Status != HTTP_STATUS_OK) {
-				g::Logger.TraceWarn("[Updater] Response status is not 200. Status: " + to_string(Status) + " Response: " + Response + " (ByBridge)");
+				Logger.TraceWarn("[Updater] Response status is not 200. Status: " + to_string(Status) + " Response: " + Response + " (ByBridge)");
 				return;
 			}
 
@@ -158,24 +161,24 @@ BOOLEAN Updater::GetDataByBridge(string &ReturnedResponse)
 			unique_ptr<Json::CharReader> pReader(Builder.newCharReader());
 
 			if (!pReader->parse(Response.c_str(), Response.c_str() + Response.size(), &Root, &Errors)) {
-				g::Logger.TraceWarn("[Updater] Parse response failed. JsonError: " + Errors + " Response: " + Response + " (ByBridge)");
+				Logger.TraceWarn("[Updater] Parse response failed. JsonError: " + Errors + " Response: " + Response + " (ByBridge)");
 				return;
 			}
 
 			Json::Value &BridgeErrorMessage = Root["bridge_error_message"];
 			if (BridgeErrorMessage.isString()) {
-				g::Logger.TraceWarn("[Updater] bridge_error_message: " + BridgeErrorMessage.asString() + " (ByBridge)");
+				Logger.TraceWarn("[Updater] bridge_error_message: " + BridgeErrorMessage.asString() + " (ByBridge)");
 				return;
 			}
 
 			ReturnedResponse = Response;
 			Result = TRUE;
 
-			g::Logger.TraceInfo("[Updater] Get data by bridge successed.");
+			Logger.TraceInfo("[Updater] Get data by bridge successed.");
 		},
-		[](ULONG ExceptionCode)
+		[&](ULONG ExceptionCode)
 		{
-			g::Logger.TraceWarn("[Updater] An exception was caught. ExceptionCode: " + Text::Format("0x%x", ExceptionCode) + " (ByBridge)");
+			Logger.TraceWarn("[Updater] An exception was caught. ExceptionCode: " + Text::Format("0x%x", ExceptionCode) + " (ByBridge)");
 		}
 	);
 
@@ -184,6 +187,7 @@ BOOLEAN Updater::GetDataByBridge(string &ReturnedResponse)
 
 BOOLEAN Updater::GetDataDirectly(string &ReturnedResponse)
 {
+	auto &Logger = ILogger::GetInstance();
 	string Response;
 	ULONG Status;
 	BOOLEAN IsSuccessed = Internet::HttpRequest(
@@ -198,17 +202,17 @@ BOOLEAN Updater::GetDataDirectly(string &ReturnedResponse)
 	);
 
 	if (!IsSuccessed) {
-		g::Logger.TraceWarn("[Updater] Internet::HttpRequest() failed. (Directly)");
+		Logger.TraceWarn("[Updater] Internet::HttpRequest() failed. (Directly)");
 		return FALSE;
 	}
 
 	if (Status != HTTP_STATUS_OK) {
-		g::Logger.TraceWarn("[Updater] Response status is not 200. Status: " + to_string(Status) + " Response: " + Response + " (Directly)");
+		Logger.TraceWarn("[Updater] Response status is not 200. Status: " + to_string(Status) + " Response: " + Response + " (Directly)");
 		return FALSE;
 	}
 
 	ReturnedResponse = Response;
 
-	g::Logger.TraceInfo("[Updater] Get data directly successed.");
+	Logger.TraceInfo("[Updater] Get data directly successed.");
 	return TRUE;
 }

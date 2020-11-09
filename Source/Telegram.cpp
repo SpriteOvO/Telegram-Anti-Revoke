@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "QtString.h"
 #include "Telegram.h"
+#include "ILogger.h"
 
 
 //////////////////////////////////////////////////
@@ -104,7 +105,7 @@ CompT* HistoryMessage::GetComponent(ULONG Index)
 
 		}, [&](ULONG ExceptionCode)
 		{
-			g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "] Address: [" + Text::Format("0x%x", this) + "]");
+			ILogger::GetInstance().TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "] Address: [" + Text::Format("0x%x", this) + "]");
 		}
 	);
 

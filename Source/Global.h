@@ -2,7 +2,6 @@
 
 class HistoryMessage;
 class QtString;
-class LoggerManager;
 class LanguageInstance;
 
 typedef LPVOID(__cdecl *fntMalloc)(unsigned int size);
@@ -20,7 +19,6 @@ struct MARK_INFO
 
 namespace g
 {
-	extern LoggerManager Logger;
 	extern fntMalloc fnMalloc;
 	extern fntFree fnOriginalFree;
 	extern fntIndex fnEditedIndex;

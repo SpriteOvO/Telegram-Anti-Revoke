@@ -1,6 +1,7 @@
 ﻿#include "Header.h"
 #include "Telegram.h"
 #include "Global.h"
+#include "ILogger.h"
 
 
 void Session::ProcessRevoke(HistoryMessage* pMessage)
@@ -13,7 +14,7 @@ void Session::ProcessRevoke(HistoryMessage* pMessage)
 
 		QtString *pTimeText = pMessage->GetTimeText();
 		if (!pTimeText->IsValidTime()) {
-			g::Logger.TraceWarn("A bad TimeText. Address: [" + Text::Format("0x%x", pMessage) + "]");
+			ILogger::GetInstance().TraceWarn("A bad TimeText. Address: [" + Text::Format("0x%x", pMessage) + "]");
 			return;
 		}
 
@@ -24,7 +25,7 @@ void Session::ProcessRevoke(HistoryMessage* pMessage)
 
 	}, [](ULONG ExceptionCode)
 	{
-		g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "]");
+		ILogger::GetInstance().TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "]");
 	});
 }
 
@@ -105,7 +106,7 @@ void ProcessItems()
 
 			}, [&](ULONG ExceptionCode)
 			{
-				g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "] Address: [" + Text::Format("0x%x", pMessage) + "]");
+				ILogger::GetInstance().TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "] Address: [" + Text::Format("0x%x", pMessage) + "]");
 			});
 		}
 	}

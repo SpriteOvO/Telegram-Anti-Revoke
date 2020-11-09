@@ -3,11 +3,11 @@
 #include "Global.h"
 #include "AntiRevoke.h"
 #include "Updater.h"
+#include "ILogger.h"
 
 
 namespace g
 {
-	LoggerManager Logger;
 	ULONG_PTR MainModule = NULL;
 	ULONG CurrentVersion = 0;
 
@@ -157,12 +157,14 @@ BOOLEAN HookMemoryFree(BOOLEAN Status)
 
 void InitMarkLanguage()
 {
-	Safe::TryExcept([]()
+	auto &Logger = ILogger::GetInstance();
+
+	Safe::TryExcept([&]()
 	{
 		// LanguageInstance *Instance = g::fnGetCurrentInstance();
 		LanguageInstance *pLangInstance = *g::ppLangInstance;
 		if (pLangInstance == NULL) {
-			g::Logger.TraceWarn("Get language instance failed.");
+			Logger.TraceWarn("Get language instance failed.");
 			return;
 		}
 
@@ -183,7 +185,7 @@ void InitMarkLanguage()
 		// find language
 		auto Iterator = g::MultiLanguageMarks.find(CurrentPluralId);
 		if (Iterator == g::MultiLanguageMarks.end()) {
-			g::Logger.TraceWarn(string("An unadded language. PluralId: [") + Convert::UnicodeToAnsi(CurrentPluralId + wstring(L"] Name: [") + CurrentName) + string("]"));
+			Logger.TraceWarn(string("An unadded language. PluralId: [") + Convert::UnicodeToAnsi(CurrentPluralId + wstring(L"] Name: [") + CurrentName) + string("]"));
 			return;
 		}
 
@@ -205,14 +207,16 @@ void InitMarkLanguage()
 			}
 		}
 
-	}, [](ULONG ExceptionCode)
+	}, [&](ULONG ExceptionCode)
 	{
-		g::Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "]");
+		Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "]");
 	});
 }
 
 BOOLEAN SearchSigns()
 {
+	auto &Logger = ILogger::GetInstance();
+
 	// Some of the following instructions are taken from version 1.8.8
 	// Thanks to [采蘑菇的小蘑菇] for providing help with compiling Telegram.
 
@@ -269,13 +273,13 @@ BOOLEAN SearchSigns()
 		*/
 		vector<PVOID> vCallMalloc = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x41\x84\xC0\x75\xF9\x2B\xCA\x53\x56\x8D\x59\x01\x53\xE8", "xxxxxxxxxxxxxx");
 		if (vCallMalloc.size() != 1) {
-			g::Logger.TraceWarn("Search malloc falied.");
+			Logger.TraceWarn("Search malloc falied.");
 			return FALSE;
 		}
 
 		vector<PVOID> vCallFree = Memory::FindPatternEx(GetCurrentProcess(), vCallMalloc[0], 0x50, "\x56\xE8\x00\x00\x00\x00\x59\x5E\x5B\xEB", "xx????xxxx");
 		if (vCallFree.size() != 1) {
-			g::Logger.TraceWarn("Search free falied.");
+			Logger.TraceWarn("Search free falied.");
 			return FALSE;
 		}
 
@@ -342,7 +346,7 @@ BOOLEAN SearchSigns()
 		{
 			vector<PVOID> vCallDestroyMessage = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x71\x00\x89\x08\x85\xC9\x0F\x84\x00\x00\x00\x00\x00\x00\x00\xE8", "xx?xxxxxx???????x");
 			if (vCallDestroyMessage.size() != 1) {
-				g::Logger.TraceWarn("Search DestroyMessage falied.");
+				Logger.TraceWarn("Search DestroyMessage falied.");
 				return FALSE;
 			}
 
@@ -354,7 +358,7 @@ BOOLEAN SearchSigns()
 		{
 			vector<PVOID> vCallDestroyMessage = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x51\x8B\xC4\x89\x08\x8B\xCE\xE8\x00\x00\x00\x00\x80\xBE\x00\x00\x00\x00\x00", "xxxxxxxx????xx????x");
 			if (vCallDestroyMessage.size() != 1) {
-				g::Logger.TraceWarn("Search new DestroyMessage falied.");
+				Logger.TraceWarn("Search new DestroyMessage falied.");
 				return FALSE;
 			}
 
@@ -408,7 +412,7 @@ BOOLEAN SearchSigns()
 		*/
 		vector<PVOID> vCallApplyEdition = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\xE8\x00\x00\x00\x00\x83\x7C\x87\x00\x00\x73\x00\xE8", "x????xxx??x?x");
 		if (vCallApplyEdition.size() != 1) {
-			g::Logger.TraceWarn("Search ApplyEdition falied.");
+			Logger.TraceWarn("Search ApplyEdition falied.");
 			return FALSE;
 		}
 
@@ -477,7 +481,7 @@ BOOLEAN SearchSigns()
 		*/
 		vector<PVOID> vCallSignedIndex = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\xE8\x00\x00\x00\x00\x8B\x44\x87\x08\x83\xCF\xFF", "x????xxxxxxx");
 		if (vCallSignedIndex.size() != 1) {
-			g::Logger.TraceWarn("Search SignedIndex falied.");
+			Logger.TraceWarn("Search SignedIndex falied.");
 			return FALSE;
 		}
 
@@ -526,7 +530,7 @@ BOOLEAN SearchSigns()
 		*/
 		vector<PVOID> vResult = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\xE8\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x46\x08\x8B\x38", "x????x????xxxxx");
 		if (vResult.size() != 1) {
-			g::Logger.TraceWarn("Search ReplyIndex falied.");
+			Logger.TraceWarn("Search ReplyIndex falied.");
 			return FALSE;
 		}
 
@@ -575,7 +579,7 @@ BOOLEAN SearchSigns()
 		{
 			vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x0D\x00\x00\x00\x00\x03\xC6\x0F\xB7\xC0\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B\x49", "xx????xxxxxxxxx????xx");
 			if (vCallCurrent.empty()) {
-				g::Logger.TraceWarn("Search LangInstance falied.");
+				Logger.TraceWarn("Search LangInstance falied.");
 				return FALSE;
 			}
 
@@ -586,7 +590,7 @@ BOOLEAN SearchSigns()
 		{
 			vCallCurrent = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x0D\x00\x00\x00\x00\x03\xC6\x0F\xB7\xC0\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B", "xx????xxxxxxxxx????x");
 			if (vCallCurrent.empty()) {
-				g::Logger.TraceWarn("Search LangInstance falied.");
+				Logger.TraceWarn("Search LangInstance falied.");
 				return FALSE;
 			}
 
@@ -595,7 +599,7 @@ BOOLEAN SearchSigns()
 
 		g::ppLangInstance = (LanguageInstance**)(*(ULONG_PTR*)(*(ULONG_PTR*)((ULONG_PTR)vCallCurrent[0] + 2)) + Offset);
 		if (g::ppLangInstance == NULL) {
-			g::Logger.TraceWarn("LangInstance is null.");
+			Logger.TraceWarn("LangInstance is null.");
 			return FALSE;
 		}
 	}
@@ -613,14 +617,14 @@ BOOLEAN SearchSigns()
 		*/
 		vector<PVOID> vCallToHistoryMessage = Memory::FindPatternEx(GetCurrentProcess(), (PVOID)g::MainModule, MainModuleInfo.SizeOfImage, "\x8B\x49\x00\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B\x01\xFF\x90\x00\x00\x00\x00\x85\xC0", "xx?xxxx????xxxx????xx");
 		if (vCallToHistoryMessage.empty()) {
-			g::Logger.TraceWarn("Search toHistoryMessage index falied. (1)");
+			Logger.TraceWarn("Search toHistoryMessage index falied. (1)");
 			return FALSE;
 		}
 
 		ULONG Offset = *(ULONG*)((ULONG_PTR)vCallToHistoryMessage[0] + 15);
 
 		if (Offset % sizeof(PVOID) != 0) {
-			g::Logger.TraceWarn("Search toHistoryMessage index falied. (2)");
+			Logger.TraceWarn("Search toHistoryMessage index falied. (2)");
 			return FALSE;
 		}
 
@@ -628,7 +632,7 @@ BOOLEAN SearchSigns()
 		for (PVOID Address : vCallToHistoryMessage)
 		{
 			if (*(ULONG*)((ULONG_PTR)Address + 15) != Offset) {
-				g::Logger.TraceWarn("Search toHistoryMessage index falied. (3)");
+				Logger.TraceWarn("Search toHistoryMessage index falied. (3)");
 				return FALSE;
 			}
 		}
@@ -678,6 +682,8 @@ BOOLEAN InitOffsets()
 
 DWORD WINAPI Initialize(PVOID pParameter)
 {
+	auto &Logger = ILogger::GetInstance();
+
 #ifdef _DEBUG
 	MessageBoxW(NULL, L"Initialize", L"Anti-Revoke Plugin", MB_ICONINFORMATION);
 #endif
@@ -686,37 +692,37 @@ DWORD WINAPI Initialize(PVOID pParameter)
 	g::CurrentVersion = File::GetCurrentVersion();
 
 	if (g::MainModule == NULL || g::CurrentVersion == 0) {
-		g::Logger.TraceError("Initialize failed.");
+		Logger.TraceError("Initialize failed.");
 		return 0;
 	}
 
 	Updater::GetInstance().CheckUpdate();
 	
 	if (!InitOffsets()) {
-		g::Logger.TraceError("You are using a version of Telegram that is deprecated by the plugin.\nPlease update your Telegram.", FALSE);
+		Logger.TraceError("You are using a version of Telegram that is deprecated by the plugin.\nPlease update your Telegram.", FALSE);
 		return 0;
 	}
 
 	if (!SearchSigns()) {
-		g::Logger.TraceError("SearchSigns() failed.");
+		Logger.TraceError("SearchSigns() failed.");
 		return 0;
 	}
 
 	MH_STATUS Status = MH_Initialize();
 	if (Status != MH_OK) {
-		g::Logger.TraceError(string("MH_Initialize() failed.\n") + MH_StatusToString(Status));
+		Logger.TraceError(string("MH_Initialize() failed.\n") + MH_StatusToString(Status));
 		return 0;
 	}
 
 	InitMarkLanguage();
 
 	if (!HookMemoryFree(TRUE)) {
-		g::Logger.TraceError("HookMemoryFree() failed.");
+		Logger.TraceError("HookMemoryFree() failed.");
 		return 0;
 	}
 
 	if (!HookRevoke(TRUE)) {
-		g::Logger.TraceError("HookRevoke() failed.");
+		Logger.TraceError("HookRevoke() failed.");
 		return 0;
 	}
 
@@ -729,7 +735,7 @@ BOOLEAN CheckProcess()
 {
 	string CurrentName = File::GetCurrentName();
 	if (Text::ToLower(CurrentName) != "telegram.exe") {
-		g::Logger.TraceWarn("This is not a Telegram process. [" + CurrentName + "]");
+		ILogger::GetInstance().TraceWarn("This is not a Telegram process. [" + CurrentName + "]");
 		return FALSE;
 	}
 	return TRUE;
