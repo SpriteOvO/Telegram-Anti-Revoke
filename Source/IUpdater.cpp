@@ -21,6 +21,13 @@ bool IUpdater::CheckUpdate()
 
     // Get releases data
     //
+
+    // GitHub REST API limits the rate of unauthenticated requests to 60 per hour
+    // See: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting
+    //
+    // So we first try to request to Google Script API (we call it "bridge" here)
+    // It will forward the request to GitHub REST API with authentication information
+    //
     if (!GetDataByBridge(Response))
     {
         Logger.TraceWarn("[Updater] GetDataByBridge() failed, try GetDataDirectly().");

@@ -104,6 +104,7 @@ bool IRuntime::InitDynamicData_MallocFree()
         .text:01B7CABC 53                                      push    ebx             ; size
 
         // find this (internal malloc)
+        //
         .text:01B7CABD E8 87 98 00 00                          call    _malloc
 
         .text:01B7CAC2 8B F0                                   mov     esi, eax
@@ -125,6 +126,7 @@ bool IRuntime::InitDynamicData_MallocFree()
         .text:01B7CAE2 56                                      push    esi             ; block
 
         // and find this (internal free)
+        //
         .text:01B7CAE3 E8 7F 45 00 00                          call    _free
 
         .text:01B7CAE8 59                                      pop     ecx
@@ -176,6 +178,7 @@ bool IRuntime::InitDynamicData_DestroyMessage()
         .text:008CD8DE 8B 4D E0                                mov     this, [ebp-20h] ; this
 
         // find this
+        //
         .text:008CD8E1 E8 9A 02 00 00                          call    ?destroyMessage@Session@Data@@QAEXV?$not_null@PAVHistoryItem@@@gsl@@@Z ; Data::Session::destroyMessage(gsl::not_null<HistoryItem *>)
 
         .text:008CD8E6 85 F6                                   test    esi, esi
@@ -269,6 +272,7 @@ bool IRuntime::InitDynamicData_EditedIndex()
         .text:00A4F36B 8B 38                                   mov     edi, [eax]
 
         // find this (RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index()
+        //
         .text:00A4F36D E8 6E 3A EA FF                          call    ?Index@?$RuntimeComponent@UHistoryMessageEdited@@VHistoryItem@@@@SAHXZ ; RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index(void)
 
         .text:00A4F372 83 7C 87 08 04                          cmp     dword ptr [edi+eax*4+8], 4
@@ -326,6 +330,7 @@ bool IRuntime::InitDynamicData_SignedIndex()
         .text:009F10E9 8B 38                                   mov     edi, [eax]
 
         // find this (RuntimeComponent<HistoryMessageSigned,HistoryItem>::Index()
+        //
         .text:009F10EB E8 30 62 FA FF                          call    RuntimeComponent_HistoryMessageSigned_HistoryItem___Index
 
         .text:009F10F0 8B 44 87 08                             mov     eax, [edi+eax*4+8]
@@ -383,6 +388,7 @@ bool IRuntime::InitDynamicData_ReplyIndex()
         .text:009EE652                         loc_9EE652:                             ; CODE XREF: HistoryView__Message__updatePressed+122↑j
 
         // find this (RuntimeComponent<HistoryMessageReply,HistoryItem>::Index()
+        //
         .text:009EE652 E8 B9 52 FB FF                          call    RuntimeComponent_HistoryMessageReply_HistoryItem___Index
 
         .text:009EE657 8B 46 08                                mov     eax, [esi+8]
