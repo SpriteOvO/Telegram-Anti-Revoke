@@ -58,9 +58,18 @@ BOOL WINAPI RealDllMain(HMODULE hModule, ULONG Reason, PVOID pReserved)
         DisableThreadLibraryCalls(hModule);
         // Utils::CreateConsole();
 
-        if (CheckProcess()) {
-            CloseHandle(CreateThread(NULL, 0, Initialize, NULL, 0, NULL));
+        if (!CheckProcess()) {
+            return TRUE;
         }
+
+        HANDLE hThread = CreateThread(NULL, 0, Initialize, NULL, 0, NULL);
+        if (hThread == NULL) {
+            ILogger::GetInstance().TraceError("CreateThread() failed. ErrorCode: " + std::to_string(GetLastError()));
+            ExitProcess(0);
+            return FALSE;
+        }
+
+        CloseHandle(hThread);
     }
 
     return TRUE;
