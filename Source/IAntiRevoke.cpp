@@ -195,7 +195,7 @@ void IAntiRevoke::ProcessBlockedMessages()
                         pTimeText = pMessage->GetTimeText();
                     }
 
-                    //  vvvvvvvvvvvvvvvvvvvv TODO: This is temp code, hook HistoryMessage's destructor function to improve.
+                    //  vvvvvvvvvvvvvvvvvvvv TODO: This is a workaround, try to hook HistoryMessage's destructor to improve.
                     if (pTimeText == NULL ||
                         pTimeText->IsEmpty() || // This message isn't the current channel or group.
                         pTimeText->Find(_MarkData.Content) != std::wstring::npos // This message is marked.
