@@ -25,7 +25,7 @@ ULONG WINAPI Initialize(PVOID pParameter)
     IUpdater::GetInstance().CheckUpdate();
     
     if (!Runtime.InitFixedData()) {
-        Logger.TraceError("You are using a version of Telegram that is deprecated by the plugin.\nPlease update your Telegram.", false);
+        Logger.TraceError("The version of Telegram you are using has been deprecated by the plugin.\nPlease update your Telegram client.", false);
         return 0;
     }
 
