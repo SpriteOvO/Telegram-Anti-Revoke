@@ -34,8 +34,6 @@ bool IUpdater::CheckUpdate()
     }
     else
     {
-        Logger.TraceInfo("[Updater] GetDataByBridge() successed.");
-
         if (ParseResponse(Response.value())) {
             Logger.TraceInfo("[Updater] ParseResponse() successed. (ByBridge)");
             return true;
@@ -48,7 +46,6 @@ bool IUpdater::CheckUpdate()
         Logger.TraceWarn("[Updater] GetDataDirectly() failed.");
         return false;
     }
-    Logger.TraceInfo("[Updater] GetDataDirectly() successed.");
 
     if (!ParseResponse(Response.value())) {
         Logger.TraceWarn("[Updater] ParseResponse() failed. (Directly)");
