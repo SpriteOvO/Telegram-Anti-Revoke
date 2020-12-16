@@ -16,7 +16,7 @@ ILogger::ILogger()
 {
     _File.open("ArLog.txt", std::ofstream::out | std::ofstream::trunc);
 
-    TraceInfo("Running. Version: [" AR_VERSION "]");
+    TraceInfo("Running. Version: [" AR_VERSION_STRING "]");
 }
 
 void ILogger::TraceText(const std::string &Content)

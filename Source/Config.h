@@ -1,7 +1,17 @@
 ﻿#pragma once
 
-// Current version
-#define AR_VERSION           "0.2.6"
+#if !defined TO_STRING && !defined __TO_STRING
+# define __TO_STRING(value)  # value
+# define TO_STRING(value)    __TO_STRING(value)
+#endif
+
+#define AR_VERSION_MAJOR     0
+#define AR_VERSION_MINOR     2
+#define AR_VERSION_BUILD     6
+
+#define AR_VERSION_STRING    TO_STRING(AR_VERSION_MAJOR) "." TO_STRING(AR_VERSION_MINOR) "." TO_STRING(AR_VERSION_BUILD)
+#define AR_VERSION_RSRC_NUM  AR_VERSION_MAJOR, AR_VERSION_MINOR, AR_VERSION_BUILD, 0
+#define AR_VERSION_RSRC_STR  AR_VERSION_STRING ".0"
 
 #define AR_OWNER_REPO        "SpriteOvO/Telegram-Anti-Revoke"
 #define AR_REPO_URL          "https://github.com/" AR_OWNER_REPO

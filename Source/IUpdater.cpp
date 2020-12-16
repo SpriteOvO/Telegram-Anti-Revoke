@@ -98,11 +98,11 @@ bool IUpdater::ParseResponse(const std::string &Response)
         return false;
     }
 
-    std::vector<std::string> vLocal = Text::SplitByFlag(AR_VERSION, ".");
+    std::vector<std::string> vLocal = Text::SplitByFlag(AR_VERSION_STRING, ".");
     std::vector<std::string> vLatest = Text::SplitByFlag(TagNameContent, ".");
 
     if (vLocal.size() != 3 || vLatest.size() != 3) {
-        Logger.TraceWarn("[Updater] Version format invalid. Local: " AR_VERSION " Latest: " + TagNameContent);
+        Logger.TraceWarn("[Updater] Version format invalid. Local: " AR_VERSION_STRING " Latest: " + TagNameContent);
         return false;
     }
 
@@ -146,7 +146,7 @@ bool IUpdater::ParseResponse(const std::string &Response)
     std::string Msg =
         "A new version has been released.\n"
         "\n"
-        "Current version: " AR_VERSION "\n"
+        "Current version: " AR_VERSION_STRING "\n"
         "Latest version: " + TagNameContent + "\n"
         "\n" +
         ChangeLog +
