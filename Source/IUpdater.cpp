@@ -28,28 +28,29 @@ bool IUpdater::CheckUpdate()
     // It will forward the request to GitHub REST API with authentication information
     //
 
-    std::string Response;
-    if (!GetDataByBridge(Response)) {
+    std::optional<std::string> Response = GetDataByBridge();
+    if (!Response.has_value()) {
         Logger.TraceWarn("[Updater] GetDataByBridge() failed, try GetDataDirectly().");
     }
     else
     {
         Logger.TraceInfo("[Updater] GetDataByBridge() successed.");
 
-        if (ParseResponse(Response)) {
+        if (ParseResponse(Response.value())) {
             Logger.TraceInfo("[Updater] ParseResponse() successed. (ByBridge)");
             return true;
         }
         Logger.TraceWarn("[Updater] ParseResponse() failed, try Directly. (ByBridge)");
     }
 
-    if (!GetDataDirectly(Response)) {
+    Response = GetDataDirectly();
+    if (!Response.has_value()) {
         Logger.TraceWarn("[Updater] GetDataDirectly() failed.");
         return false;
     }
     Logger.TraceInfo("[Updater] GetDataDirectly() successed.");
 
-    if (!ParseResponse(Response)) {
+    if (!ParseResponse(Response.value())) {
         Logger.TraceWarn("[Updater] ParseResponse() failed. (Directly)");
         return false;
     }
@@ -158,10 +159,10 @@ bool IUpdater::ParseResponse(const std::string &Response)
     return true;
 }
 
-bool IUpdater::GetDataByBridge(std::string &ReturnedResponse)
+std::optional<std::string> IUpdater::GetDataByBridge()
 {
     auto &Logger = ILogger::GetInstance();
-    bool Result = false;
+    std::optional<std::string> Result = std::nullopt;
 
     Safe::TryExcept(
         [&]()
@@ -207,8 +208,7 @@ bool IUpdater::GetDataByBridge(std::string &ReturnedResponse)
                 return;
             }
 
-            ReturnedResponse = Response;
-            Result = true;
+            Result = Response;
 
             Logger.TraceInfo("[Updater] Get data by bridge successed.");
         },
@@ -221,9 +221,10 @@ bool IUpdater::GetDataByBridge(std::string &ReturnedResponse)
     return Result;
 }
 
-bool IUpdater::GetDataDirectly(std::string &ReturnedResponse)
+std::optional<std::string> IUpdater::GetDataDirectly()
 {
     auto &Logger = ILogger::GetInstance();
+
     std::string Response;
     uint32_t Status;
     bool IsSuccessed = Internet::HttpRequest(
@@ -239,16 +240,14 @@ bool IUpdater::GetDataDirectly(std::string &ReturnedResponse)
 
     if (!IsSuccessed) {
         Logger.TraceWarn("[Updater] Internet::HttpRequest() failed. (Directly)");
-        return false;
+        return std::nullopt;
     }
 
     if (Status != HTTP_STATUS_OK) {
         Logger.TraceWarn("[Updater] Response status is not 200. Status: " + std::to_string(Status) + " Response: " + Response + " (Directly)");
-        return false;
+        return std::nullopt;
     }
 
-    ReturnedResponse = Response;
-
     Logger.TraceInfo("[Updater] Get data directly successed.");
-    return true;
+    return Response;
 }

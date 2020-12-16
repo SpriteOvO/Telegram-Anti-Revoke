@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <optional>
 
 
 class IUpdater
@@ -13,7 +14,7 @@ public:
 private:
     bool ParseResponse(const std::string &Response);
 
-    bool GetDataByBridge(std::string &ReturnedResponse);
-    bool GetDataDirectly(std::string &ReturnedResponse);
+    std::optional<std::string> GetDataByBridge();
+    std::optional<std::string> GetDataDirectly();
 
 };
