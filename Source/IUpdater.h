@@ -11,6 +11,8 @@ public:
     bool CheckUpdate();
 
 private:
+    bool ParseResponse(const std::string &Response);
+
     bool GetDataByBridge(std::string &ReturnedResponse);
     bool GetDataDirectly(std::string &ReturnedResponse);
 

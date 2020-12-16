@@ -17,7 +17,6 @@ IUpdater& IUpdater::GetInstance()
 bool IUpdater::CheckUpdate()
 {
     auto &Logger = ILogger::GetInstance();
-    std::string Response;
 
     // Get releases data
     //
@@ -28,15 +27,40 @@ bool IUpdater::CheckUpdate()
     // So we first try to request to Google Script API (we call it "bridge" here)
     // It will forward the request to GitHub REST API with authentication information
     //
-    if (!GetDataByBridge(Response))
-    {
-        Logger.TraceWarn("[Updater] GetDataByBridge() failed, try GetDataDirectly().");
 
-        if (!GetDataDirectly(Response)) {
-            Logger.TraceWarn("[Updater] GetDataDirectly() failed.");
-            return false;
-        }
+    std::string Response;
+    if (!GetDataByBridge(Response)) {
+        Logger.TraceWarn("[Updater] GetDataByBridge() failed, try GetDataDirectly().");
     }
+    else
+    {
+        Logger.TraceInfo("[Updater] GetDataByBridge() successed.");
+
+        if (ParseResponse(Response)) {
+            Logger.TraceInfo("[Updater] ParseResponse() successed. (ByBridge)");
+            return true;
+        }
+        Logger.TraceWarn("[Updater] ParseResponse() failed, try Directly. (ByBridge)");
+    }
+
+    if (!GetDataDirectly(Response)) {
+        Logger.TraceWarn("[Updater] GetDataDirectly() failed.");
+        return false;
+    }
+    Logger.TraceInfo("[Updater] GetDataDirectly() successed.");
+
+    if (!ParseResponse(Response)) {
+        Logger.TraceWarn("[Updater] ParseResponse() failed. (Directly)");
+        return false;
+    }
+
+    Logger.TraceInfo("[Updater] ParseResponse() successed. (Directly)");
+    return true;
+}
+
+bool IUpdater::ParseResponse(const std::string &Response)
+{
+    auto &Logger = ILogger::GetInstance();
 
     // Parse response
     //
