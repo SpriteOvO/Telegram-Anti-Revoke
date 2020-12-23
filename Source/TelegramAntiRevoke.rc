@@ -16,7 +16,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// 中文(简体，中国) resources
+// Chinese (Simplified, PRC) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
@@ -65,9 +65,27 @@ VS_VERSION_INFO VERSIONINFO
  FILETYPE 0x2L
  FILESUBTYPE 0x0L
 BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080004b0"
+        BEGIN
+            VALUE "CompanyName", "SpriteOvO"
+            VALUE "FileDescription", "Telegram local messages anti-revoke plugin"
+            VALUE "FileVersion", AR_VERSION_RSRC_STR
+            VALUE "InternalName", "version.dll"
+            VALUE "LegalCopyright", AR_COPYRIGHT
+            VALUE "OriginalFilename", AR_REPO_URL_SHORT
+            VALUE "ProductName", "Telegram-Anti-Revoke (" AR_PLATFORM_OS_STR ")"
+            VALUE "ProductVersion", AR_VERSION_RSRC_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x800, 1200
+    END
 END
 
-#endif    // 中文(简体，中国) resources
+#endif    // Chinese (Simplified, PRC) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
