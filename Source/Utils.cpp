@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <wininet.h>
 
+#include "ILogger.h"
+
 #pragma comment(lib, "wininet.lib")
 #pragma comment(lib, "Version.lib")
 
@@ -150,6 +152,17 @@ namespace Internet
         {
             hInternet = InternetOpenA("Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
             if (hInternet == NULL) {
+                break;
+            }
+
+            // Set timeout values
+            //
+            ULONG Timeout = 30000;
+            if (!InternetSetOptionA(hInternet, INTERNET_OPTION_CONNECT_TIMEOUT, &Timeout, sizeof(Timeout)) ||
+                !InternetSetOptionA(hInternet, INTERNET_OPTION_RECEIVE_TIMEOUT, &Timeout, sizeof(Timeout)) ||
+                !InternetSetOptionA(hInternet, INTERNET_OPTION_SEND_TIMEOUT, &Timeout, sizeof(Timeout)))
+            {
+                ILogger::GetInstance().TraceError("InternetSetOptionA Set timeout failed. Last error: " + std::to_string(::GetLastError()));
                 break;
             }
 
