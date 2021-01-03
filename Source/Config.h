@@ -24,4 +24,4 @@
 #define AR_REPO_URL_SHORT    "github.com/" AR_OWNER_REPO
 #define AR_ISSUES_URL        AR_REPO_URL "/issues"
 #define AR_LATEST_REQUEST    "/repos/" AR_OWNER_REPO "/releases/latest"
-#define AR_COPYRIGHT         "Copyright (C) 2019-2020 SpriteOvO. All rights reserved."
+#define AR_COPYRIGHT         "Copyright (C) 2019-2021 SpriteOvO. All rights reserved."
