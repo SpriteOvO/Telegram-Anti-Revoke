@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <set>
+#include <unordered_set>
 #include <mutex>
 
 #include "Telegram.h"
@@ -31,7 +31,7 @@ private:
     FnDestroyMessageT _FnOriginalDestroyMessage;
     FnFreeT _FnOriginalFree;
     std::mutex _Mutex;
-    std::set<HistoryMessage*> _BlockedMessages;
+    std::unordered_set<HistoryMessage*> _BlockedMessages;
 
 
     bool HookFreeFunction();

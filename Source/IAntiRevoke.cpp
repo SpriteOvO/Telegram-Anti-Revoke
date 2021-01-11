@@ -1,6 +1,6 @@
 ﻿#include "IAntiRevoke.h"
 
-#include <map>
+#include <unordered_map>
 #include "ThirdParty/MinHook/MinHook.h"
 
 #include "ILogger.h"
@@ -50,7 +50,7 @@ void IAntiRevoke::InitMarker()
         So we use PluralId and Name.
     */
 
-    std::map<std::wstring, std::vector<MarkDataT>> MultiLangMarks =
+    std::unordered_map<std::wstring, std::vector<MarkDataT>> MultiLangMarks =
     {
         {
             L"en",
