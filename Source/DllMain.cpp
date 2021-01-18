@@ -13,7 +13,6 @@
 
 #define ORIGINAL_EXPORTED_LIST(invoke)       \
     invoke(GetFileVersionInfoA, 1);          \
-    invoke(GetFileVersionInfoByHandle, 2);   \
     invoke(GetFileVersionInfoExA, 3);        \
     invoke(GetFileVersionInfoExW, 4);        \
     invoke(GetFileVersionInfoSizeA, 5);      \
@@ -34,7 +33,6 @@
 
 #define ORIGINAL_EXPORTED_LIST(invoke)       \
     invoke(GetFileVersionInfoA, 1);          \
-    invoke(GetFileVersionInfoByHandle, 2);   \
     invoke(GetFileVersionInfoExW, 3);        \
     invoke(GetFileVersionInfoSizeA, 4);      \
     invoke(GetFileVersionInfoSizeExW, 5);    \

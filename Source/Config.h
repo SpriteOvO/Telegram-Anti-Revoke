@@ -13,11 +13,12 @@
 #define AR_VERSION_RSRC_NUM  AR_VERSION_MAJOR, AR_VERSION_MINOR, AR_VERSION_BUILD, 0
 #define AR_VERSION_RSRC_STR  AR_VERSION_STRING ".0"
 
-#if defined OS_WIN7
-# define AR_PLATFORM_OS_STR  "Win7"
-#elif defined OS_WIN10
-# define AR_PLATFORM_OS_STR  "Win10"
-#endif
+// #if defined OS_WIN7
+// # define AR_PLATFORM_OS_STR  "Win7"
+// #elif defined OS_WIN10
+// # define AR_PLATFORM_OS_STR  "Win10"
+// #endif
+#define AR_PLATFORM_OS_STR  "Wine"
 
 #define AR_OWNER_REPO        "SpriteOvO/Telegram-Anti-Revoke"
 #define AR_REPO_URL          "https://github.com/" AR_OWNER_REPO
