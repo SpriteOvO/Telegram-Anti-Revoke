@@ -19,7 +19,7 @@ Telegram local messages anti-revoke plugin.
 * Multi-language support.  
 
 ## :tomato: Compatibility
-The latest version is only compatible with **Telegram v2.4.0 ~ v2.5.5** or higher.  
+The latest version is only compatible with **Telegram v2.4.0 ~ v2.5.7** or higher.  
 If you are using **Telegram beta**, please check the latest preview version.  
 (Compatibility updates for **Telegram beta** may not be released in time)
 
@@ -30,9 +30,9 @@ If you are using **Telegram beta**, please check the latest preview version.
 4. Run the Telegram program.
 
 ## :bug: Report
-Please use the [Issue Tracker](https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues) to report problems or suggest new features.
+Please use the [Issue Tracker](https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues) to report issues or suggest new features.
 
-If Telegram releases a new version update and the change is large, the plugin may go wrong or cause a crash.  
+If Telegram releases a new version and the change is large, the plugin may cause an error or crash.  
 Please report an issue and wait for plugin update.
 
 ## :gem: ThirdParty

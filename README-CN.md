@@ -19,7 +19,7 @@ Telegram 本地消息防撤回插件。
 * 多语言支持。  
 
 ## :tomato: 兼容性
-最新版本仅兼容 **Telegram v2.4.0 ~ v2.5.5** 或更高。  
+最新版本仅兼容 **Telegram v2.4.0 ~ v2.5.7** 或更高。  
 如果您正在使用 **Telegram beta**，请检查最新预览版本。  
 （对于 **Telegram beta** 的兼容性更新可能不会及时发布）
 
@@ -32,7 +32,7 @@ Telegram 本地消息防撤回插件。
 ## :bug: 报告
 请使用 [问题跟踪器](https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues) 报告问题或提出新功能。
 
-如 Telegram 发布了新版本更新且变动较大，插件可能会出错或导致崩溃。  
+如果 Telegram 发布了新版本且变动较大，插件可能会出错或导致崩溃。  
 请报告该问题并等待插件更新。
 
 ## :gem: 第三方
