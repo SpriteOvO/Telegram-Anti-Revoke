@@ -11,69 +11,73 @@
 
 #if defined OS_WIN10
 
-#define ORIGINAL_EXPORTED_LIST(invoke)       \
-    invoke(GetFileVersionInfoA, 1);          \
-    invoke(GetFileVersionInfoByHandle, 2);   \
-    invoke(GetFileVersionInfoExA, 3);        \
-    invoke(GetFileVersionInfoExW, 4);        \
-    invoke(GetFileVersionInfoSizeA, 5);      \
-    invoke(GetFileVersionInfoSizeExA, 6);    \
-    invoke(GetFileVersionInfoSizeExW, 7);    \
-    invoke(GetFileVersionInfoSizeW, 8);      \
-    invoke(GetFileVersionInfoW, 9);          \
-    invoke(VerFindFileA, 10);                \
-    invoke(VerFindFileW, 11);                \
-    invoke(VerInstallFileA, 12);             \
-    invoke(VerInstallFileW, 13);             \
-    invoke(VerLanguageNameA, 14);            \
-    invoke(VerLanguageNameW, 15);            \
-    invoke(VerQueryValueA, 16);              \
-    invoke(VerQueryValueW, 17);
+#define ORIGINAL_EXPORTS_CALLBACKER(callback)    \
+    callback(GetFileVersionInfoA,        1);     \
+    callback(GetFileVersionInfoByHandle, 2);     \
+    callback(GetFileVersionInfoExA,      3);     \
+    callback(GetFileVersionInfoExW,      4);     \
+    callback(GetFileVersionInfoSizeA,    5);     \
+    callback(GetFileVersionInfoSizeExA,  6);     \
+    callback(GetFileVersionInfoSizeExW,  7);     \
+    callback(GetFileVersionInfoSizeW,    8);     \
+    callback(GetFileVersionInfoW,        9);     \
+    callback(VerFindFileA,               10);    \
+    callback(VerFindFileW,               11);    \
+    callback(VerInstallFileA,            12);    \
+    callback(VerInstallFileW,            13);    \
+    callback(VerLanguageNameA,           14);    \
+    callback(VerLanguageNameW,           15);    \
+    callback(VerQueryValueA,             16);    \
+    callback(VerQueryValueW,             17);
 
 #elif defined OS_WIN7
 
-#define ORIGINAL_EXPORTED_LIST(invoke)       \
-    invoke(GetFileVersionInfoA, 1);          \
-    invoke(GetFileVersionInfoByHandle, 2);   \
-    invoke(GetFileVersionInfoExW, 3);        \
-    invoke(GetFileVersionInfoSizeA, 4);      \
-    invoke(GetFileVersionInfoSizeExW, 5);    \
-    invoke(GetFileVersionInfoSizeW, 6);      \
-    invoke(GetFileVersionInfoW, 7);          \
-    invoke(VerFindFileA, 8);                 \
-    invoke(VerFindFileW, 9);                 \
-    invoke(VerInstallFileA, 10);             \
-    invoke(VerInstallFileW, 11);             \
-    invoke(VerLanguageNameA, 12);            \
-    invoke(VerLanguageNameW, 13);            \
-    invoke(VerQueryValueA, 14);              \
-    invoke(VerQueryValueW, 15);
+#define ORIGINAL_EXPORTS_CALLBACKER(callback)    \
+    callback(GetFileVersionInfoA,        1);     \
+    callback(GetFileVersionInfoByHandle, 2);     \
+    callback(GetFileVersionInfoExW,      3);     \
+    callback(GetFileVersionInfoSizeA,    4);     \
+    callback(GetFileVersionInfoSizeExW,  5);     \
+    callback(GetFileVersionInfoSizeW,    6);     \
+    callback(GetFileVersionInfoW,        7);     \
+    callback(VerFindFileA,               8);     \
+    callback(VerFindFileW,               9);     \
+    callback(VerInstallFileA,            10);    \
+    callback(VerInstallFileW,            11);    \
+    callback(VerLanguageNameA,           12);    \
+    callback(VerLanguageNameW,           13);    \
+    callback(VerQueryValueA,             14);    \
+    callback(VerQueryValueW,             15);
 
 #else
 # error "Project configuration error. You must define OS_WIN10 or OS_WIN7 in Preprocessor Definitions."
 #endif
 
-// Export forwarding functions
+// Export proxy functions
 //
-#define EXPORT_FORWARDING_FUNCTION(name, ordinal)    __pragma(comment(linker, "/EXPORT:" # name "=_Forwarder_" # name ",@" # ordinal))
-ORIGINAL_EXPORTED_LIST(EXPORT_FORWARDING_FUNCTION);
-#undef EXPORT_FORWARDING_FUNCTION
+#if defined PLATFORM_X86
+# define EXPORT_PROXY_FUNCTION(name, ordinal)    __pragma(comment(linker, "/EXPORT:" # name "=_asm_proxy_" # name ",@" # ordinal))
+#elif defined PLATFORM_X64
+# define EXPORT_PROXY_FUNCTION(name, ordinal)    __pragma(comment(linker, "/EXPORT:" # name "=asm_proxy_" # name ",@" # ordinal))
+#endif
+ORIGINAL_EXPORTS_CALLBACKER(EXPORT_PROXY_FUNCTION);
+#undef EXPORT_PROXY_FUNCTION
 
-namespace Forwarder
+namespace Proxy
 {
     HMODULE hOriginalModule = NULL;
 
     // Declare original exported functions address
     //
-#define DECLARE_ORIGINAL_EXPORTED_ADDRESS(name, ordinal)    void* Fn ## name = NULL;
-    ORIGINAL_EXPORTED_LIST(DECLARE_ORIGINAL_EXPORTED_ADDRESS);
-#undef DECLARE_ORIGINAL_EXPORTED_ADDRESS
+#define DECLARE_ORIGINAL_EXPORT_ADDRESS(name, ordinal)    extern "C" void* Proxy_OEFn ## name = NULL;
+    ORIGINAL_EXPORTS_CALLBACKER(DECLARE_ORIGINAL_EXPORT_ADDRESS);
+#undef DECLARE_ORIGINAL_EXPORT_ADDRESS
 
-    void* GetExportedAddress(const char *ExportedName)
+    void* GetExportedAddress(const char *SymbolName)
     {
-        void* Address = GetProcAddress(hOriginalModule, ExportedName);
+        void* Address = GetProcAddress(hOriginalModule, SymbolName);
         if (Address == NULL) {
-            ILogger::GetInstance().TraceError("Could not find [" + std::string(ExportedName) + "] function.");
+            ILogger::GetInstance().TraceError("Cannot find [" + std::string{SymbolName} + "] exported symbol.");
             ExitProcess(0);
             return NULL;
         }
@@ -81,7 +85,7 @@ namespace Forwarder
         return Address;
     }
 
-    void Initialize()
+    extern "C" void Proxy_Initialize()
     {
         // Initialize hOriginalModule
         //
@@ -90,7 +94,7 @@ namespace Forwarder
             char SystemPath[MAX_PATH];
             GetSystemDirectoryA(SystemPath, MAX_PATH);
 
-            hOriginalModule = LoadLibraryA((std::string(SystemPath) + "\\version.dll").c_str());
+            hOriginalModule = LoadLibraryA((std::string{SystemPath} + "\\version.dll").c_str());
             if (hOriginalModule == NULL) {
                 ILogger::GetInstance().TraceError("Unable to load the original module.");
                 ExitProcess(0);
@@ -100,12 +104,14 @@ namespace Forwarder
 
         // Initialize original exported functions address
         //
-#define INIT_ORIGINAL_EXPORTED_ADDRESS(name, ordinal)    if (Fn ## name == NULL) { Fn ## name = GetExportedAddress(# name); }
-        ORIGINAL_EXPORTED_LIST(INIT_ORIGINAL_EXPORTED_ADDRESS);
-#undef INIT_ORIGINAL_EXPORTED_ADDRESS
+#define INIT_ORIGINAL_EXPORT_ADDRESS(name, ordinal)    if (Proxy_OEFn ## name == NULL) { Proxy_OEFn ## name = GetExportedAddress(# name); }
+        ORIGINAL_EXPORTS_CALLBACKER(INIT_ORIGINAL_EXPORT_ADDRESS);
+#undef INIT_ORIGINAL_EXPORT_ADDRESS
+
+        return;
     }
 
-    void Uninitialize()
+    void Deinitialize()
     {
         if (hOriginalModule != NULL) {
             FreeLibrary(hOriginalModule);
@@ -113,20 +119,8 @@ namespace Forwarder
         }
     }
 
-} // namespace AheadLib
+} // namespace Proxy
 
-// Implement forwarding functions
-//
-#define IMPL_FORWARDING_FUNCTION(name, ordinal)                        \
-    extern "C" __declspec(naked) void __cdecl Forwarder_ ## name ()    \
-    {                                                                  \
-        __asm pushad                                                   \
-        __asm call Forwarder::Initialize                               \
-        __asm popad                                                    \
-        __asm jmp Forwarder::Fn ## name                                \
-    }
-ORIGINAL_EXPORTED_LIST(IMPL_FORWARDING_FUNCTION);
-#undef IMPL_FORWARDING_FUNCTION
 
 // Implemented in RealMain.cpp
 //
@@ -138,7 +132,7 @@ BOOL WINAPI DllMain(HMODULE hModule, ULONG Reason, PVOID pReserved)
         return RealDllMain(hModule, Reason, pReserved);
     }
     else if (Reason == DLL_PROCESS_DETACH) {
-        Forwarder::Uninitialize();
+        Proxy::Deinitialize();
     }
 
     return TRUE;

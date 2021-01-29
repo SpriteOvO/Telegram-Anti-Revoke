@@ -184,4 +184,9 @@
       <Filter>ThirdParty\jsoncpp\src</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <MASM Include="..\Source\Assembly.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
+  </ItemGroup>
 </Project>
