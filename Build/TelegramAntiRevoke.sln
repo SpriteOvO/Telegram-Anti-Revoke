@@ -1,31 +1,43 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.757
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30709.132
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TelegramAntiRevoke", "TelegramAntiRevoke.vcxproj", "{A8D6F458-845B-47D6-9DEF-40F07B49F119}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TelegramAntiRevoke", "TelegramAntiRevoke.vcxproj", "{A9D4127A-F409-4B22-BEF2-113B5F489048}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Win10 Debug|x64 = Win10 Debug|x64
 		Win10 Debug|x86 = Win10 Debug|x86
+		Win10 Release|x64 = Win10 Release|x64
 		Win10 Release|x86 = Win10 Release|x86
+		Win7 Debug|x64 = Win7 Debug|x64
 		Win7 Debug|x86 = Win7 Debug|x86
+		Win7 Release|x64 = Win7 Release|x64
 		Win7 Release|x86 = Win7 Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A8D6F458-845B-47D6-9DEF-40F07B49F119}.Win10 Debug|x86.ActiveCfg = Win10 Debug|Win32
-		{A8D6F458-845B-47D6-9DEF-40F07B49F119}.Win10 Debug|x86.Build.0 = Win10 Debug|Win32
-		{A8D6F458-845B-47D6-9DEF-40F07B49F119}.Win10 Release|x86.ActiveCfg = Win10 Release|Win32
-		{A8D6F458-845B-47D6-9DEF-40F07B49F119}.Win10 Release|x86.Build.0 = Win10 Release|Win32
-		{A8D6F458-845B-47D6-9DEF-40F07B49F119}.Win7 Debug|x86.ActiveCfg = Win7 Debug|Win32
-		{A8D6F458-845B-47D6-9DEF-40F07B49F119}.Win7 Debug|x86.Build.0 = Win7 Debug|Win32
-		{A8D6F458-845B-47D6-9DEF-40F07B49F119}.Win7 Release|x86.ActiveCfg = Win7 Release|Win32
-		{A8D6F458-845B-47D6-9DEF-40F07B49F119}.Win7 Release|x86.Build.0 = Win7 Release|Win32
+		{A9D4127A-F409-4B22-BEF2-113B5F489048}.Win10 Debug|x64.ActiveCfg = Win10 Debug|x64
+		{A9D4127A-F409-4B22-BEF2-113B5F489048}.Win10 Debug|x64.Build.0 = Win10 Debug|x64
+		{A9D4127A-F409-4B22-BEF2-113B5F489048}.Win10 Debug|x86.ActiveCfg = Win10 Debug|Win32
+		{A9D4127A-F409-4B22-BEF2-113B5F489048}.Win10 Debug|x86.Build.0 = Win10 Debug|Win32
+		{A9D4127A-F409-4B22-BEF2-113B5F489048}.Win10 Release|x64.ActiveCfg = Win10 Release|x64
+		{A9D4127A-F409-4B22-BEF2-113B5F489048}.Win10 Release|x64.Build.0 = Win10 Release|x64
+		{A9D4127A-F409-4B22-BEF2-113B5F489048}.Win10 Release|x86.ActiveCfg = Win10 Release|Win32
+		{A9D4127A-F409-4B22-BEF2-113B5F489048}.Win10 Release|x86.Build.0 = Win10 Release|Win32
+		{A9D4127A-F409-4B22-BEF2-113B5F489048}.Win7 Debug|x64.ActiveCfg = Win7 Debug|x64
+		{A9D4127A-F409-4B22-BEF2-113B5F489048}.Win7 Debug|x64.Build.0 = Win7 Debug|x64
+		{A9D4127A-F409-4B22-BEF2-113B5F489048}.Win7 Debug|x86.ActiveCfg = Win7 Debug|Win32
+		{A9D4127A-F409-4B22-BEF2-113B5F489048}.Win7 Debug|x86.Build.0 = Win7 Debug|Win32
+		{A9D4127A-F409-4B22-BEF2-113B5F489048}.Win7 Release|x64.ActiveCfg = Win7 Release|x64
+		{A9D4127A-F409-4B22-BEF2-113B5F489048}.Win7 Release|x64.Build.0 = Win7 Release|x64
+		{A9D4127A-F409-4B22-BEF2-113B5F489048}.Win7 Release|x86.ActiveCfg = Win7 Release|Win32
+		{A9D4127A-F409-4B22-BEF2-113B5F489048}.Win7 Release|x86.Build.0 = Win7 Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {C18267B0-DD31-4C60-9104-41F962B19C3E}
+		SolutionGuid = {D950E947-0FC7-42FB-981D-66C62BCF4666}
 	EndGlobalSection
 EndGlobal

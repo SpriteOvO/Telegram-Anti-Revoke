@@ -1,26 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Win10 Debug|Win32">
       <Configuration>Win10 Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Win10 Debug|x64">
+      <Configuration>Win10 Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Win10 Release|Win32">
       <Configuration>Win10 Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Win10 Release|x64">
+      <Configuration>Win10 Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Win7 Debug|Win32">
       <Configuration>Win7 Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Win7 Debug|x64">
+      <Configuration>Win7 Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Win7 Release|Win32">
       <Configuration>Win7 Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Win7 Release|x64">
+      <Configuration>Win7 Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Source\Config.h" />
+    <ClInclude Include="..\Source\IAntiRevoke.h" />
+    <ClInclude Include="..\Source\ILogger.h" />
+    <ClInclude Include="..\Source\IRuntime.h" />
+    <ClInclude Include="..\Source\IUpdater.h" />
+    <ClInclude Include="..\Source\QtString.h" />
+    <ClInclude Include="..\Source\Resource.h" />
+    <ClInclude Include="..\Source\Telegram.h" />
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\allocator.h" />
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\assertions.h" />
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\autolink.h" />
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\config.h" />
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\forwards.h" />
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\json.h" />
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\json_features.h" />
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\reader.h" />
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\src\json_tool.h" />
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\value.h" />
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\version.h" />
+    <ClInclude Include="..\Source\ThirdParty\jsoncpp\writer.h" />
+    <ClInclude Include="..\Source\ThirdParty\MinHook\MinHook.h" />
+    <ClInclude Include="..\Source\ThirdParty\MinHook\src\buffer.h" />
+    <ClInclude Include="..\Source\ThirdParty\MinHook\src\hde\hde32.h" />
+    <ClInclude Include="..\Source\ThirdParty\MinHook\src\hde\hde64.h" />
+    <ClInclude Include="..\Source\ThirdParty\MinHook\src\hde\pstdint.h" />
+    <ClInclude Include="..\Source\ThirdParty\MinHook\src\hde\table32.h" />
+    <ClInclude Include="..\Source\ThirdParty\MinHook\src\hde\table64.h" />
+    <ClInclude Include="..\Source\ThirdParty\MinHook\src\trampoline.h" />
+    <ClInclude Include="..\Source\Utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Source\DllMain.cpp" />
+    <ClCompile Include="..\Source\IAntiRevoke.cpp" />
+    <ClCompile Include="..\Source\ILogger.cpp" />
+    <ClCompile Include="..\Source\IRuntime.cpp" />
+    <ClCompile Include="..\Source\IUpdater.cpp" />
+    <ClCompile Include="..\Source\QtString.cpp" />
+    <ClCompile Include="..\Source\RealMain.cpp" />
+    <ClCompile Include="..\Source\Telegram.cpp" />
+    <ClCompile Include="..\Source\ThirdParty\jsoncpp\src\json_reader.cpp" />
+    <ClCompile Include="..\Source\ThirdParty\jsoncpp\src\json_value.cpp" />
+    <ClCompile Include="..\Source\ThirdParty\jsoncpp\src\json_writer.cpp" />
+    <ClCompile Include="..\Source\ThirdParty\MinHook\src\buffer.c" />
+    <ClCompile Include="..\Source\ThirdParty\MinHook\src\hde\hde32.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Win7 Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Win7 Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThirdParty\MinHook\src\hde\hde64.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Win7 Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Win10 Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Win7 Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Source\ThirdParty\MinHook\src\hook.c" />
+    <ClCompile Include="..\Source\ThirdParty\MinHook\src\trampoline.c" />
+    <ClCompile Include="..\Source\Utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\Source\TelegramAntiRevoke.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Source\ThirdParty\jsoncpp\src\json_valueiterator.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{A8D6F458-845B-47D6-9DEF-40F07B49F119}</ProjectGuid>
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{a9d4127a-f409-4b22-bef2-113b5f489048}</ProjectGuid>
     <RootNamespace>TelegramAntiRevoke</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -51,6 +134,32 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -68,38 +177,84 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)Binary\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Binary\$(Platform)\$(Configuration)\ObjectFiles\</IntDir>
     <TargetName>version</TargetName>
-    <OutDir>$(SolutionDir)Binary\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Binary\$(Configuration)\ObjectFiles\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)Binary\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Binary\$(Platform)\$(Configuration)\ObjectFiles\</IntDir>
     <TargetName>version</TargetName>
-    <OutDir>$(SolutionDir)Binary\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Binary\$(Configuration)\ObjectFiles\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)Binary\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Binary\$(Platform)\$(Configuration)\ObjectFiles\</IntDir>
     <TargetName>version</TargetName>
-    <OutDir>$(SolutionDir)Binary\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Binary\$(Configuration)\ObjectFiles\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)Binary\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Binary\$(Platform)\$(Configuration)\ObjectFiles\</IntDir>
     <TargetName>version</TargetName>
-    <OutDir>$(SolutionDir)Binary\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Binary\$(Configuration)\ObjectFiles\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)Binary\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Binary\$(Platform)\$(Configuration)\ObjectFiles\</IntDir>
+    <TargetName>version</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)Binary\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Binary\$(Platform)\$(Configuration)\ObjectFiles\</IntDir>
+    <TargetName>version</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)Binary\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Binary\$(Platform)\$(Configuration)\ObjectFiles\</IntDir>
+    <TargetName>version</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)Binary\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)Binary\$(Platform)\$(Configuration)\ObjectFiles\</IntDir>
+    <TargetName>version</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>OS_WIN10;WIN32;_DEBUG;TELEGRAMANTIREVOKE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>OS_WIN10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
     <ResourceCompile>
       <PreprocessorDefinitions>OS_WIN10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
@@ -107,14 +262,20 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>OS_WIN7;WIN32;_DEBUG;TELEGRAMANTIREVOKE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>OS_WIN7;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
     <ResourceCompile>
       <PreprocessorDefinitions>OS_WIN7;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
@@ -122,19 +283,23 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>OS_WIN10;WIN32;NDEBUG;TELEGRAMANTIREVOKE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>OS_WIN10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
     </Link>
     <ResourceCompile>
       <PreprocessorDefinitions>OS_WIN10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -143,85 +308,120 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>OS_WIN7;WIN32;NDEBUG;TELEGRAMANTIREVOKE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>OS_WIN7;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
     </Link>
     <ResourceCompile>
       <PreprocessorDefinitions>OS_WIN7;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Source\IAntiRevoke.cpp" />
-    <ClCompile Include="..\Source\DllMain.cpp" />
-    <ClCompile Include="..\Source\ILogger.cpp" />
-    <ClCompile Include="..\Source\IRuntime.cpp" />
-    <ClCompile Include="..\Source\QtString.cpp" />
-    <ClCompile Include="..\Source\RealMain.cpp" />
-    <ClCompile Include="..\Source\Telegram.cpp" />
-    <ClCompile Include="..\Source\Utils.cpp" />
-    <ClCompile Include="..\Source\IUpdater.cpp" />
-    <ClCompile Include="..\Source\ThirdParty\jsoncpp\src\json_reader.cpp" />
-    <ClCompile Include="..\Source\ThirdParty\jsoncpp\src\json_value.cpp" />
-    <ClCompile Include="..\Source\ThirdParty\jsoncpp\src\json_writer.cpp" />
-    <ClCompile Include="..\Source\ThirdParty\MinHook\src\buffer.c" />
-    <ClCompile Include="..\Source\ThirdParty\MinHook\src\hde\hde32.c" />
-    <ClCompile Include="..\Source\ThirdParty\MinHook\src\hde\hde64.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Win7 Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Win10 Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Win7 Release|Win32'">true</ExcludedFromBuild>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>OS_WIN10;_DEBUG;TELEGRAMANTIREVOKE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
-    <ClCompile Include="..\Source\ThirdParty\MinHook\src\hook.c" />
-    <ClCompile Include="..\Source\ThirdParty\MinHook\src\trampoline.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Source\IAntiRevoke.h" />
-    <ClInclude Include="..\Source\Config.h" />
-    <ClInclude Include="..\Source\ILogger.h" />
-    <ClInclude Include="..\Source\IRuntime.h" />
-    <ClInclude Include="..\Source\QtString.h" />
-    <ClInclude Include="..\Source\Resource.h" />
-    <ClInclude Include="..\Source\Telegram.h" />
-    <ClInclude Include="..\Source\Utils.h" />
-    <ClInclude Include="..\Source\IUpdater.h" />
-    <ClInclude Include="..\Source\ThirdParty\jsoncpp\allocator.h" />
-    <ClInclude Include="..\Source\ThirdParty\jsoncpp\assertions.h" />
-    <ClInclude Include="..\Source\ThirdParty\jsoncpp\autolink.h" />
-    <ClInclude Include="..\Source\ThirdParty\jsoncpp\config.h" />
-    <ClInclude Include="..\Source\ThirdParty\jsoncpp\forwards.h" />
-    <ClInclude Include="..\Source\ThirdParty\jsoncpp\json.h" />
-    <ClInclude Include="..\Source\ThirdParty\jsoncpp\json_features.h" />
-    <ClInclude Include="..\Source\ThirdParty\jsoncpp\reader.h" />
-    <ClInclude Include="..\Source\ThirdParty\jsoncpp\src\json_tool.h" />
-    <ClInclude Include="..\Source\ThirdParty\jsoncpp\value.h" />
-    <ClInclude Include="..\Source\ThirdParty\jsoncpp\version.h" />
-    <ClInclude Include="..\Source\ThirdParty\jsoncpp\writer.h" />
-    <ClInclude Include="..\Source\ThirdParty\MinHook\MinHook.h" />
-    <ClInclude Include="..\Source\ThirdParty\MinHook\src\buffer.h" />
-    <ClInclude Include="..\Source\ThirdParty\MinHook\src\hde\hde32.h" />
-    <ClInclude Include="..\Source\ThirdParty\MinHook\src\hde\hde64.h" />
-    <ClInclude Include="..\Source\ThirdParty\MinHook\src\hde\pstdint.h" />
-    <ClInclude Include="..\Source\ThirdParty\MinHook\src\hde\table32.h" />
-    <ClInclude Include="..\Source\ThirdParty\MinHook\src\hde\table64.h" />
-    <ClInclude Include="..\Source\ThirdParty\MinHook\src\trampoline.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="..\Source\TelegramAntiRevoke.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Source\ThirdParty\jsoncpp\src\json_valueiterator.inl" />
-  </ItemGroup>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>OS_WIN10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>OS_WIN7;_DEBUG;TELEGRAMANTIREVOKE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>OS_WIN7;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win10 Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>OS_WIN10;NDEBUG;TELEGRAMANTIREVOKE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>OS_WIN10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>OS_WIN7;NDEBUG;TELEGRAMANTIREVOKE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>OS_WIN7;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
