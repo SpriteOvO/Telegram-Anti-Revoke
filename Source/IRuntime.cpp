@@ -19,6 +19,8 @@ bool IRuntime::Initialize()
         return false;
     }
 
+    ILogger::GetInstance().TraceInfo("[IRuntime] Telegram version: " + std::to_string(_FileVersion));
+
     if (!GetModuleInformation(GetCurrentProcess(), (HMODULE)_MainModule, &_MainModuleInfo, sizeof(_MainModuleInfo))) {
         return false;
     }
