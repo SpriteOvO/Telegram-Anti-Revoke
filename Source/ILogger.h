@@ -13,7 +13,7 @@ public:
 
     void TraceInfo(const std::string &Content);
     void TraceWarn(const std::string &Content);
-    void TraceError(const std::string &Content, bool bReport = false);
+    void TraceError(const std::string &Content, bool bReport = true);
 
 private:
     std::mutex _Mutex;
