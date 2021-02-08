@@ -60,20 +60,38 @@ bool IRuntime::InitFixedData()
 
 bool IRuntime::InitDynamicData()
 {
-    __try
-    {
-        return InitDynamicData_MallocFree() &&
-            InitDynamicData_DestroyMessage() &&
-            InitDynamicData_EditedIndex() &&
-            InitDynamicData_SignedIndex() &&
-            InitDynamicData_ReplyIndex() &&
-            InitDynamicData_LangInstance() &&
-            InitDynamicData_ToHistoryMessage();
-    }
-    __except(EXCEPTION_EXECUTE_HANDLER)
-    {
-        return false;
-    }
+    auto &Logger = ILogger::GetInstance();
+
+    bool Result = false;
+
+    Safe::TryExcept(
+        [&]() {
+#define INIT_DATA_AND_LOG(name)                                                 \
+            if (!InitDynamicData_ ## name()) {                                  \
+                Logger.TraceWarn("[IRuntime] InitDynamicData_" # name "() failed.");       \
+                return;                                                         \
+            }                                                                   \
+            else {                                                              \
+                Logger.TraceInfo("[IRuntime] InitDynamicData_" # name "() succeeded.");    \
+            }
+
+            INIT_DATA_AND_LOG(MallocFree);
+            INIT_DATA_AND_LOG(DestroyMessage);
+            INIT_DATA_AND_LOG(EditedIndex);
+            INIT_DATA_AND_LOG(SignedIndex);
+            INIT_DATA_AND_LOG(ReplyIndex);
+            INIT_DATA_AND_LOG(LangInstance);
+            INIT_DATA_AND_LOG(ToHistoryMessage);
+
+#undef INIT_DATA_AND_LOG
+            Result = true;
+        },
+        [&](uint32_t ExceptionCode) {
+            Logger.TraceWarn("[IRuntime] InitDynamicData() caught an exception, code: " + Text::Format("0x%x", ExceptionCode));
+        }
+    );
+
+    return Result;
 }
 
 std::vector<uintptr_t> IRuntime::FindPatternInMainModule(const char Pattern[], const char Mask[])
