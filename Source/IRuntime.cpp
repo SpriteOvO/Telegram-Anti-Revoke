@@ -445,6 +445,8 @@ bool IRuntime::InitDynamicData_ReplyIndex()
 
 bool IRuntime::InitDynamicData_LangInstance()
 {
+    using namespace std::chrono_literals;
+
     /*
         Lang::Instance *__cdecl Lang::Current()
 
@@ -523,7 +525,23 @@ bool IRuntime::InitDynamicData_LangInstance()
         }
     }
 
-    uintptr_t CoreAppInstance = *(uintptr_t*)(*(uintptr_t*)(vResult.at(0) + 2));
+    uintptr_t pCoreAppInstance = *(uintptr_t*)(vResult.at(0) + 2);
+
+    uintptr_t CoreAppInstance = NULL;
+    for (size_t i = 0; i < 20; ++i)
+    {
+        CoreAppInstance = *(uintptr_t*)pCoreAppInstance;
+        if (CoreAppInstance != NULL) {
+            break;
+        }
+        std::this_thread::sleep_for(1s);
+    }
+
+    if (CoreAppInstance == NULL) {
+        ILogger::GetInstance().TraceWarn("[IRuntime] pCoreAppInstance always nullptr.");
+        return false;
+    }
+
     _Data.Address.pLangInstance = *(LanguageInstance**)(CoreAppInstance + LangInsOffset);
 
     if (_Data.Address.pLangInstance == NULL) {
