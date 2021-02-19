@@ -538,7 +538,7 @@ bool IRuntime::InitDynamicData_LangInstance()
     }
 
     if (CoreAppInstance == NULL) {
-        ILogger::GetInstance().TraceWarn("[IRuntime] pCoreAppInstance always nullptr.");
+        ILogger::GetInstance().TraceWarn("[IRuntime] CoreAppInstance always nullptr.");
         return false;
     }
 
