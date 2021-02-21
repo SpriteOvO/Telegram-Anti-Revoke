@@ -19,7 +19,7 @@ Telegram local messages anti-revoke plugin.
 * Multi-language support.  
 
 ## :tomato: Compatibility
-The latest version is only compatible with **Telegram v2.4.0 ~ v2.5.7** or higher.  
+The latest version is only compatible with **Telegram v2.4.0 ~ v2.5.9** or higher.  
 If you are using **Telegram beta**, please check the latest preview version.  
 (Compatibility updates for **Telegram beta** may not be released in time)
 
