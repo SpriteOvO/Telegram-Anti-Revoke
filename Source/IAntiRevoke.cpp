@@ -198,8 +198,7 @@ void IAntiRevoke::ProcessBlockedMessages()
                     //  vvvvvvvvvvvvvvvvvvvv TODO: This is a workaround, try to hook HistoryMessage's destructor to improve.
                     if (pTimeText == NULL ||
                         pTimeText->IsEmpty() || // This message isn't the current channel or group.
-                        pTimeText->Find(_MarkData.Content) != std::wstring::npos // This message is marked.
-                        )
+                        pTimeText->Find(_MarkData.Content) != std::wstring::npos /* This message is marked. */)
                     {
                         return;
                     }
@@ -308,6 +307,8 @@ void IAntiRevoke::OnFree(void *Block)
 
 void IAntiRevoke::OnDestroyMessage(History *pHistory, HistoryMessage* pMessage)
 {
+    auto &Logger = ILogger::GetInstance();
+
     Safe::TryExcept(
         [&]()
         {
@@ -320,16 +321,19 @@ void IAntiRevoke::OnDestroyMessage(History *pHistory, HistoryMessage* pMessage)
 
             QtString *pTimeText = pMessage->GetTimeText();
             if (!pTimeText->IsValidTime()) {
-                ILogger::GetInstance().TraceWarn("A bad TimeText. Address: [" + Text::Format("0x%x", pMessage) + "]");
+                Logger.TraceWarn("A bad TimeText. Address: [" + Text::Format("0x%x", pMessage) + "]");
                 return;
             }
+#if defined _DEBUG
+            Logger.TraceInfo("Caught a deleted meesage. Address: [" + Text::Format("0x%x", pMessage) + "]");
+#endif
 
             std::lock_guard<std::mutex> Lock(_Mutex);
             _BlockedMessages.insert(pMessage);
-
-        }, [](ULONG ExceptionCode)
+        },
+        [&](ULONG ExceptionCode)
         {
-            ILogger::GetInstance().TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "]");
+            Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "]");
         }
     );
 }
