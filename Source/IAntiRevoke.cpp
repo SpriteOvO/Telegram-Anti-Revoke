@@ -197,7 +197,7 @@ void IAntiRevoke::ProcessBlockedMessages()
 
                     //  vvvvvvvvvvvvvvvvvvvv TODO: This is a workaround, try to hook HistoryMessage's destructor to improve.
                     if (pTimeText == NULL ||
-                        pTimeText->IsEmpty() || // This message isn't the current channel or group.
+                        pTimeText->IsEmpty() || // This message content hasn't been cached by Telegram.
                         pTimeText->Find(_MarkData.Content) != std::wstring::npos /* This message is marked. */)
                     {
                         return;
