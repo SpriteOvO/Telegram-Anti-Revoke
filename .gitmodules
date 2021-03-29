@@ -1,0 +1,6 @@
+[submodule "Source/ThirdParty/jsoncpp"]
+	path = Source/ThirdParty/jsoncpp
+	url = https://github.com/open-source-parsers/jsoncpp.git
+[submodule "Source/ThirdParty/minhook"]
+	path = Source/ThirdParty/minhook
+	url = https://github.com/TsudaKageyu/minhook.git
