@@ -1,7 +1,7 @@
 ﻿#include "IAntiRevoke.h"
 
 #include <unordered_map>
-#include "ThirdParty/MinHook/MinHook.h"
+#include <MinHook.h>
 
 #include "ILogger.h"
 #include "IRuntime.h"

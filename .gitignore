@@ -355,3 +355,5 @@ MigrationBackup/
 # Custom
 Notes/
 Binary/
+out/
+Build/
