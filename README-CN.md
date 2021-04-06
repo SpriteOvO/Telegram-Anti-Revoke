@@ -36,7 +36,7 @@ Telegram 本地消息防撤回插件。
 为避免问题重复，请在提交前检查已有的问题。
 
 ## :gem: 第三方
-* JsonCpp ([MIT License](https://github.com/open-source-parsers/jsoncpp/blob/master/LICENSE))
+* Json ([MIT License](https://github.com/nlohmann/json/blob/develop/LICENSE.MIT))
 * MinHook ([BSD 2-Clause License](https://github.com/TsudaKageyu/minhook/blob/master/LICENSE.txt))
 
 ## :beer: 鸣谢

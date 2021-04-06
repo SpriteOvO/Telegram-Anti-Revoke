@@ -36,7 +36,7 @@ Please use the [Issue Tracker](https://github.com/SpriteOvO/Telegram-Anti-Revoke
 To avoid duplication of issues, please check existing issues before submitting.
 
 ## :gem: ThirdParty
-* JsonCpp ([MIT License](https://github.com/open-source-parsers/jsoncpp/blob/master/LICENSE))
+* Json ([MIT License](https://github.com/nlohmann/json/blob/develop/LICENSE.MIT))
 * MinHook ([BSD 2-Clause License](https://github.com/TsudaKageyu/minhook/blob/master/LICENSE.txt))
 
 ## :beer: Acknowledgments
