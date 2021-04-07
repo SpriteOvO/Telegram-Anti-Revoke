@@ -86,21 +86,34 @@ if (MSVC)
 
     # Prevent MSBuild from adding the build type to the end of the binary directory for binary file output
     #
-    set_target_properties (TelegramAntiRevoke PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-    set_target_properties (TelegramAntiRevoke PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR})
-    set_target_properties (TelegramAntiRevoke PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
-    set_target_properties (TelegramAntiRevoke PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${CMAKE_BINARY_DIR})
-    set_target_properties (TelegramAntiRevoke PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${CMAKE_BINARY_DIR})
+    set (TAR_BINARY_OUT_DIR "${CMAKE_BINARY_DIR}/Binary")
+
+    set_target_properties (TelegramAntiRevoke PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TAR_BINARY_OUT_DIR})
+    set_target_properties (TelegramAntiRevoke PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${TAR_BINARY_OUT_DIR})
+    set_target_properties (TelegramAntiRevoke PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${TAR_BINARY_OUT_DIR})
+    set_target_properties (TelegramAntiRevoke PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${TAR_BINARY_OUT_DIR})
+    set_target_properties (TelegramAntiRevoke PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${TAR_BINARY_OUT_DIR})
+
+    set_target_properties (TelegramAntiRevoke PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${TAR_BINARY_OUT_DIR})
+    set_target_properties (TelegramAntiRevoke PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${TAR_BINARY_OUT_DIR})
+    set_target_properties (TelegramAntiRevoke PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${TAR_BINARY_OUT_DIR})
+    set_target_properties (TelegramAntiRevoke PROPERTIES LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL ${TAR_BINARY_OUT_DIR})
+    set_target_properties (TelegramAntiRevoke PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO ${TAR_BINARY_OUT_DIR})
+
+    set_target_properties (TelegramAntiRevoke PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${TAR_BINARY_OUT_DIR})
+    set_target_properties (TelegramAntiRevoke PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${TAR_BINARY_OUT_DIR})
+    set_target_properties (TelegramAntiRevoke PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${TAR_BINARY_OUT_DIR})
+    set_target_properties (TelegramAntiRevoke PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL ${TAR_BINARY_OUT_DIR})
+    set_target_properties (TelegramAntiRevoke PROPERTIES ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO ${TAR_BINARY_OUT_DIR})
+
+    # Rename binary file name after build
+    #
+    add_custom_command (
+        TARGET TelegramAntiRevoke
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy "${TAR_BINARY_OUT_DIR}/TelegramAntiRevoke.dll" "${TAR_BINARY_OUT_DIR}/version.dll"
+    )
 endif ()
-
-
-# Rename output file name after build
-#
-add_custom_command (
-    TARGET TelegramAntiRevoke
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/TelegramAntiRevoke.dll" "${CMAKE_BINARY_DIR}/version.dll"
-)
 
 
 # Link third-party libraries
