@@ -111,7 +111,7 @@ if (MSVC)
     add_custom_command (
         TARGET TelegramAntiRevoke
         POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy "${TAR_BINARY_OUT_DIR}/TelegramAntiRevoke.dll" "${TAR_BINARY_OUT_DIR}/version.dll"
+        COMMAND ${CMAKE_COMMAND} -E rename "${TAR_BINARY_OUT_DIR}/TelegramAntiRevoke.dll" "${TAR_BINARY_OUT_DIR}/version.dll"
     )
 endif ()
 
