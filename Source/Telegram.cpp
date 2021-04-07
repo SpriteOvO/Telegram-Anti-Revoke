@@ -1,7 +1,8 @@
 ﻿#include "Telegram.h"
 
+#include <spdlog/spdlog.h>
+
 #include "Utils.h"
-#include "ILogger.h"
 #include "IRuntime.h"
 #include "IAntiRevoke.h"
 
@@ -145,7 +146,7 @@ CompT* HistoryMessage::GetComponent(uint32_t Index)
 
         }, [&](ULONG ExceptionCode)
         {
-            ILogger::GetInstance().TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "] Address: [" + Text::Format("0x%x", this) + "]");
+            spdlog::warn("Function: [" __FUNCTION__ "] An exception was caught. Code: {:#x}, Address: {}", ExceptionCode, (void*)this);
         }
     );
 

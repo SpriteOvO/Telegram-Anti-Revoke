@@ -1,9 +1,10 @@
 ﻿#include "IAntiRevoke.h"
 
 #include <unordered_map>
-#include <MinHook.h>
 
-#include "ILogger.h"
+#include <MinHook.h>
+#include <spdlog/spdlog.h>
+
 #include "IRuntime.h"
 #include "Utils.h"
 
@@ -89,8 +90,6 @@ void IAntiRevoke::InitMarker()
     //
     _MarkData = MultiLangMarks[L"en"].at(0);
 
-    auto &Logger = ILogger::GetInstance();
-
     Safe::TryExcept(
         [&]()
         {
@@ -109,7 +108,7 @@ void IAntiRevoke::InitMarker()
             //
             auto Iterator = MultiLangMarks.find(CurrentPluralId);
             if (Iterator == MultiLangMarks.end()) {
-                Logger.TraceWarn(std::string("An unadded language. PluralId: [") + Convert::UnicodeToAnsi(CurrentPluralId + std::wstring(L"] Name: [") + CurrentName) + std::string("]"));
+                spdlog::warn("An unadded language. PluralId: \"{}\", Name: \"{}\"", Convert::UnicodeToAnsi(CurrentPluralId), Convert::UnicodeToAnsi(CurrentName));
                 return;
             }
 
@@ -137,28 +136,26 @@ void IAntiRevoke::InitMarker()
 
         }, [&](ULONG ExceptionCode)
         {
-            Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "]");
+            spdlog::warn("Function: [" __FUNCTION__ "] An exception was caught. Code: {:#x}", ExceptionCode);
         }
     );
 }
 
 void IAntiRevoke::SetupHooks()
 {
-    auto &Logger = ILogger::GetInstance();
-
     MH_STATUS Status = MH_Initialize();
     if (Status != MH_OK) {
-        Logger.TraceError(std::string("[IAntiRevoke] MH_Initialize() failed.\n") + MH_StatusToString(Status));
+        spdlog::critical("[IAntiRevoke] MH_Initialize() failed. Status: {}", MH_StatusToString(Status));
         return;
     }
 
     if (!HookFreeFunction()) {
-        Logger.TraceError("[IAntiRevoke] HookFreeFunction() failed.");
+        spdlog::critical("[IAntiRevoke] HookFreeFunction() failed.");
         return;
     }
 
     if (!HookRevokeFunction()) {
-        Logger.TraceError("[IAntiRevoke] HookRevokeFunction() failed.");
+        spdlog::critical("[IAntiRevoke] HookRevokeFunction() failed.");
         return;
     }
 }
@@ -249,7 +246,7 @@ void IAntiRevoke::ProcessBlockedMessages()
 
                 }, [&](ULONG ExceptionCode)
                 {
-                    ILogger::GetInstance().TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "] Address: [" + Text::Format("0x%x", pMessage) + "]");
+                    spdlog::warn("Function: [" __FUNCTION__ "] An exception was caught. Code: {:#x}, Address: {}", ExceptionCode, (void*)pMessage);
                 }
             );
         }
@@ -307,8 +304,6 @@ void IAntiRevoke::OnFree(void *Block)
 
 void IAntiRevoke::OnDestroyMessage(History *pHistory, HistoryMessage* pMessage)
 {
-    auto &Logger = ILogger::GetInstance();
-
     Safe::TryExcept(
         [&]()
         {
@@ -321,19 +316,18 @@ void IAntiRevoke::OnDestroyMessage(History *pHistory, HistoryMessage* pMessage)
 
             QtString *pTimeText = pMessage->GetTimeText();
             if (!pTimeText->IsValidTime()) {
-                Logger.TraceWarn("A bad TimeText. Address: [" + Text::Format("0x%x", pMessage) + "]");
+                spdlog::warn("A bad TimeText. Address: {}", (void*)pMessage);
                 return;
             }
-#if defined _DEBUG
-            Logger.TraceInfo("Caught a deleted meesage. Address: [" + Text::Format("0x%x", pMessage) + "]");
-#endif
+
+            spdlog::debug("Caught a deleted meesage. Address: {}", (void*)pMessage);
 
             std::lock_guard<std::mutex> Lock(_Mutex);
             _BlockedMessages.insert(pMessage);
         },
         [&](ULONG ExceptionCode)
         {
-            Logger.TraceWarn("Function: [" __FUNCTION__ "] An exception was caught. Code: [" + Text::Format("0x%x", ExceptionCode) + "]");
+            spdlog::warn("Function: [" __FUNCTION__ "] An exception was caught. Code: {:#x}", ExceptionCode);
         }
     );
 }

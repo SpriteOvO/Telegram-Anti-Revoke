@@ -2,10 +2,12 @@
 
 #include <Windows.h>
 #include <wininet.h>
+
 #include <nlohmann/json.hpp>
+#include <spdlog/spdlog.h>
+
 #include "Config.h"
 #include "Utils.h"
-#include "ILogger.h"
 
 
 using json = nlohmann::json;
@@ -18,8 +20,6 @@ IUpdater& IUpdater::GetInstance()
 
 bool IUpdater::CheckUpdate()
 {
-    auto &Logger = ILogger::GetInstance();
-
     // Get releases data
     //
 
@@ -32,36 +32,34 @@ bool IUpdater::CheckUpdate()
 
     std::optional<std::string> Response = GetDataByBridge();
     if (!Response.has_value()) {
-        Logger.TraceWarn("[Updater] GetDataByBridge() failed, try GetDataDirectly().");
+        spdlog::warn("[Updater] GetDataByBridge() failed, try GetDataDirectly().");
     }
     else
     {
         if (ParseResponse(Response.value())) {
-            Logger.TraceInfo("[Updater] ParseResponse() successed. (ByBridge)");
+            spdlog::info("[Updater] ParseResponse() successed. (ByBridge)");
             return true;
         }
-        Logger.TraceWarn("[Updater] ParseResponse() failed, try Directly. (ByBridge)");
+        spdlog::warn("[Updater] ParseResponse() failed, try Directly. (ByBridge)");
     }
 
     Response = GetDataDirectly();
     if (!Response.has_value()) {
-        Logger.TraceWarn("[Updater] GetDataDirectly() failed.");
+        spdlog::warn("[Updater] GetDataDirectly() failed.");
         return false;
     }
 
     if (!ParseResponse(Response.value())) {
-        Logger.TraceWarn("[Updater] ParseResponse() failed. (Directly)");
+        spdlog::warn("[Updater] ParseResponse() failed. (Directly)");
         return false;
     }
 
-    Logger.TraceInfo("[Updater] ParseResponse() successed. (Directly)");
+    spdlog::info("[Updater] ParseResponse() successed. (Directly)");
     return true;
 }
 
 bool IUpdater::ParseResponse(const std::string &Response)
 {
-    auto &Logger = ILogger::GetInstance();
-
     try
     {
         // Parse response
@@ -73,11 +71,11 @@ bool IUpdater::ParseResponse(const std::string &Response)
         const auto &Body = Root["body"];
 
         if (Message.is_string()) {
-            Logger.TraceWarn("[Updater] Response has a message. message: " + Message.get<std::string>());
+            spdlog::warn("[Updater] Response has a message. message: {}", Message.get<std::string>());
         }
 
         if (!TagName.is_string() || !HtmlUrl.is_string() || !Body.is_string()) {
-            Logger.TraceWarn("[Updater] Response fields invalid.");
+            spdlog::warn("[Updater] Response fields invalid.");
             return false;
         }
 
@@ -86,7 +84,7 @@ bool IUpdater::ParseResponse(const std::string &Response)
         std::string BodyContent = Body.get<std::string>();
 
         if (HtmlUrlContent.find(AR_REPO_URL) != 0) {
-            Logger.TraceWarn("[Updater] html_url field invalid. html_url: " + HtmlUrlContent);
+            spdlog::warn("[Updater] html_url field invalid. html_url: {}", HtmlUrlContent);
             return false;
         }
 
@@ -94,7 +92,7 @@ bool IUpdater::ParseResponse(const std::string &Response)
         std::vector<std::string> vLatest = Text::SplitByFlag(TagNameContent, ".");
 
         if (vLocal.size() != 3 || vLatest.size() != 3) {
-            Logger.TraceWarn("[Updater] Version format invalid. Local: " AR_VERSION_STRING " Latest: " + TagNameContent);
+            spdlog::warn("[Updater] Version format invalid. Local: {}, Latest: {}", AR_VERSION_STRING, TagNameContent);
             return false;
         }
 
@@ -104,11 +102,11 @@ bool IUpdater::ParseResponse(const std::string &Response)
         uint32_t LatestNumber = stoul(LatestString);
 
         if (LocalNumber >= LatestNumber) {
-            Logger.TraceInfo("[Updater] No need to update. Local: " + LocalString + " Latest: " + LatestString);
+            spdlog::info("[Updater] No need to update. Local: {}, Latest: {}", LocalString, LatestString);
             return true;
         }
 
-        Logger.TraceInfo("[Updater] Need to update. Local: " + LocalString + " Latest: " + LatestString);
+        spdlog::info("[Updater] Need to update. Local: {}, Latest: {}", LocalString, LatestString);
 
         // Get Changelog
         //
@@ -152,15 +150,13 @@ bool IUpdater::ParseResponse(const std::string &Response)
     }
     catch (json::exception &Exception)
     {
-        Logger.TraceWarn("[Updater] Caught a json exception. What: " + std::string{Exception.what()} + " Response: " + Response);
+        spdlog::warn("[Updater] Caught a json exception. What: {}, Response: {}", Exception.what(), Response);
         return false;
     }
 }
 
 std::optional<std::string> IUpdater::GetDataByBridge()
 {
-    auto &Logger = ILogger::GetInstance();
-
     std::string Response;
     uint32_t Status;
     bool IsSuccessed = Internet::HttpRequest(
@@ -177,12 +173,12 @@ std::optional<std::string> IUpdater::GetDataByBridge()
     );
 
     if (!IsSuccessed) {
-        Logger.TraceWarn("[Updater] Internet::HttpRequest() failed. (ByBridge)");
+        spdlog::warn("[Updater] Internet::HttpRequest() failed. (ByBridge)");
         return std::nullopt;
     }
 
     if (Status != HTTP_STATUS_OK) {
-        Logger.TraceWarn("[Updater] Response status is not 200. Status: " + std::to_string(Status) + " Response: " + Response + " (ByBridge)");
+        spdlog::warn("[Updater] Response status is not 200. Status: {}, Response: {} (ByBridge)", Status, Response);
         return std::nullopt;
     }
 
@@ -191,24 +187,22 @@ std::optional<std::string> IUpdater::GetDataByBridge()
         auto Root = json::parse(Response);
         const auto &BridgeErrorMessage = Root["bridge_error_message"];
         if (BridgeErrorMessage.is_string()) {
-            Logger.TraceWarn("[Updater] bridge_error_message: " + BridgeErrorMessage.get<std::string>() + " (ByBridge)");
+            spdlog::warn("[Updater] bridge_error_message: {} (ByBridge)", BridgeErrorMessage.get<std::string>());
             return std::nullopt;
         }
 
-        Logger.TraceInfo("[Updater] Get data by bridge successed.");
+        spdlog::info("[Updater] Get data by bridge successed.");
         return Response;
     }
     catch (json::exception &Exception)
     {
-        Logger.TraceWarn("[Updater] Caught a json exception. What: " + std::string{Exception.what()} + " Response: " + Response);
+        spdlog::warn("[Updater] Caught a json exception. What: {}, Response: {}", Exception.what(), Response);
         return std::nullopt;
     }
 }
 
 std::optional<std::string> IUpdater::GetDataDirectly()
 {
-    auto &Logger = ILogger::GetInstance();
-
     std::string Response;
     uint32_t Status;
     bool IsSuccessed = Internet::HttpRequest(
@@ -223,15 +217,15 @@ std::optional<std::string> IUpdater::GetDataDirectly()
     );
 
     if (!IsSuccessed) {
-        Logger.TraceWarn("[Updater] Internet::HttpRequest() failed. (Directly)");
+        spdlog::warn("[Updater] Internet::HttpRequest() failed. (Directly)");
         return std::nullopt;
     }
 
     if (Status != HTTP_STATUS_OK) {
-        Logger.TraceWarn("[Updater] Response status is not 200. Status: " + std::to_string(Status) + " Response: " + Response + " (Directly)");
+        spdlog::warn("[Updater] Response status is not 200. Status: {}, Response: {} (Directly)", Status, Response);
         return std::nullopt;
     }
 
-    Logger.TraceInfo("[Updater] Get data directly successed.");
+    spdlog::info("[Updater] Get data directly successed.");
     return Response;
 }

@@ -3,10 +3,11 @@
 // Used to forward the original exported function back to the hijacked system DLL.
 //
 
-#include <string>
 #include <Windows.h>
 
-#include "ILogger.h"
+#include <string>
+
+#include <spdlog/spdlog.h>
 
 
 #if defined OS_WIN10
@@ -77,9 +78,8 @@ namespace Proxy
     {
         void* Address = GetProcAddress(hOriginalModule, SymbolName);
         if (Address == NULL) {
-            ILogger::GetInstance().TraceError("Cannot find [" + std::string{SymbolName} + "] exported symbol.");
-            ExitProcess(0);
-            return NULL;
+            spdlog::critical("Cannot find \"{}\" exported symbol.", SymbolName);
+            std::exit(0);
         }
 
         return Address;
@@ -96,9 +96,8 @@ namespace Proxy
 
             hOriginalModule = LoadLibraryA((std::string{SystemPath} + "\\version.dll").c_str());
             if (hOriginalModule == NULL) {
-                ILogger::GetInstance().TraceError("Unable to load the original module.");
-                ExitProcess(0);
-                return;
+                spdlog::critical("Unable to load the original module.");
+                std::exit(0);
             }
         }
 
@@ -107,8 +106,6 @@ namespace Proxy
 #define INIT_ORIGINAL_EXPORT_ADDRESS(name, ordinal)    if (Proxy_OEFn ## name == NULL) { Proxy_OEFn ## name = GetExportedAddress(# name); }
         ORIGINAL_EXPORTS_CALLBACKER(INIT_ORIGINAL_EXPORT_ADDRESS);
 #undef INIT_ORIGINAL_EXPORT_ADDRESS
-
-        return;
     }
 
     void Deinitialize()

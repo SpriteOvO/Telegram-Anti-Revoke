@@ -1,10 +1,11 @@
 ﻿#include "Utils.h"
 
-#include <memory>
-#include <algorithm>
 #include <wininet.h>
 
-#include "ILogger.h"
+#include <memory>
+#include <algorithm>
+
+#include <spdlog/spdlog.h>
 
 #pragma comment(lib, "wininet.lib")
 #pragma comment(lib, "Version.lib")
@@ -162,7 +163,7 @@ namespace Internet
                 !InternetSetOptionA(hInternet, INTERNET_OPTION_RECEIVE_TIMEOUT, &Timeout, sizeof(Timeout)) ||
                 !InternetSetOptionA(hInternet, INTERNET_OPTION_SEND_TIMEOUT, &Timeout, sizeof(Timeout)))
             {
-                ILogger::GetInstance().TraceError("InternetSetOptionA Set timeout failed. Last error: " + std::to_string(::GetLastError()));
+                spdlog::critical("InternetSetOptionA Set timeout failed. Last error: {}", ::GetLastError());
                 break;
             }
 

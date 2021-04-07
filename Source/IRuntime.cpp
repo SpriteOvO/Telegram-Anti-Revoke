@@ -1,6 +1,7 @@
 #include "IRuntime.h"
 
-#include "ILogger.h"
+#include <spdlog/spdlog.h>
+
 #include "Utils.h"
 
 
@@ -19,7 +20,7 @@ bool IRuntime::Initialize()
         return false;
     }
 
-    ILogger::GetInstance().TraceInfo("[IRuntime] Telegram version: " + std::to_string(_FileVersion));
+    spdlog::info("[IRuntime] Telegram version: {}", _FileVersion);
 
     if (!GetModuleInformation(GetCurrentProcess(), (HMODULE)_MainModule, &_MainModuleInfo, sizeof(_MainModuleInfo))) {
         return false;
@@ -70,19 +71,17 @@ bool IRuntime::InitFixedData()
 
 bool IRuntime::InitDynamicData()
 {
-    auto &Logger = ILogger::GetInstance();
-
     bool Result = false;
 
     Safe::TryExcept(
         [&]() {
 #define INIT_DATA_AND_LOG(name)                                                 \
             if (!InitDynamicData_ ## name()) {                                  \
-                Logger.TraceWarn("[IRuntime] InitDynamicData_" # name "() failed.");       \
+                spdlog::warn("[IRuntime] InitDynamicData_" # name "() failed.");       \
                 return;                                                         \
             }                                                                   \
             else {                                                              \
-                Logger.TraceInfo("[IRuntime] InitDynamicData_" # name "() succeeded.");    \
+                spdlog::info("[IRuntime] InitDynamicData_" # name "() succeeded.");    \
             }
 
             INIT_DATA_AND_LOG(MallocFree);
@@ -97,7 +96,7 @@ bool IRuntime::InitDynamicData()
             Result = true;
         },
         [&](uint32_t ExceptionCode) {
-            Logger.TraceWarn("[IRuntime] InitDynamicData() caught an exception, code: " + Text::Format("0x%x", ExceptionCode));
+            spdlog::warn("[IRuntime] InitDynamicData() caught an exception, code: {:#x}", ExceptionCode);
         }
     );
 
@@ -170,13 +169,13 @@ bool IRuntime::InitDynamicData_MallocFree()
 
     std::vector<uintptr_t> vMallocResult = FindPatternInMainModule("\x41\x84\xC0\x75\xF9\x2B\xCA\x53\x56\x8D\x59\x01\x53\xE8", "xxxxxxxxxxxxxx");
     if (vMallocResult.size() != 1) {
-        ILogger::GetInstance().TraceWarn("[IRuntime] Search malloc failed.");
+        spdlog::warn("[IRuntime] Search malloc failed.");
         return false;
     }
 
     std::vector<uintptr_t> vFreeResult = FindPatternInRange(vMallocResult.at(0), 0x50, "\x56\xE8\x00\x00\x00\x00\x59\x5E\x5B\xEB", "xx????xxxx");
     if (vFreeResult.size() != 1) {
-        ILogger::GetInstance().TraceWarn("[IRuntime] Search free failed.");
+        spdlog::warn("[IRuntime] Search free failed.");
         return false;
     }
 
@@ -246,7 +245,7 @@ bool IRuntime::InitDynamicData_DestroyMessage()
     {
         std::vector<uintptr_t> vResult = FindPatternInMainModule("\x8B\x71\x00\x89\x08\x85\xC9\x0F\x84\x00\x00\x00\x00\x00\x00\x00\xE8", "xx?xxxxxx???????x");
         if (vResult.size() != 1) {
-            ILogger::GetInstance().TraceWarn("[IRuntime] Search DestroyMessage failed.");
+            spdlog::warn("[IRuntime] Search DestroyMessage failed.");
             return false;
         }
 
@@ -257,7 +256,7 @@ bool IRuntime::InitDynamicData_DestroyMessage()
     {
         std::vector<uintptr_t> vResult = FindPatternInMainModule("\x51\x8B\xC4\x89\x08\x8B\xCE\xE8\x00\x00\x00\x00\x80\xBE\x00\x00\x00\x00\x00", "xxxxxxxx????xx????x");
         if (vResult.size() != 1) {
-            ILogger::GetInstance().TraceWarn("[IRuntime] Search new DestroyMessage failed.");
+            spdlog::warn("[IRuntime] Search new DestroyMessage failed.");
             return false;
         }
 
@@ -315,7 +314,7 @@ bool IRuntime::InitDynamicData_EditedIndex()
 
     std::vector<uintptr_t> vResult = FindPatternInMainModule("\xE8\x00\x00\x00\x00\x83\x7C\x87\x00\x00\x73\x00\xE8", "x????xxx??x?x");
     if (vResult.size() != 1) {
-        ILogger::GetInstance().TraceWarn("[IRuntime] Search EditedIndex failed.");
+        spdlog::warn("[IRuntime] Search EditedIndex failed.");
         return false;
     }
 
@@ -389,7 +388,7 @@ bool IRuntime::InitDynamicData_SignedIndex()
 
     std::vector<uintptr_t> vResult = FindPatternInMainModule("\xE8\x00\x00\x00\x00\x8B\x44\x87\x08\x83\xCF\xFF", "x????xxxxxxx");
     if (vResult.size() != 1) {
-        ILogger::GetInstance().TraceWarn("[IRuntime] Search SignedIndex failed.");
+        spdlog::warn("[IRuntime] Search SignedIndex failed.");
         return false;
     }
 
@@ -443,7 +442,7 @@ bool IRuntime::InitDynamicData_ReplyIndex()
 
     std::vector<uintptr_t> vResult = FindPatternInMainModule("\xE8\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x46\x08\x8B\x38", "x????x????xxxxx");
     if (vResult.size() != 1) {
-        ILogger::GetInstance().TraceWarn("[IRuntime] Search ReplyIndex failed.");
+        spdlog::warn("[IRuntime] Search ReplyIndex failed.");
         return false;
     }
 
@@ -497,7 +496,7 @@ bool IRuntime::InitDynamicData_LangInstance()
     {
         vResult = FindPatternInMainModule("\x8B\x0D\x00\x00\x00\x00\x03\xC6\x0F\xB7\xC0\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B\x49", "xx????xxxxxxxxx????xx");
         if (vResult.empty()) {
-            ILogger::GetInstance().TraceWarn("[IRuntime] Search LangInstance failed. (old)");
+            spdlog::warn("[IRuntime] Search LangInstance failed. (old)");
             return false;
         }
 
@@ -508,7 +507,7 @@ bool IRuntime::InitDynamicData_LangInstance()
         for (uintptr_t Address : vResult)
         {
             if ((uint32_t)(*(uint8_t*)(Address + 21)) != LangInsOffset) {
-                ILogger::GetInstance().TraceWarn("[IRuntime] Searched LangInstance index not sure. (old)");
+                spdlog::warn("[IRuntime] Searched LangInstance index not sure. (old)");
                 return false;
             }
         }
@@ -518,7 +517,7 @@ bool IRuntime::InitDynamicData_LangInstance()
     {
         vResult = FindPatternInMainModule("\x8B\x0D\x00\x00\x00\x00\x03\xC6\x0F\xB7\xC0\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B", "xx????xxxxxxxxx????x");
         if (vResult.empty()) {
-            ILogger::GetInstance().TraceWarn("[IRuntime] Search LangInstance failed. (new)");
+            spdlog::warn("[IRuntime] Search LangInstance failed. (new)");
             return false;
         }
 
@@ -529,7 +528,7 @@ bool IRuntime::InitDynamicData_LangInstance()
         for (uintptr_t Address : vResult)
         {
             if (*(uint32_t*)(Address + 21) != LangInsOffset) {
-                ILogger::GetInstance().TraceWarn("[IRuntime] Searched LangInstance index not sure. (new)");
+                spdlog::warn("[IRuntime] Searched LangInstance index not sure. (new)");
                 return false;
             }
         }
@@ -548,14 +547,14 @@ bool IRuntime::InitDynamicData_LangInstance()
     }
 
     if (CoreAppInstance == NULL) {
-        ILogger::GetInstance().TraceWarn("[IRuntime] CoreAppInstance always nullptr.");
+        spdlog::warn("[IRuntime] CoreAppInstance always nullptr.");
         return false;
     }
 
     _Data.Address.pLangInstance = *(LanguageInstance**)(CoreAppInstance + LangInsOffset);
 
     if (_Data.Address.pLangInstance == NULL) {
-        ILogger::GetInstance().TraceWarn("[IRuntime] Searched pLangInstance is null.");
+        spdlog::warn("[IRuntime] Searched pLangInstance is null.");
         return false;
     }
 
@@ -577,14 +576,14 @@ bool IRuntime::InitDynamicData_ToHistoryMessage()
 
     std::vector<uintptr_t> vResult = FindPatternInMainModule("\x8B\x49\x00\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B\x01\xFF\x90\x00\x00\x00\x00\x85\xC0", "xx?xxxx????xxxx????xx");
     if (vResult.empty()) {
-        ILogger::GetInstance().TraceWarn("[IRuntime] Search toHistoryMessage index falied.");
+        spdlog::warn("[IRuntime] Search toHistoryMessage index falied.");
         return false;
     }
 
     uint32_t Offset = *(uint32_t*)(vResult.at(0) + 15);
 
     if (Offset % sizeof(void*) != 0) {
-        ILogger::GetInstance().TraceWarn("[IRuntime] Searched toHistoryMessage index invalid.");
+        spdlog::warn("[IRuntime] Searched toHistoryMessage index invalid.");
         return false;
     }
 
@@ -593,7 +592,7 @@ bool IRuntime::InitDynamicData_ToHistoryMessage()
     for (uintptr_t Address : vResult)
     {
         if (*(uint32_t*)(Address + 15) != Offset) {
-            ILogger::GetInstance().TraceWarn("[IRuntime] Searched toHistoryMessage index not sure.");
+            spdlog::warn("[IRuntime] Searched toHistoryMessage index not sure.");
             return false;
         }
     }

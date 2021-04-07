@@ -48,6 +48,7 @@ endif ()
 #
 add_subdirectory ("Source/ThirdParty/json")
 add_subdirectory ("Source/ThirdParty/minhook")
+add_subdirectory ("Source/ThirdParty/spdlog")
 
 
 # Code files
@@ -58,7 +59,7 @@ add_library (
     "Source/DllMain.cpp"
     "Source/RealMain.cpp"
     "Source/IAntiRevoke.cpp"        "Source/IAntiRevoke.h"
-    "Source/ILogger.cpp"            "Source/ILogger.h"
+    "Source/Logger.cpp"             "Source/Logger.h"
     "Source/IRuntime.cpp"           "Source/IRuntime.h"
     "Source/IUpdater.cpp"           "Source/IUpdater.h"
     "Source/QtString.cpp"           "Source/QtString.h"
@@ -106,3 +107,4 @@ add_custom_command (
 #
 target_link_libraries (TelegramAntiRevoke PRIVATE nlohmann_json::nlohmann_json)
 target_link_libraries (TelegramAntiRevoke PRIVATE minhook)
+target_link_libraries (TelegramAntiRevoke PRIVATE spdlog::spdlog)
