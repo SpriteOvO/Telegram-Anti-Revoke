@@ -1,0 +1,60 @@
+name: Windows MSVC Builds
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - 'Resource/**'
+    branches: [ dev ]
+
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - 'Resource/**'
+    branches: [ dev ]
+
+  workflow_dispatch:
+
+jobs:
+  Build:
+    runs-on: windows-latest
+
+    env:
+      UPLOAD_ARTIFACT: false
+
+    defaults:
+      run:
+        shell: pwsh
+
+    strategy:
+      matrix:
+        os: ['7', '10']
+        platform: [ { normal : 'x86', cmake : 'Win32' }, { normal : 'x64', cmake : 'x64' } ]
+        build_type: ['Release']
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Generate project and build
+        run: |
+          mkdir Build && cd Build
+          mkdir Win${{ matrix.os }}-${{ matrix.platform.normal }} && cd Win${{ matrix.os }}-${{ matrix.platform.normal }}
+          mkdir ${{ matrix.build_type }} && cd ${{ matrix.build_type }}
+
+          cmake -G "Visual Studio 16 2019" -A ${{ matrix.platform.cmake }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DTAR_OS=WIN${{ matrix.os }} ../../../
+          cmake --build . --config ${{ matrix.build_type }}
+
+          ls ./Binary
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        if: env.UPLOAD_ARTIFACT == 'true'
+        with:
+          name: Win${{ matrix.os }}-${{ matrix.platform.normal }}-${{ matrix.build_type }}
+          path: Build\Win${{ matrix.os }}-${{ matrix.platform.normal }}\${{ matrix.build_type }}\Binary\
+          retention-days: 5
