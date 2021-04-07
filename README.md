@@ -38,6 +38,7 @@ To avoid duplication of issues, please check existing issues before submitting.
 ## :gem: ThirdParty
 * json ([MIT License](https://github.com/nlohmann/json/blob/develop/LICENSE.MIT))
 * MinHook ([BSD 2-Clause License](https://github.com/TsudaKageyu/minhook/blob/master/LICENSE.txt))
+* spdlog ([MIT License](https://github.com/gabime/spdlog/blob/v1.x/LICENSE))
 
 ## :beer: Acknowledgments
 * Thanks to *采蘑菇的小蘑菇* for providing help with compiling Telegram.

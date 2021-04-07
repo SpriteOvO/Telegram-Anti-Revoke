@@ -38,6 +38,7 @@ Telegram 本地消息防撤回插件。
 ## :gem: 第三方
 * json ([MIT License](https://github.com/nlohmann/json/blob/develop/LICENSE.MIT))
 * MinHook ([BSD 2-Clause License](https://github.com/TsudaKageyu/minhook/blob/master/LICENSE.txt))
+* spdlog ([MIT License](https://github.com/gabime/spdlog/blob/v1.x/LICENSE))
 
 ## :beer: 鸣谢
 * 感谢 *采蘑菇的小蘑菇* 提供编译 Telegram 的帮助。
