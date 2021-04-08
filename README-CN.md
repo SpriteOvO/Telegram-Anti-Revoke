@@ -31,6 +31,9 @@ Telegram 本地消息防撤回插件。
 3. 复制 *version.dll* 文件到 Telegram 根目录。  
 4. 运行 Telegram 程序。
 
+## :hammer_and_wrench: 构建
+转到 [构建说明](/Docs/Build.md)。
+
 ## :bug: 报告
 请使用 [问题跟踪器](https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues) 报告问题或提出新功能。  
 为避免问题重复，请在提交前检查已有的问题。

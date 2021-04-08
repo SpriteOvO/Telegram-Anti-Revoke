@@ -31,6 +31,9 @@ If you are using **Telegram beta**, please check the latest preview version.
 3. Copy *version.dll* file into the Telegram root directory.  
 4. Run the Telegram program.
 
+## :hammer_and_wrench: Build
+See the [Build Instructions](/Docs/Build.md).
+
 ## :bug: Report
 Please use the [Issue Tracker](https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues) to report issues or suggest new features.  
 To avoid duplication of issues, please check existing issues before submitting.
