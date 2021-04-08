@@ -23,7 +23,7 @@ Open __Powershell__, go to ___BuildPath___.
 Modify the following arguments according to your needs and run it.
 
 ```
-cmake -G "Visual Studio 16 2019" -A [Win32|x64] -DCMAKE_BUILD_TYPE=[Debug|Release|RelWithDebInfo|MinSizeRel] -DTAR_OS=[WIN7|WIN10] ../
-cmake --build . --config [Debug|Release|RelWithDebInfo|MinSizeRel]
+cmake -G "Visual Studio 16 2019" -A <Win32|x64> -DCMAKE_BUILD_TYPE=<Debug|Release|RelWithDebInfo|MinSizeRel> -DTAR_OS=<WIN7|WIN10> ../
+cmake --build . --config <Debug|Release|RelWithDebInfo|MinSizeRel>
 ls ./Binary
 ```
