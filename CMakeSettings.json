@@ -2,7 +2,7 @@
   "configurations": [
     {
       "name": "Win7-x86-Debug",
-      "generator": "Ninja",
+      "generator": "Visual Studio 16 2019",
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
@@ -13,7 +13,7 @@
     },
     {
       "name": "Win7-x86-Release",
-      "generator": "Ninja",
+      "generator": "Visual Studio 16 2019",
       "configurationType": "RelWithDebInfo",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
@@ -24,7 +24,7 @@
     },
     {
       "name": "Win7-x64-Debug",
-      "generator": "Ninja",
+      "generator": "Visual Studio 16 2019",
       "configurationType": "Debug",
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${projectDir}\\out\\build\\${name}",
@@ -35,7 +35,7 @@
     },
     {
       "name": "Win7-x64-Release",
-      "generator": "Ninja",
+      "generator": "Visual Studio 16 2019",
       "configurationType": "RelWithDebInfo",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
@@ -46,7 +46,7 @@
     },
     {
       "name": "Win10-x86-Debug",
-      "generator": "Ninja",
+      "generator": "Visual Studio 16 2019",
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
@@ -57,7 +57,7 @@
     },
     {
       "name": "Win10-x86-Release",
-      "generator": "Ninja",
+      "generator": "Visual Studio 16 2019",
       "configurationType": "RelWithDebInfo",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
@@ -68,7 +68,7 @@
     },
     {
       "name": "Win10-x64-Debug",
-      "generator": "Ninja",
+      "generator": "Visual Studio 16 2019",
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
@@ -79,7 +79,7 @@
     },
     {
       "name": "Win10-x64-Release",
-      "generator": "Ninja",
+      "generator": "Visual Studio 16 2019",
       "configurationType": "RelWithDebInfo",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
