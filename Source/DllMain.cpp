@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include <spdlog/spdlog.h>
+#include "Logger.h"
 
 
 #if defined OS_WIN10
@@ -78,8 +78,7 @@ namespace Proxy
     {
         void* Address = GetProcAddress(hOriginalModule, SymbolName);
         if (Address == NULL) {
-            spdlog::critical("Cannot find \"{}\" exported symbol.", SymbolName);
-            std::exit(0);
+            Logger::DoError("Cannot find \"" + std::string{SymbolName} + "\" exported symbol.", true);
         }
 
         return Address;
@@ -96,8 +95,7 @@ namespace Proxy
 
             hOriginalModule = LoadLibraryA((std::string{SystemPath} + "\\version.dll").c_str());
             if (hOriginalModule == NULL) {
-                spdlog::critical("Unable to load the original module.");
-                std::exit(0);
+                Logger::DoError("Unable to load the original module.", true);
             }
         }
 

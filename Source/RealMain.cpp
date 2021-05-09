@@ -10,6 +10,16 @@
 #include "Utils.h"
 
 
+bool CheckProcess()
+{
+    std::string CurrentName = File::GetCurrentName();
+    if (Text::ToLower(CurrentName) != "telegram.exe") {
+        spdlog::warn("This is not a Telegram process. \"{}\"", CurrentName);
+        return false;
+    }
+    return true;
+}
+
 ULONG WINAPI Initialize(PVOID pParameter)
 {
 #ifdef _DEBUG
@@ -17,6 +27,10 @@ ULONG WINAPI Initialize(PVOID pParameter)
 #endif
 
     Logger::Initialize();
+
+    if (!CheckProcess()) {
+        return TRUE;
+    }
 
     spdlog::info("Running. Version: \"{}\"", AR_VERSION_STRING);
 
@@ -47,30 +61,15 @@ ULONG WINAPI Initialize(PVOID pParameter)
     return 0;
 }
 
-bool CheckProcess()
-{
-    std::string CurrentName = File::GetCurrentName();
-    if (Text::ToLower(CurrentName) != "telegram.exe") {
-        spdlog::warn("This is not a Telegram process. \"{}\"", CurrentName);
-        return false;
-    }
-    return true;
-}
-
 BOOL WINAPI RealDllMain(HMODULE hModule, ULONG Reason, PVOID pReserved)
 {
     if (Reason == DLL_PROCESS_ATTACH)
     {
         DisableThreadLibraryCalls(hModule);
 
-        if (!CheckProcess()) {
-            return TRUE;
-        }
-
         HANDLE hThread = CreateThread(NULL, 0, Initialize, NULL, 0, NULL);
         if (hThread == NULL) {
-            spdlog::critical("CreateThread() failed. ErrorCode: {}", ::GetLastError());
-            std::exit(0);
+            Logger::DoError("CreateThread() failed. ErrorCode: " + std::to_string(::GetLastError()), true);
             return FALSE;
         }
 

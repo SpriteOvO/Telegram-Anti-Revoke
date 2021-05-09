@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 
+#include <spdlog/spdlog.h>
 #include <spdlog/sinks/sink.h>
 #include <spdlog/pattern_formatter.h>
 #include <spdlog/details/log_msg.h>

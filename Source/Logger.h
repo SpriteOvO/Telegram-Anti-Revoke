@@ -1,10 +1,12 @@
 ﻿#pragma once
 
-#include <spdlog/spdlog.h>
+#include <string>
 
 
 namespace Logger
 {
+    [[noreturn]] void DoError(const std::string &Content, bool bReport);
+
     void Initialize();
 
 } // namespace Logger
