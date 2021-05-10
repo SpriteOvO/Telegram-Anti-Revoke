@@ -6,14 +6,12 @@ on:
       - '**.md'
       - 'LICENSE'
       - 'Resource/**'
-    branches: [ dev ]
 
   pull_request:
     paths-ignore:
       - '**.md'
       - 'LICENSE'
       - 'Resource/**'
-    branches: [ dev ]
 
   workflow_dispatch:
 
