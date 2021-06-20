@@ -123,6 +123,11 @@ BOOL WINAPI RealDllMain(HMODULE hModule, ULONG Reason, PVOID pReserved);
 
 BOOL WINAPI DllMain(HMODULE hModule, ULONG Reason, PVOID pReserved)
 {
+#if defined PLATFORM_X64
+    // Prevent calling API crashes in exported functions (idk why...
+    Proxy::Proxy_Initialize();
+#endif
+
     if (Reason == DLL_PROCESS_ATTACH) {
         return RealDllMain(hModule, Reason, pReserved);
     }
