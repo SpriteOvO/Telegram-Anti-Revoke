@@ -127,7 +127,11 @@ namespace Logger
             {
 #ifdef _DEBUG
             case spdlog::level::warn:
-                MessageBoxA(NULL, Payload.c_str(), "Anti-Revoke Plugin", MB_ICONWARNING);
+                std::thread{
+                    [](std::string Payload) {
+                        MessageBoxA(NULL, Payload.c_str(), "Anti-Revoke Plugin", MB_ICONWARNING);
+                    }, Payload
+                }.detach();
                 break;
 #endif
             case spdlog::level::err:
