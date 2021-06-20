@@ -413,6 +413,8 @@ bool IRuntime::InitDynamicData_DestroyMessage()
 
 bool IRuntime::InitDynamicData_EditedIndex()
 {
+#if defined PLATFORM_X86
+
     /*
         void __thiscall HistoryMessage::applyEdition(HistoryMessage *this, MTPDmessage *message)
 
@@ -467,6 +469,55 @@ bool IRuntime::InitDynamicData_EditedIndex()
     _Data.Function.EditedIndex = (FnIndexT)(EditedIndexCaller + 5 + *(int32_t*)(EditedIndexCaller + 1));
 
     return true;
+
+#elif defined PLATFORM_X64
+
+    /*
+        void __fastcall HistoryMessage::applyEdition(HistoryMessage *__hidden this, const struct MTPDmessage *)
+
+        Telegram.exe+A67003 - 8B 49 28              - mov ecx,[rcx+28]
+        Telegram.exe+A67006 - 8B C1                 - mov eax,ecx
+        Telegram.exe+A67008 - 83 E0 40              - and eax,40 { 64 }
+        Telegram.exe+A6700B - 75 06                 - jne Telegram.exe+A67013
+        Telegram.exe+A6700D - 83 C9 40              - or ecx,40 { 64 }
+        Telegram.exe+A67010 - 89 4F 28              - mov [rdi+28],ecx
+        Telegram.exe+A67013 - 48 8B 47 08           - mov rax,[rdi+08]
+        Telegram.exe+A67017 - 48 8B 18              - mov rbx,[rax]
+
+        // find this
+        //
+        Telegram.exe+A6701A - E8 4129B7FF           - call Telegram.exe+5D9960
+
+        Telegram.exe+A6701F - 48 63 C8              - movsxd  rcx,eax
+        Telegram.exe+A67022 - 48 83 7C CB 10 08     - cmp qword ptr [rbx+rcx*8+10],08 { 8 }
+        Telegram.exe+A67028 - 73 26                 - jae Telegram.exe+A67050
+        Telegram.exe+A6702A - E8 3129B7FF           - call Telegram.exe+5D9960
+        Telegram.exe+A6702F - 8B C8                 - mov ecx,eax
+        Telegram.exe+A67031 - BA 01000000           - mov edx,00000001 { 1 }
+        Telegram.exe+A67036 - 48 8B 47 08           - mov rax,[rdi+08]
+        Telegram.exe+A6703A - 48 D3 E2              - shl rdx,cl
+        Telegram.exe+A6703D - 48 8B 08              - mov rcx,[rax]
+        Telegram.exe+A67040 - 48 0B 91 18020000     - or rdx,[rcx+00000218]
+        Telegram.exe+A67047 - 48 8D 4F 08           - lea rcx,[rdi+08]
+        Telegram.exe+A6704B - E8 700CEBFF           - call Telegram.exe+917CC0
+
+        E8 ?? ?? ?? ?? 48 63 C8 48 83 7C CB ?? ?? 73 ?? E8
+    */
+
+    std::vector<uintptr_t> vResult = FindPatternInMainModule("\xE8\x00\x00\x00\x00\x48\x63\xC8\x48\x83\x7C\xCB\x00\x00\x73\x00\xE8", "x????xxxxxxx??x?x");
+    if (vResult.size() != 1) {
+        spdlog::warn("[IRuntime] Search EditedIndex failed.");
+        return false;
+    }
+
+    uintptr_t EditedIndexCaller = vResult.at(0);
+    _Data.Function.EditedIndex = (FnIndexT)(EditedIndexCaller + 5 + *(int32_t*)(EditedIndexCaller + 1));
+
+    return true;
+
+#else
+# error "Unimplemented."
+#endif
 }
 
 bool IRuntime::InitDynamicData_SignedIndex()
