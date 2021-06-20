@@ -24,7 +24,7 @@
     },
     {
       "name": "Win7-x64-Debug",
-      "generator": "Visual Studio 16 2019",
+      "generator": "Visual Studio 16 2019 Win64",
       "configurationType": "Debug",
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${projectDir}\\out\\build\\${name}",
@@ -35,7 +35,7 @@
     },
     {
       "name": "Win7-x64-Release",
-      "generator": "Visual Studio 16 2019",
+      "generator": "Visual Studio 16 2019 Win64",
       "configurationType": "RelWithDebInfo",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
@@ -68,7 +68,7 @@
     },
     {
       "name": "Win10-x64-Debug",
-      "generator": "Visual Studio 16 2019",
+      "generator": "Visual Studio 16 2019 Win64",
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
@@ -79,7 +79,7 @@
     },
     {
       "name": "Win10-x64-Release",
-      "generator": "Visual Studio 16 2019",
+      "generator": "Visual Studio 16 2019 Win64",
       "configurationType": "RelWithDebInfo",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
