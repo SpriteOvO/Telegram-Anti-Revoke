@@ -665,6 +665,8 @@ bool IRuntime::InitDynamicData_SignedIndex()
 
 bool IRuntime::InitDynamicData_ReplyIndex()
 {
+#if defined PLATFORM_X86
+
     /*
         HistoryView__Message__updatePressed
 
@@ -715,6 +717,44 @@ bool IRuntime::InitDynamicData_ReplyIndex()
     _Data.Function.ReplyIndex = (FnIndexT)(ReplyIndexCaller + 5 + *(int32_t*)(ReplyIndexCaller + 1));
 
     return true;
+
+#elif defined PLATFORM_X64
+
+    /*
+        bool __fastcall HistoryMessage::updateDependencyItem()
+
+        .text:0000000140AE10D0 48 89 5C 24 18                          mov     [rsp+arg_10], rbx
+        .text:0000000140AE10D5 57                                      push    rdi
+        .text:0000000140AE10D6 48 83 EC 20                             sub     rsp, 20h
+        .text:0000000140AE10DA 48 8B 41 08                             mov     rax, [rcx+8]
+        .text:0000000140AE10DE 48 8B F9                                mov     rdi, rcx
+        .text:0000000140AE10E1 48 8B 18                                mov     rbx, [rax]
+        .text:0000000140AE10E4 E8 57 A2 FF FF                          call    ?Index@?$RuntimeComponent@UHistoryMessageReply@@VHistoryItem@@@@SAHXZ ; RuntimeComponent<HistoryMessageReply,HistoryItem>::Index(void)
+        .text:0000000140AE10E9 48 63 D0                                movsxd  rdx, eax
+        .text:0000000140AE10EC 48 63 44 D3 10                          movsxd  rax, dword ptr [rbx+rdx*8+10h]
+        .text:0000000140AE10F1 83 F8 08                                cmp     eax, 8
+        .text:0000000140AE10F4 72 6B                                   jb      short loc_140AE1161
+        .text:0000000140AE10F6 48 8B D8                                mov     rbx, rax
+        .text:0000000140AE10F9 48 03 5F 08                             add     rbx, [rdi+8]
+        .text:0000000140AE10FD 74 62                                   jz      short loc_140AE1161
+
+        E8 ?? ?? ?? ?? 48 63 D0 48 63 44 D3 10 83 F8 08 72 6B
+    */
+
+    std::vector<uintptr_t> vResult = FindPatternInMainModule("\xE8\x00\x00\x00\x00\x48\x63\xD0\x48\x63\x44\xD3\x10\x83\xF8\x08\x72\x6B", "x????xxxxxxxxxxxxx");
+    if (vResult.size() != 1) {
+        spdlog::warn("[IRuntime] Search ReplyIndex failed.");
+        return false;
+    }
+
+    uintptr_t ReplyIndexCaller = vResult.at(0);
+    _Data.Function.ReplyIndex = (FnIndexT)(ReplyIndexCaller + 5 + *(int32_t*)(ReplyIndexCaller + 1));
+
+    return true;
+
+#else
+# error "Unimplemented."
+#endif
 }
 
 bool IRuntime::InitDynamicData_LangInstance()
