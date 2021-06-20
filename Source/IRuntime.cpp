@@ -255,6 +255,8 @@ bool IRuntime::InitDynamicData_MallocFree()
 
 bool IRuntime::InitDynamicData_DestroyMessage()
 {
+#if defined PLATFORM_X86
+
     /*
         void __userpurge Data::Session::processMessagesDeleted(Data::Session *this@<ecx>, int a2@<ebp>, int a3@<edi>, int a4@<esi>, int channelId, QVector<MTPint> *data)
 
@@ -329,6 +331,84 @@ bool IRuntime::InitDynamicData_DestroyMessage()
     }
 
     return true;
+
+#elif defined PLATFORM_X64
+
+    /*
+        void Data::Session::processMessagesDeleted(struct ChatIdType<2>, class QVector<class tl::int_type> const &)
+
+        Telegram.exe+7ADDB2 - 74 1C                 - je Telegram.exe+7ADDD0
+        Telegram.exe+7ADDB4 - 48 8B 09              - mov rcx,[rcx]
+        Telegram.exe+7ADDB7 - 3B 42 10              - cmp eax,[rdx+10]
+        Telegram.exe+7ADDBA - 74 17                 - je Telegram.exe+7ADDD3
+        Telegram.exe+7ADDBC - 0F1F 40 00            - nop dword ptr [rax+00]
+        Telegram.exe+7ADDC0 - 48 3B D1              - cmp rdx,rcx
+        Telegram.exe+7ADDC3 - 74 0B                 - je Telegram.exe+7ADDD0
+        Telegram.exe+7ADDC5 - 48 8B 52 08           - mov rdx,[rdx+08]
+        Telegram.exe+7ADDC9 - 3B 42 10              - cmp eax,[rdx+10]
+        Telegram.exe+7ADDCC - 75 F2                 - jne Telegram.exe+7ADDC0
+        Telegram.exe+7ADDCE - EB 03                 - jmp Telegram.exe+7ADDD3
+        Telegram.exe+7ADDD0 - 48 8B D5              - mov rdx,rbp
+        Telegram.exe+7ADDD3 - 48 85 D2              - test rdx,rdx
+        Telegram.exe+7ADDD6 - 49 0F44 D0            - cmove rdx,r8
+        Telegram.exe+7ADDDA - 49 3B D0              - cmp rdx,r8
+        Telegram.exe+7ADDDD - 74 4C                 - je Telegram.exe+7ADE2B
+        Telegram.exe+7ADDDF - 48 8B 52 18           - mov rdx,[rdx+18]
+        Telegram.exe+7ADDE3 - 48 85 D2              - test rdx,rdx
+        Telegram.exe+7ADDE6 - 0F84 5D010000         - je Telegram.exe+7ADF49
+        Telegram.exe+7ADDEC - 48 8B 5A 18           - mov rbx,[rdx+18]
+        Telegram.exe+7ADDF0 - 48 85 DB              - test rbx,rbx
+        Telegram.exe+7ADDF3 - 0F84 29010000         - je Telegram.exe+7ADF22
+        Telegram.exe+7ADDF9 - 48 8B CB              - mov rcx,rbx
+
+        // find this
+        //
+        Telegram.exe+7ADDFC - E8 2FAD2600           - call Telegram.exe+A18B30
+
+        Telegram.exe+7ADE01 - 80 BB 28020000 00     - cmp byte ptr [rbx+00000228],00 { 0 }
+        Telegram.exe+7ADE08 - 75 6D                 - jne Telegram.exe+7ADE77
+        Telegram.exe+7ADE0A - 48 89 9C 24 C8000000  - mov [rsp+000000C8],rbx
+        Telegram.exe+7ADE12 - 4C 8D 84 24 C8000000  - lea r8,[rsp+000000C8]
+        Telegram.exe+7ADE1A - 48 8D 54 24 20        - lea rdx,[rsp+20]
+        Telegram.exe+7ADE1F - 48 8D 4C 24 30        - lea rcx,[rsp+30]
+        Telegram.exe+7ADE24 - E8 E7F4ACFF           - call Telegram.exe+27D310
+        Telegram.exe+7ADE29 - EB 4C                 - jmp Telegram.exe+7ADE77
+        Telegram.exe+7ADE2B - 48 85 FF              - test rdi,rdi
+        Telegram.exe+7ADE2E - 74 47                 - je Telegram.exe+7ADE77
+        Telegram.exe+7ADE30 - 80 BF 74010000 00     - cmp byte ptr [rdi+00000174],00 { 0 }
+        Telegram.exe+7ADE37 - 74 3E                 - je Telegram.exe+7ADE77
+        Telegram.exe+7ADE39 - 3B 87 70010000        - cmp eax,[rdi+00000170]
+        Telegram.exe+7ADE3F - 7C 36                 - jl Telegram.exe+7ADE77
+        Telegram.exe+7ADE41 - 48 8B 4F 48           - mov rcx,[rdi+48]
+        Telegram.exe+7ADE45 - 48 85 C9              - test rcx,rcx
+        Telegram.exe+7ADE48 - 0F84 86000000         - je Telegram.exe+7ADED4
+        Telegram.exe+7ADE4E - 48 8B 89 F80D0000     - mov rcx,[rcx+00000DF8]
+        Telegram.exe+7ADE55 - 48 8D 44 24 48        - lea rax,[rsp+48]
+        Telegram.exe+7ADE5A - 48 89 84 24 C8000000  - mov [rsp+000000C8],rax
+        Telegram.exe+7ADE62 - 48 89 AC 24 80000000  - mov [rsp+00000080],rbp
+        Telegram.exe+7ADE6A - 4C 8D 44 24 48        - lea r8,[rsp+48]
+        Telegram.exe+7ADE6F - 48 8B D7              - mov rdx,rdi
+        Telegram.exe+7ADE72 - E8 09B1F8FF           - call Telegram.exe+738F80
+        Telegram.exe+7ADE77 - 48 83 C6 04           - add rsi,04 { 4 }
+        Telegram.exe+7ADE7B - 49 3B F7              - cmp rsi,r15
+        Telegram.exe+7ADE7E - 0F85 CCFEFFFF         - jne Telegram.exe+7ADD50
+
+        48 8B 5A 18 48 85 DB 0F 84 ?? ?? ?? ?? 48 8B CB E8
+    */
+
+    std::vector<uintptr_t> vResult = FindPatternInMainModule("\x48\x8B\x5A\x18\x48\x85\xDB\x0F\x84\x00\x00\x00\x00\x48\x8B\xCB\xE8", "xxxxxxxxx????xxxx");
+    if (vResult.size() != 1) {
+        spdlog::warn("[IRuntime] Search DestroyMessage failed.");
+        return false;
+    }
+
+    _Data.Address.FnDestroyMessageCaller = (void*)(vResult.at(0) + 16);
+
+    return true;
+
+#else
+# error "Unimplemented."
+#endif
 }
 
 bool IRuntime::InitDynamicData_EditedIndex()
