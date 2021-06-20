@@ -522,6 +522,8 @@ bool IRuntime::InitDynamicData_EditedIndex()
 
 bool IRuntime::InitDynamicData_SignedIndex()
 {
+#if defined PLATFORM_X86
+
     /*
         HistoryView__Message__refreshEditedBadge
 
@@ -592,6 +594,73 @@ bool IRuntime::InitDynamicData_SignedIndex()
     _Data.Function.SignedIndex = (FnIndexT)(SignedIndexCaller + 5 + *(int32_t*)(SignedIndexCaller + 1));
 
     return true;
+
+#elif defined PLATFORM_X64
+
+    /*
+        void __fastcall HistoryMessage::setPostAuthor(HistoryMessage *__hidden this, const struct QString *)
+
+        .text:0000000140ADFF00 48 89 5C 24 10                          mov     [rsp+arg_8], rbx
+        .text:0000000140ADFF05 48 89 74 24 18                          mov     [rsp+arg_10], rsi
+        .text:0000000140ADFF0A 48 89 7C 24 20                          mov     [rsp+arg_18], rdi
+        .text:0000000140ADFF0F 41 56                                   push    r14
+        .text:0000000140ADFF11 48 83 EC 20                             sub     rsp, 20h
+        .text:0000000140ADFF15 48 8B 41 08                             mov     rax, [rcx+8]
+        .text:0000000140ADFF19 4C 8B F2                                mov     r14, rdx
+        .text:0000000140ADFF1C 48 8B F9                                mov     rdi, rcx
+        .text:0000000140ADFF1F 48 8B 18                                mov     rbx, [rax]
+        .text:0000000140ADFF22 E8 E9 B4 FF FF                          call    ?Index@?$RuntimeComponent@UHistoryMessageSigned@@VHistoryItem@@@@SAHXZ ; RuntimeComponent<HistoryMessageSigned,HistoryItem>::Index(void)
+        .text:0000000140ADFF27 4C 63 C0                                movsxd  r8, eax
+        .text:0000000140ADFF2A 4A 63 44 C3 10                          movsxd  rax, dword ptr [rbx+r8*8+10h]
+        .text:0000000140ADFF2F 83 F8 08                                cmp     eax, 8
+        .text:0000000140ADFF32 72 09                                   jb      short loc_140ADFF3D
+        .text:0000000140ADFF34 48 8B D8                                mov     rbx, rax
+        .text:0000000140ADFF37 48 03 5F 08                             add     rbx, [rdi+8]
+        .text:0000000140ADFF3B EB 02                                   jmp     short loc_140ADFF3F
+        .text:0000000140ADFF3D                         ; ---------------------------------------------------------------------------
+        .text:0000000140ADFF3D
+        .text:0000000140ADFF3D                         loc_140ADFF3D:                          ; CODE XREF: HistoryMessage::setPostAuthor(QString const &)+32↑j
+        .text:0000000140ADFF3D 33 DB                                   xor     ebx, ebx
+        .text:0000000140ADFF3F
+        .text:0000000140ADFF3F                         loc_140ADFF3F:                          ; CODE XREF: HistoryMessage::setPostAuthor(QString const &)+3B↑j
+        .text:0000000140ADFF3F 49 8B 06                                mov     rax, [r14]
+        .text:0000000140ADFF42 83 78 04 00                             cmp     dword ptr [rax+4], 0
+        .text:0000000140ADFF46 75 48                                   jnz     short loc_140ADFF90
+        .text:0000000140ADFF48 48 85 DB                                test    rbx, rbx
+        .text:0000000140ADFF4B 0F 84 FA 00 00 00                       jz      loc_140AE004B
+        .text:0000000140ADFF51 E8 BA B4 FF FF                          call    ?Index@?$RuntimeComponent@UHistoryMessageSigned@@VHistoryItem@@@@SAHXZ ; RuntimeComponent<HistoryMessageSigned,HistoryItem>::Index(void)
+        .text:0000000140ADFF56 8B C8                                   mov     ecx, eax
+        .text:0000000140ADFF58 41 B8 01 00 00 00                       mov     r8d, 1
+        .text:0000000140ADFF5E 48 8B 47 08                             mov     rax, [rdi+8]
+        .text:0000000140ADFF62 49 D3 E0                                shl     r8, cl
+        .text:0000000140ADFF65 48 8D 4F 08                             lea     rcx, [rdi+8]    ; mask
+        .text:0000000140ADFF69 49 F7 D0                                not     r8
+        .text:0000000140ADFF6C 48 8B 10                                mov     rdx, [rax]
+        .text:0000000140ADFF6F 48 8B 92 18 02 00 00                    mov     rdx, [rdx+218h]
+        .text:0000000140ADFF76 49 23 D0                                and     rdx, r8
+        .text:0000000140ADFF79 E8 82 F7 EA FF                          call    ?UpdateComponents@RuntimeComposerBase@@IEAA_N_K@Z ; RuntimeComposerBase::UpdateComponents(unsigned __int64)
+        .text:0000000140ADFF7E 48 8B 4F 18                             mov     rcx, [rdi+18h]
+        .text:0000000140ADFF82 48 85 C9                                test    rcx, rcx
+        .text:0000000140ADFF85 0F 84 D6 00 00 00                       jz      loc_140AE0061
+        .text:0000000140ADFF8B E9 AB 00 00 00                          jmp     loc_140AE003B
+
+        E8 ?? ?? ?? ?? 4C 63 C0 4A 63 44 C3 10 83 F8 08 72 ?? 48 8B D8 48 03 5F 08 EB
+    */
+
+    std::vector<uintptr_t> vResult = FindPatternInMainModule("\xE8\x00\x00\x00\x00\x4C\x63\xC0\x4A\x63\x44\xC3\x10\x83\xF8\x08\x72\x00\x48\x8B\xD8\x48\x03\x5F\x08\xEB", "x????xxxxxxxxxxxx?xxxxxxxx");
+    if (vResult.size() != 1) {
+        spdlog::warn("[IRuntime] Search SignedIndex failed.");
+        return false;
+    }
+
+    uintptr_t SignedIndexCaller = vResult.at(0);
+    _Data.Function.SignedIndex = (FnIndexT)(SignedIndexCaller + 5 + *(int32_t*)(SignedIndexCaller + 1));
+
+    return true;
+
+#else
+# error "Unimplemented."
+#endif
 }
 
 bool IRuntime::InitDynamicData_ReplyIndex()
