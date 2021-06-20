@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
+include(FetchContent)
+
 project(TelegramAntiRevoke VERSION 0.3.2 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -16,6 +18,44 @@ endif()
 if (NOT DEFINED TAR_OS)
     message(FATAL_ERROR "\"TAR_OS\" is undefined.")
 endif()
+
+
+##################################################
+# Third-party libraries
+#
+
+# minhook
+#
+message("Fetching 'minhook'...")
+FetchContent_Declare(
+    minhook
+    GIT_REPOSITORY "https://github.com/TsudaKageyu/minhook.git"
+    GIT_TAG "423d1e45af2ed2719a5c31e990e935ef301ed9c3"
+)
+FetchContent_MakeAvailable(minhook)
+message("Fetch 'minhook' done.")
+
+# json
+#
+message("Fetching 'json'...")
+FetchContent_Declare(
+    json
+    GIT_REPOSITORY "https://github.com/nlohmann/json.git"
+    GIT_TAG "v3.9.1"
+)
+FetchContent_MakeAvailable(json)
+message("Fetch 'json' done.")
+
+# spdlog
+#
+message("Fetching 'spdlog'...")
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY "https://github.com/gabime/spdlog.git"
+    GIT_TAG "v1.8.5"
+)
+FetchContent_MakeAvailable(spdlog)
+message("Fetch 'spdlog' done.")
 
 
 ##################################################
@@ -44,14 +84,6 @@ if (MSVC)
 else()
     message(FATAL_ERROR "Unsupported compiler.")
 endif()
-
-
-##################################################
-# Third-party libraries
-#
-add_subdirectory ("Source/ThirdParty/json")
-add_subdirectory ("Source/ThirdParty/minhook")
-add_subdirectory ("Source/ThirdParty/spdlog")
 
 
 ##################################################
