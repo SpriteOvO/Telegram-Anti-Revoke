@@ -119,6 +119,8 @@ std::vector<uintptr_t> IRuntime::FindPatternInRange(uintptr_t StartAddress, size
 
 bool IRuntime::InitDynamicData_MallocFree()
 {
+#if defined PLATFORM_X86
+
     /*
         void __cdecl __std_exception_copy(__std_exception_data *from, __std_exception_data *to)
 
@@ -186,6 +188,69 @@ bool IRuntime::InitDynamicData_MallocFree()
     _Data.Function.Free = (FnFreeT)(FreeCaller + 5 + *(int32_t*)(FreeCaller + 1));
 
     return true;
+
+#elif defined PLATFORM_X64
+
+    /*
+        void __fastcall _std_exception_copy(const __std_exception_data *from, __std_exception_data *to)
+
+        .text:0000000142B5CF5D 48 FF C7                                inc     rdi
+        .text:0000000142B5CF60 80 3C 38 00                             cmp     byte ptr [rax+rdi], 0
+        .text:0000000142B5CF64 75 F7                                   jnz     short loc_142B5CF5D
+        .text:0000000142B5CF66 48 8D 4F 01                             lea     rcx, [rdi+1]    ; size
+
+        // find this (internal malloc)
+        //
+        .text:0000000142B5CF6A E8 99 F5 00 00                          call    malloc
+
+        .text:0000000142B5CF6F 48 8B D8                                mov     rbx, rax
+        .text:0000000142B5CF72 48 85 C0                                test    rax, rax
+        .text:0000000142B5CF75 74 1C                                   jz      short loc_142B5CF93
+        .text:0000000142B5CF77 4C 8B 06                                mov     r8, [rsi]       ; source
+        .text:0000000142B5CF7A 48 8D 57 01                             lea     rdx, [rdi+1]    ; size_in_elements
+        .text:0000000142B5CF7E 48 8B C8                                mov     rcx, rax        ; destination
+        .text:0000000142B5CF81 E8 96 5E 02 00                          call    strcpy_s
+        .text:0000000142B5CF86 48 8B C3                                mov     rax, rbx
+        .text:0000000142B5CF89 41 C6 46 08 01                          mov     byte ptr [r14+8], 1
+        .text:0000000142B5CF8E 49 89 06                                mov     [r14], rax
+        .text:0000000142B5CF91 33 DB                                   xor     ebx, ebx
+        .text:0000000142B5CF93
+        .text:0000000142B5CF93                         loc_142B5CF93:                          ; CODE XREF: __std_exception_copy+45↑j
+        .text:0000000142B5CF93 48 8B CB                                mov     rcx, rbx        ; block
+
+        // and find this (internal free)
+        //
+        .text:0000000142B5CF96 E8 59 F5 00 00                          call    free
+
+        .text:0000000142B5CF9B EB 0A                                   jmp     short loc_142B5CFA7
+
+        malloc: 48 FF C7 80 3C 38 00 75 F7 48 8D 4F 01 E8
+        free: 48 8B CB E8 ?? ?? ?? ?? EB
+    */
+
+    std::vector<uintptr_t> vMallocResult = FindPatternInMainModule("\x48\xFF\xC7\x80\x3C\x38\x00\x75\xF7\x48\x8D\x4F\x01\xE8", "xxxxxxxxxxxxxx");
+    if (vMallocResult.size() != 1) {
+        spdlog::warn("[IRuntime] Search malloc failed.");
+        return false;
+    }
+
+    std::vector<uintptr_t> vFreeResult = FindPatternInRange(vMallocResult.at(0), 0x50, "\x48\x8B\xCB\xE8\x00\x00\x00\x00\xEB", "xxxx????x");
+    if (vFreeResult.size() != 1) {
+        spdlog::warn("[IRuntime] Search free failed.");
+        return false;
+    }
+
+    uintptr_t MallocCaller = vMallocResult.at(0) + 13;
+    uintptr_t FreeCaller = vFreeResult.at(0) + 3;
+
+    _Data.Function.Malloc = (FnMallocT)(MallocCaller + 5 + *(int32_t*)(MallocCaller + 1));
+    _Data.Function.Free = (FnFreeT)(FreeCaller + 5 + *(int32_t*)(FreeCaller + 1));
+
+    return true;
+
+#else
+# error "Unimplemented."
+#endif
 }
 
 bool IRuntime::InitDynamicData_DestroyMessage()
