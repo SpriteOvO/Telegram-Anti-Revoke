@@ -32,7 +32,13 @@ ULONG WINAPI Initialize(PVOID pParameter)
         return TRUE;
     }
 
-    spdlog::info("Running. Version: \"{}\"", AR_VERSION_STRING);
+    spdlog::info("Running. Version: \"{}\", Platform: \"{}\"", AR_VERSION_STRING,
+#if defined PLATFORM_X86
+        "x86"
+#elif defined PLATFORM_X64
+        "x64"
+#endif
+    );
 
     auto &Runtime = IRuntime::GetInstance();
     auto &AntiRevoke = IAntiRevoke::GetInstance();
