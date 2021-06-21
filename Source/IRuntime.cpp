@@ -916,6 +916,8 @@ bool IRuntime::InitDynamicData_LangInstance()
 
 bool IRuntime::InitDynamicData_ToHistoryMessage()
 {
+#if defined PLATFORM_X86
+
     /*
         Telegram.exe+724503 - 8B 49 20              - mov ecx,[ecx+20]
         Telegram.exe+724506 - 85 C9                 - test ecx,ecx
@@ -949,6 +951,46 @@ bool IRuntime::InitDynamicData_ToHistoryMessage()
             return false;
         }
     }
+
+#elif defined PLATFORM_X64
+
+    /*
+        std::optional<enum Storage::SharedMediaType> Media::View::OverlayWidget::sharedMediaType(void)const
+    
+        .text:0000000140D35693 48 83 7F 50 00                          cmp     qword ptr [rdi+50h], 0
+        .text:0000000140D35698 74 2B                                   jz      short loc_140D356C5
+        .text:0000000140D3569A 48 8B 06                                mov     rax, [rsi]
+        .text:0000000140D3569D 48 8B CE                                mov     rcx, rsi
+
+        // find this
+        //
+        .text:0000000140D356A0 FF 90 C8 01 00 00                       call    qword ptr [rax+1C8h]
+
+        .text:0000000140D356A6 C6 43 01 01                             mov     byte ptr [rbx+1], 1
+        .text:0000000140D356AA 48 85 C0                                test    rax, rax
+        .text:0000000140D356AD 75 51                                   jnz     short loc_140D35700
+        .text:0000000140D356AF C6 03 07                                mov     byte ptr [rbx], 7
+        .text:0000000140D356B2 48 8B C3                                mov     rax, rbx
+        .text:0000000140D356B5 48 8B 5C 24 40                          mov     rbx, [rsp+38h+arg_0]
+        .text:0000000140D356BA 48 8B 74 24 48                          mov     rsi, [rsp+38h+arg_8]
+        .text:0000000140D356BF 48 83 C4 30                             add     rsp, 30h
+        .text:0000000140D356C3 5F                                      pop     rdi
+        .text:0000000140D356C4 C3                                      retn
+
+        FF 90 ?? ?? ?? ?? C6 43 01 01
+    */
+
+    std::vector<uintptr_t> vResult = FindPatternInMainModule("\xFF\x90\x00\x00\x00\x00\xC6\x43\x01\x01", "xx????xxxx");
+    if (vResult.size() != 1) {
+        spdlog::warn("[IRuntime] Search toHistoryMessage index falied.");
+        return false;
+    }
+
+    uint32_t Offset = *(uint32_t*)(vResult.at(0) + 2);
+
+#else
+# error "Unimplemented."
+#endif
 
     _Data.Index.ToHistoryMessage = (Offset / sizeof(void*)) - 1 /* Start from 0 */;
 
