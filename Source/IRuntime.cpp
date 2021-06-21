@@ -761,6 +761,8 @@ bool IRuntime::InitDynamicData_LangInstance()
 {
     using namespace std::chrono_literals;
 
+#if defined PLATFORM_X86
+
     /*
         Lang::Instance *__cdecl Lang::Current()
 
@@ -840,6 +842,52 @@ bool IRuntime::InitDynamicData_LangInstance()
     }
 
     uintptr_t pCoreAppInstance = *(uintptr_t*)(vResult.at(0) + 2);
+
+#elif defined PLATFORM_X64
+
+    /*
+        Telegram.exe+BEACE0 - 40 53                 - push rbx
+        Telegram.exe+BEACE2 - 48 83 EC 20           - sub rsp,20 { 32 }
+
+        // find this (Application::Instance)
+        //
+        Telegram.exe+BEACE6 - 48 8B 05 F34CC704     - mov rax,[Telegram.exe+585F9E0] { (23F931E6690) }
+
+        Telegram.exe+BEACED - 48 8B D9              - mov rbx,rcx
+        Telegram.exe+BEACF0 - 48 85 C0              - test rax,rax
+        Telegram.exe+BEACF3 - 0F84 86000000         - je Telegram.exe+BEAD7F
+
+        // and this (std::unique_ptr<Lang::Instance> _langpack)
+        //
+        Telegram.exe+BEACF9 - 48 8B 80 90060000     - mov rax,[rax+00000690]
+
+        Telegram.exe+BEAD00 - 0FB7 D2               - movzx edx,dx
+        Telegram.exe+BEAD03 - 48 8B 48 70           - mov rcx,[rax+70]
+        Telegram.exe+BEAD07 - 48 8B 40 78           - mov rax,[rax+78]
+        Telegram.exe+BEAD0B - 48 2B C1              - sub rax,rcx
+        Telegram.exe+BEAD0E - 48 C1 F8 03           - sar rax,03 { 3 }
+        Telegram.exe+BEAD12 - 48 3B D0              - cmp rdx,rax
+        Telegram.exe+BEAD15 - 73 41                 - jae Telegram.exe+BEAD58
+        Telegram.exe+BEAD17 - 48 8B 04 D1           - mov rax,[rcx+rdx*8]
+        Telegram.exe+BEAD1B - 48 8D 0C D1           - lea rcx,[rcx+rdx*8]
+        Telegram.exe+BEAD1F - 48 89 03              - mov [rbx],rax
+        Telegram.exe+BEAD22 - 48 3B CB              - cmp rcx,rbx
+
+        48 8B 05 ?? ?? ?? ?? 48 8B D9 48 85 C0 0F 84 ?? ?? ?? ?? 48 8B 80
+    */
+
+    std::vector<uintptr_t> vResult = FindPatternInMainModule("\x48\x8B\x05\x00\x00\x00\x00\x48\x8B\xD9\x48\x85\xC0\x0F\x84\x00\x00\x00\x00\x48\x8B\x80", "xxx????xxxxxxxx????xxx");
+    if (vResult.size() != 1) {
+        spdlog::warn("[IRuntime] Search LangInstance failed. (new x64)");
+        return false;
+    }
+
+    uintptr_t pCoreAppInstance = vResult.at(0) + 7 + *(int32_t*)(vResult.at(0) + 3);
+    uint32_t LangInsOffset = *(uint32_t*)(vResult.at(0) + 22);
+
+#else
+# error "Unimplemented."
+#endif
 
     uintptr_t CoreAppInstance = NULL;
     for (size_t i = 0; i < 20; ++i)
