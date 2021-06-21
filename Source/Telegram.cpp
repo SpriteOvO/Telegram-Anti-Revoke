@@ -226,7 +226,7 @@ void HistoryMessage::SetTimeWidth(int32_t Value)
 }
 
 //////////////////////////////////////////////////
-// LanguageInstance
+// Lang::Instance
 //
 
 QtString* LanguageInstance::GetId()
