@@ -83,7 +83,7 @@ void IAntiRevoke::InitMarker()
             }
         }
 
-        // For more languages or corrections, please go to the GitHub issue submission.
+        // For more languages or corrections, please submit on the GitHub Issue Tracker.
     };
 
     // Set default lang
@@ -307,7 +307,7 @@ void IAntiRevoke::OnDestroyMessage(History *pHistory, HistoryMessage* pMessage)
     Safe::TryExcept(
         [&]()
         {
-            // TODO: Allow revoke BOT messages in non-private chats.
+            // TODO: Allow revoking BOT messages in non-private chats.
             //
 
             if (!pMessage->IsMessage()) {
