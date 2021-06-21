@@ -231,20 +231,44 @@ void HistoryMessage::SetTimeWidth(int32_t Value)
 
 QtString* LanguageInstance::GetId()
 {
+#if defined PLATFORM_X86
     return (QtString*)((uintptr_t)this + 0x4);
+#elif defined PLATFORM_X64
+    return (QtString*)((uintptr_t)this + 0x8);
+#else
+# error "Unimplemented."
+#endif
 }
 
 QtString* LanguageInstance::GetPluralId()
 {
+#if defined PLATFORM_X86
     return (QtString*)((uintptr_t)this + 0x8);
+#elif defined PLATFORM_X64
+    return (QtString*)((uintptr_t)this + 0x10);
+#else
+# error "Unimplemented."
+#endif
 }
 
 QtString* LanguageInstance::GetName()
 {
+#if defined PLATFORM_X86
     return (QtString*)((uintptr_t)this + 0x14);
+#elif defined PLATFORM_X64
+    return (QtString*)((uintptr_t)this + 0x28);
+#else
+# error "Unimplemented."
+#endif
 }
 
 QtString* LanguageInstance::GetNativeName()
 {
+#if defined PLATFORM_X86
     return (QtString*)((uintptr_t)this + 0x18);
+#elif defined PLATFORM_X64
+    return (QtString*)((uintptr_t)this + 0x30);
+#else
+# error "Unimplemented."
+#endif
 }
