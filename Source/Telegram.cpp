@@ -66,7 +66,13 @@ Media* HistoryViewElement::GetMedia()
 
 QtString* HistoryMessageEdited::GetTimeText()
 {
+#if defined PLATFORM_X86
     return (QtString*)((uintptr_t)this + 0x10);
+#elif defined PLATFORM_X64
+    return (QtString*)((uintptr_t)this + 0x18);
+#else
+# error "Unimplemented."
+#endif
 }
 
 //////////////////////////////////////////////////
