@@ -112,7 +112,7 @@ public:
     bool IsMessage();
 
     template <class CompT>
-    CompT* GetComponent(uint32_t Index);
+    CompT* GetComponent(uint32_t index);
 
     HistoryMessageEdited* GetEdited();
     HistoryMessageSigned* GetSigned();

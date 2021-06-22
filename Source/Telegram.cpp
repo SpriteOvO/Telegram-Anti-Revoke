@@ -137,17 +137,24 @@ bool HistoryMessage::IsMessage()
 }
 
 template <class CompT>
-CompT* HistoryMessage::GetComponent(uint32_t Index)
+CompT* HistoryMessage::GetComponent(uint32_t index)
 {
-    CompT* Result = NULL;
+    CompT *result = nullptr;
 
     Safe::TryExcept(
-        [&]()
-        {
-            auto pData = *(void***)((uintptr_t)this + 8);
-            int32_t Offset = *(int32_t*)((uintptr_t)(*pData) + 4ui64 * Index + 8);
-            if (Offset >= 4) {
-                Result = (CompT*)((uintptr_t)pData + Offset);
+        [&]() {
+            struct RuntimeComposerMetadata {
+                size_t size;
+                size_t align;
+                size_t offsets[64];
+                int last;
+            };
+
+            auto data = *(void***)((uintptr_t)this + 8);
+            auto metaData = (RuntimeComposerMetadata*)(*data);
+            auto offset = metaData->offsets[index];
+            if (offset >= sizeof(RuntimeComposerMetadata*)) {
+                result = (CompT*)((uintptr_t)data + offset);
             }
 
         }, [&](ULONG ExceptionCode)
@@ -156,7 +163,7 @@ CompT* HistoryMessage::GetComponent(uint32_t Index)
         }
     );
 
-    return Result;
+    return result;
 }
 
 HistoryMessageEdited* HistoryMessage::GetEdited()
