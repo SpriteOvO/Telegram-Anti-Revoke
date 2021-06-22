@@ -475,42 +475,47 @@ bool IRuntime::InitDynamicData_EditedIndex()
     /*
         void __fastcall HistoryMessage::applyEdition(HistoryMessage *__hidden this, const struct MTPDmessage *)
 
-        Telegram.exe+A67003 - 8B 49 28              - mov ecx,[rcx+28]
-        Telegram.exe+A67006 - 8B C1                 - mov eax,ecx
-        Telegram.exe+A67008 - 83 E0 40              - and eax,40 { 64 }
-        Telegram.exe+A6700B - 75 06                 - jne Telegram.exe+A67013
-        Telegram.exe+A6700D - 83 C9 40              - or ecx,40 { 64 }
-        Telegram.exe+A67010 - 89 4F 28              - mov [rdi+28],ecx
-        Telegram.exe+A67013 - 48 8B 47 08           - mov rax,[rdi+08]
-        Telegram.exe+A67017 - 48 8B 18              - mov rbx,[rax]
+        Telegram.exe+A65456 - 44 8B 42 10           - mov r8d,[rdx+10]
+        Telegram.exe+A6545A - 41 81 E0 00002000     - and r8d,00200000 { 2097152 }
+        Telegram.exe+A65461 - 44 0B C0              - or r8d,eax
+        Telegram.exe+A65464 - 44 89 41 28           - mov [rcx+28],r8d
+        Telegram.exe+A65468 - F7 42 10 00800000     - test [rdx+10],00008000 { 32768 }
+        Telegram.exe+A6546F - 48 8D 9A 98000000     - lea rbx,[rdx+00000098]
+        Telegram.exe+A65476 - 49 0F44 DF            - cmove rbx,r15
+        Telegram.exe+A6547A - 48 85 DB              - test rbx,rbx
+        Telegram.exe+A6547D - 74 6F                 - je Telegram.exe+A654EE
+        Telegram.exe+A6547F - 41 0FBA E8 0F         - bts r8d,0F { 15 }
+        Telegram.exe+A65484 - 44 89 41 28           - mov [rcx+28],r8d
+        Telegram.exe+A65488 - 48 8B 41 08           - mov rax,[rcx+08]
+        Telegram.exe+A6548C - 48 8B 38              - mov rdi,[rax]
+        Telegram.exe+A6548F - E8 8C0ED7FF           - call Telegram.exe+7D6320
+        Telegram.exe+A65494 - 48 63 C8              - movsxd  rcx,eax
+        Telegram.exe+A65497 - 48 83 7C CF 10 08     - cmp qword ptr [rdi+rcx*8+10],08 { 8 }
+        Telegram.exe+A6549D - 73 26                 - jae Telegram.exe+A654C5
 
         // find this
         //
-        Telegram.exe+A6701A - E8 4129B7FF           - call Telegram.exe+5D9960
+        Telegram.exe+A6549F - E8 7C0ED7FF           - call Telegram.exe+7D6320
 
-        Telegram.exe+A6701F - 48 63 C8              - movsxd  rcx,eax
-        Telegram.exe+A67022 - 48 83 7C CB 10 08     - cmp qword ptr [rbx+rcx*8+10],08 { 8 }
-        Telegram.exe+A67028 - 73 26                 - jae Telegram.exe+A67050
-        Telegram.exe+A6702A - E8 3129B7FF           - call Telegram.exe+5D9960
-        Telegram.exe+A6702F - 8B C8                 - mov ecx,eax
-        Telegram.exe+A67031 - BA 01000000           - mov edx,00000001 { 1 }
-        Telegram.exe+A67036 - 48 8B 47 08           - mov rax,[rdi+08]
-        Telegram.exe+A6703A - 48 D3 E2              - shl rdx,cl
-        Telegram.exe+A6703D - 48 8B 08              - mov rcx,[rax]
-        Telegram.exe+A67040 - 48 0B 91 18020000     - or rdx,[rcx+00000218]
-        Telegram.exe+A67047 - 48 8D 4F 08           - lea rcx,[rdi+08]
-        Telegram.exe+A6704B - E8 700CEBFF           - call Telegram.exe+917CC0
+        Telegram.exe+A654A4 - 8B C8                 - mov ecx,eax
+        Telegram.exe+A654A6 - BA 01000000           - mov edx,00000001 { 1 }
+        Telegram.exe+A654AB - 48 D3 E2              - shl rdx,cl
+        Telegram.exe+A654AE - 48 8B 46 08           - mov rax,[rsi+08]
+        Telegram.exe+A654B2 - 48 8B 08              - mov rcx,[rax]
+        Telegram.exe+A654B5 - 48 0B 91 18020000     - or rdx,[rcx+00000218]
+        Telegram.exe+A654BC - 48 8D 4E 08           - lea rcx,[rsi+08]
+        Telegram.exe+A654C0 - E8 FB27EBFF           - call Telegram.exe+917CC0
 
-        E8 ?? ?? ?? ?? 48 63 C8 48 83 7C CB ?? ?? 73 ?? E8
+        48 83 7C CF 10 08 73 ?? E8
     */
 
-    std::vector<uintptr_t> vResult = FindPatternInMainModule("\xE8\x00\x00\x00\x00\x48\x63\xC8\x48\x83\x7C\xCB\x00\x00\x73\x00\xE8", "x????xxxxxxx??x?x");
+    std::vector<uintptr_t> vResult = FindPatternInMainModule("\x48\x83\x7C\xCF\x10\x08\x73\x00\xE8", "xxxxxxx?x");
     if (vResult.size() != 1) {
         spdlog::warn("[IRuntime] Search EditedIndex failed.");
         return false;
     }
 
-    uintptr_t EditedIndexCaller = vResult.at(0);
+    uintptr_t EditedIndexCaller = vResult.at(0) + 8;
     _Data.Function.EditedIndex = (FnIndexT)(EditedIndexCaller + 5 + *(int32_t*)(EditedIndexCaller + 1));
 
     return true;
