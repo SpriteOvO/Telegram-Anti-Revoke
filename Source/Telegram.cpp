@@ -144,8 +144,8 @@ CompT* HistoryMessage::GetComponent(uint32_t Index)
     Safe::TryExcept(
         [&]()
         {
-            PVOID *pData = *(PVOID**)((uintptr_t)this + 8);
-            INT Offset = *(INT*)((uintptr_t)(*pData) + 4 * Index + 8);
+            auto pData = *(void***)((uintptr_t)this + 8);
+            int32_t Offset = *(int32_t*)((uintptr_t)(*pData) + 4ui64 * Index + 8);
             if (Offset >= 4) {
                 Result = (CompT*)((uintptr_t)pData + Offset);
             }
