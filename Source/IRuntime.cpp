@@ -393,10 +393,10 @@ bool IRuntime::InitDynamicData_DestroyMessage()
         Telegram.exe+7ADE7B - 49 3B F7              - cmp rsi,r15
         Telegram.exe+7ADE7E - 0F85 CCFEFFFF         - jne Telegram.exe+7ADD50
 
-        48 8B 5A 18 48 85 DB 0F 84 ?? ?? ?? ?? 48 8B CB E8
+        48 8B 5A 18 48 85 DB 0F 84 ?? ?? ?? ?? 48 8B CB E8 ?? ?? ?? ?? 80 BB ?? ?? ?? ?? 00
     */
 
-    std::vector<uintptr_t> vResult = FindPatternInMainModule("\x48\x8B\x5A\x18\x48\x85\xDB\x0F\x84\x00\x00\x00\x00\x48\x8B\xCB\xE8", "xxxxxxxxx????xxxx");
+    std::vector<uintptr_t> vResult = FindPatternInMainModule("\x48\x8B\x5A\x18\x48\x85\xDB\x0F\x84\x00\x00\x00\x00\x48\x8B\xCB\xE8\x00\x00\x00\x00\x80\xBB\x00\x00\x00\x00\x00", "xxxxxxxxx????xxxx????xx????x");
     if (vResult.size() != 1) {
         spdlog::warn("[IRuntime] Search DestroyMessage failed.");
         return false;

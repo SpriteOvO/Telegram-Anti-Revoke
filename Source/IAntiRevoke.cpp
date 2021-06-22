@@ -273,11 +273,14 @@ bool IAntiRevoke::HookRevokeFunction()
 {
     void* HookAddress = IRuntime::GetInstance().GetData().Address.FnDestroyMessageCaller;
     void* TargetAddress = Utils::GetFunctionAddress(&History::OnDestroyMessage);
-    std::vector<uint8_t> Shellcode = Memory::MakeCall(HookAddress, TargetAddress);
 
     // Save the original function
     //
     _FnOriginalDestroyMessage = (FnDestroyMessageT)((uintptr_t)HookAddress + 5 + *(int32_t*)((uintptr_t)HookAddress + 1));
+
+#if defined PLATFORM_X86
+
+    std::vector<uint8_t> Shellcode = Memory::MakeCall(HookAddress, TargetAddress);
 
     return Memory::ForceOperate(
         HookAddress,
@@ -286,6 +289,46 @@ bool IAntiRevoke::HookRevokeFunction()
             memcpy(HookAddress, Shellcode.data(), Shellcode.size());
         }
     );
+
+#elif defined PLATFORM_X64
+
+    std::vector<uint8_t> Shellcode = {
+        0xFF, 0xFF, 0xFF,                                                                               // mov rcx,rbx                          ; Original placeholders
+        0xFF, 0x15, 0x02, 0x00, 0x00, 0x00, 0xEB, 0x08, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // call History::OnDestroyMessage       ; Detour
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,                                                       // cmp byte ptr [rbx+00000228],00 { 0 } ; Original
+        0xFF, 0x25, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF              // jmp XXXXXXXXXXXXXXXX                 ; Jump back
+    };
+
+    auto HookBegin = (uint8_t*)HookAddress - 3;
+    auto JumpBack = HookBegin + 15;
+
+    std::memcpy(Shellcode.data(), HookBegin, 3);
+    std::memcpy(Shellcode.data() + 11, &TargetAddress, sizeof(TargetAddress));
+    std::memcpy(Shellcode.data() + 19, HookBegin + 8, 7);
+    std::memcpy(Shellcode.data() + 32, &JumpBack, sizeof(JumpBack));
+
+    std::vector<uint8_t> Jumper = {
+        0xFF, 0x25, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF              // jmp XXXXXXXXXXXXXXXX
+    };
+
+    auto Allocated = VirtualAlloc(nullptr, 0x1000, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+    if (Allocated == nullptr) {
+        spdlog::warn("VirtualAlloc failed. LastError: {}", ::GetLastError());
+        return false;
+    }
+
+    std::memcpy(Jumper.data() + 6, &Allocated, sizeof(Allocated));
+    std::memcpy(Allocated, Shellcode.data(), Shellcode.size());
+
+    return Memory::ForceOperate(HookBegin, Jumper.size(),
+        [&]() {
+            std::memcpy(HookBegin, Jumper.data(), Jumper.size());
+        }
+    );
+
+#else
+# error "Unimplemented."
+#endif
 }
 
 void IAntiRevoke::OnFree(void *Block)
