@@ -118,7 +118,7 @@ public:
     HistoryMessageSigned* GetSigned();
     HistoryMessageReply* GetReply();
 
-    History* GetHistory();
+    // History* GetHistory();
     Media* GetMedia();
     bool IsSticker();
     bool IsLargeEmoji();

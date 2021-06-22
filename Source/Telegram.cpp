@@ -168,10 +168,10 @@ HistoryMessageReply* HistoryMessage::GetReply()
     return GetComponent<HistoryMessageReply>(IRuntime::GetInstance().GetData().Function.ReplyIndex());
 }
 
-History* HistoryMessage::GetHistory()
-{
-    return *(History**)((uintptr_t)this + 0x10);
-}
+// History* HistoryMessage::GetHistory()
+// {
+//     return *(History**)((uintptr_t)this + 0x10);
+// }
 
 Media* HistoryMessage::GetMedia()
 {
