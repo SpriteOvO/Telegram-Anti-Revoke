@@ -41,7 +41,7 @@ bool IRuntime::InitFixedData()
         _Data.Offset.TimeText = 0x70;
         _Data.Offset.TimeWidth = 0x74;
         _Data.Offset.MainView = 0x5C;
-        _Data.Offset.Media = 0x54;
+        // _Data.Offset.Media = 0x54;
         _Data.Offset.SignedTimeText = 0x14;
         // _Data.Offset.HistoryPeer = 0x7C;
     }
@@ -51,7 +51,7 @@ bool IRuntime::InitFixedData()
         _Data.Offset.TimeText = 0x70;
         _Data.Offset.TimeWidth = 0x74;
         _Data.Offset.MainView = 0x5C;
-        _Data.Offset.Media = 0x54;
+        // _Data.Offset.Media = 0x54;
         _Data.Offset.SignedTimeText = 0x10;    // changed
         // _Data.Offset.HistoryPeer = 0x7C;       // maybe untested! (I forgot :)
     }
@@ -61,7 +61,7 @@ bool IRuntime::InitFixedData()
         _Data.Offset.TimeText = 0x78;          // changed
         _Data.Offset.TimeWidth = 0x7C;         // changed
         _Data.Offset.MainView = 0x60;          // changed
-        _Data.Offset.Media = 0x5C;             // changed
+        // _Data.Offset.Media = 0x5C;             // changed
         _Data.Offset.SignedTimeText = 0x10;
         // _Data.Offset.HistoryPeer = 0x7C;       // untested!
     }

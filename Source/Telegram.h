@@ -3,17 +3,17 @@
 #include "QtString.h"
 
 
-enum class DocumentType : uint32_t
-{
-    File = 0,
-    Video = 1,
-    Song = 2,
-    Sticker = 3,
-    Animated = 4,
-    Voice = 5,
-    RoundVideo = 6,
-    WallPaper = 7,
-};
+// enum class DocumentType : uint32_t
+// {
+//     File = 0,
+//     Video = 1,
+//     Song = 2,
+//     Sticker = 3,
+//     Animated = 4,
+//     Voice = 5,
+//     RoundVideo = 6,
+//     WallPaper = 7,
+// };
 
 
 class Object
@@ -29,17 +29,17 @@ public:
     int32_t Height = 0;
 };
 
-class DocumentData
-{
-public:
-    DocumentType GetType();
-    bool IsSticker();
-};
+// class DocumentData
+// {
+// public:
+//     DocumentType GetType();
+//     bool IsSticker();
+// };
 
 class Media : public Object
 {
 public:
-    DocumentData *GetDocument();
+    // DocumentData *GetDocument();
 };
 
 class HistoryViewElement : public Object
@@ -68,24 +68,24 @@ public:
 
 };
 
-class PeerData
-{
-public:
-    bool IsChannel();
-
-private:
-    using PeerId = uint64_t;
-
-    static constexpr auto PeerIdMask         = PeerId(0xFFFFFFFFULL);
-    static constexpr auto PeerIdTypeMask     = PeerId(0xF00000000ULL);
-    static constexpr auto PeerIdUserShift    = PeerId(0x000000000ULL);
-    static constexpr auto PeerIdChatShift    = PeerId(0x100000000ULL);
-    static constexpr auto PeerIdChannelShift = PeerId(0x200000000ULL);
-    static constexpr auto PeerIdFakeShift    = PeerId(0xF00000000ULL);
-
-    PeerId GetId();
-
-};
+// class PeerData
+// {
+// public:
+//     bool IsChannel();
+// 
+// private:
+//     using PeerId = uint64_t;
+// 
+//     static constexpr auto PeerIdMask         = PeerId(0xFFFFFFFFULL);
+//     static constexpr auto PeerIdTypeMask     = PeerId(0xF00000000ULL);
+//     static constexpr auto PeerIdUserShift    = PeerId(0x000000000ULL);
+//     static constexpr auto PeerIdChatShift    = PeerId(0x100000000ULL);
+//     static constexpr auto PeerIdChannelShift = PeerId(0x200000000ULL);
+//     static constexpr auto PeerIdFakeShift    = PeerId(0xF00000000ULL);
+// 
+//     PeerId GetId();
+// 
+// };
 
 class HistoryMessage;
 
@@ -119,9 +119,9 @@ public:
     HistoryMessageReply* GetReply();
 
     // History* GetHistory();
-    Media* GetMedia();
-    bool IsSticker();
-    bool IsLargeEmoji();
+    // Media* GetMedia();
+    // bool IsSticker();
+    // bool IsLargeEmoji();
     HistoryViewElement* GetMainView();
     QtString* GetTimeText();
     int32_t GetTimeWidth();

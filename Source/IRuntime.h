@@ -21,7 +21,7 @@ public:
             uint32_t TimeText;
             uint32_t TimeWidth;
             uint32_t MainView;
-            uint32_t Media;
+            // uint32_t Media;
             uint32_t SignedTimeText;
             // uint32_t HistoryPeer;
         } Offset;

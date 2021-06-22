@@ -25,25 +25,25 @@ void Object::SetWidth(int32_t Value)
 // DocumentData
 //
 
-DocumentType DocumentData::GetType()
-{
-    return *(DocumentType*)((uintptr_t)this + 8);
-}
-
-bool DocumentData::IsSticker()
-{
-    return GetType() == DocumentType::Sticker;
-}
+// DocumentType DocumentData::GetType()
+// {
+//     return *(DocumentType*)((uintptr_t)this + 8);
+// }
+// 
+// bool DocumentData::IsSticker()
+// {
+//     return GetType() == DocumentType::Sticker;
+// }
 
 //////////////////////////////////////////////////
 // Media
 //
 
-DocumentData* Media::GetDocument()
-{
-    // DocumentData *Media::document()
-    return *(DocumentData**)((uintptr_t)this + 8);
-}
+// DocumentData* Media::GetDocument()
+// {
+//     // DocumentData *Media::document()
+//     return *(DocumentData**)((uintptr_t)this + 8);
+// }
 
 //////////////////////////////////////////////////
 // HistoryView::Element
@@ -102,15 +102,15 @@ int32_t HistoryMessageReply::GetMaxReplyWidth()
 // PeerData
 //
 
-bool PeerData::IsChannel()
-{
-    return (GetId() & PeerIdTypeMask) == PeerIdChannelShift;
-}
-
-PeerData::PeerId PeerData::GetId()
-{
-    return *(PeerId*)((uintptr_t)this + 0x8);
-}
+// bool PeerData::IsChannel()
+// {
+//     return (GetId() & PeerIdTypeMask) == PeerIdChannelShift;
+// }
+// 
+// PeerData::PeerId PeerData::GetId()
+// {
+//     return *(PeerId*)((uintptr_t)this + 0x8);
+// }
 
 //////////////////////////////////////////////////
 // History
@@ -192,38 +192,38 @@ HistoryMessageReply* HistoryMessage::GetReply()
 //     return *(History**)((uintptr_t)this + 0x10);
 // }
 
-Media* HistoryMessage::GetMedia()
-{
-    return *(Media**)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.Media);
-}
+// Media* HistoryMessage::GetMedia()
+// {
+//     return *(Media**)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.Media);
+// }
+// 
+// bool HistoryMessage::IsSticker()
+// {
+//     if (Media *pMedia = GetMedia()) {
+//         if (DocumentData *pData = pMedia->GetDocument()) {
+//             return pData->IsSticker();
+//         }
+//     }
+//     return FALSE;
+// }
 
-bool HistoryMessage::IsSticker()
-{
-    if (Media *pMedia = GetMedia()) {
-        if (DocumentData *pData = pMedia->GetDocument()) {
-            return pData->IsSticker();
-        }
-    }
-    return FALSE;
-}
-
-bool HistoryMessage::IsLargeEmoji()
-{
-    // if it's a LargeEmoji, [Item->Media] is nullptr, and [Item->MainView->Media] isn't nullptr.
-    // if it's a Video, then [Item->Media] isn't nullptr.
-
-    Media *pMedia = GetMedia();
-    if (pMedia != NULL) {
-        return FALSE;
-    }
-
-    HistoryViewElement *pMainView = GetMainView();
-    if (pMainView == NULL) {
-        return FALSE;
-    }
-
-    return pMainView->GetMedia() != NULL;
-}
+// bool HistoryMessage::IsLargeEmoji()
+// {
+//     // if it's a LargeEmoji, [Item->Media] is nullptr, and [Item->MainView->Media] isn't nullptr.
+//     // if it's a Video, then [Item->Media] isn't nullptr.
+// 
+//     Media *pMedia = GetMedia();
+//     if (pMedia != NULL) {
+//         return FALSE;
+//     }
+// 
+//     HistoryViewElement *pMainView = GetMainView();
+//     if (pMainView == NULL) {
+//         return FALSE;
+//     }
+// 
+//     return pMainView->GetMedia() != NULL;
+// }
 
 HistoryViewElement* HistoryMessage::GetMainView()
 {
