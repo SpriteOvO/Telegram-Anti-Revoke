@@ -104,10 +104,10 @@ PeerData::PeerId PeerData::GetId()
 // History
 //
 
-PeerData* History::GetPeer()
-{
-    return *(PeerData**)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.HistoryPeer);
-}
+// PeerData* History::GetPeer()
+// {
+//     return *(PeerData**)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.HistoryPeer);
+// }
 
 void History::OnDestroyMessage(HistoryMessage* pMessage)
 {

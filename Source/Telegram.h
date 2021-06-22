@@ -94,7 +94,7 @@ class HistoryMessage;
 class History
 {
 public:
-    PeerData* GetPeer();
+    // PeerData* GetPeer();
 
     // Make the function conform to __thiscall rule.
     void OnDestroyMessage(HistoryMessage* pMessage);

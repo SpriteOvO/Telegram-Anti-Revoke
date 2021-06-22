@@ -43,7 +43,7 @@ bool IRuntime::InitFixedData()
         _Data.Offset.MainView = 0x5C;
         _Data.Offset.Media = 0x54;
         _Data.Offset.SignedTimeText = 0x14;
-        _Data.Offset.HistoryPeer = 0x7C;
+        // _Data.Offset.HistoryPeer = 0x7C;
     }
     // ver >= 2.4.1, ver < 2.6.0
     else if (_FileVersion >= 2004001 && _FileVersion < 2006000)
@@ -53,7 +53,7 @@ bool IRuntime::InitFixedData()
         _Data.Offset.MainView = 0x5C;
         _Data.Offset.Media = 0x54;
         _Data.Offset.SignedTimeText = 0x10;    // changed
-        _Data.Offset.HistoryPeer = 0x7C;       // maybe untested! (I forgot :)
+        // _Data.Offset.HistoryPeer = 0x7C;       // maybe untested! (I forgot :)
     }
     // ver >= 2.6.0
     else if (_FileVersion >= 2006000)
@@ -63,7 +63,7 @@ bool IRuntime::InitFixedData()
         _Data.Offset.MainView = 0x60;          // changed
         _Data.Offset.Media = 0x5C;             // changed
         _Data.Offset.SignedTimeText = 0x10;
-        _Data.Offset.HistoryPeer = 0x7C;       // untested!
+        // _Data.Offset.HistoryPeer = 0x7C;       // untested!
     }
 
     return true;
