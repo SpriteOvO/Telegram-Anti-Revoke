@@ -4,7 +4,7 @@ include(FetchContent)
 
 project(TelegramAntiRevoke VERSION 0.3.2 LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 
@@ -41,7 +41,7 @@ message("Fetching 'json'...")
 FetchContent_Declare(
     json
     GIT_REPOSITORY "https://github.com/nlohmann/json.git"
-    GIT_TAG "v3.9.1"
+    GIT_TAG "624f59eacb538904e72ccc887f8808cd0ff17e36"
 )
 FetchContent_MakeAvailable(json)
 message("Fetch 'json' done.")

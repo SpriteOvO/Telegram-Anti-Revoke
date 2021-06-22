@@ -69,7 +69,7 @@ namespace Text
     std::string ToLower(const std::string &String)
     {
         std::string Result = String;
-        std::transform(Result.begin(), Result.end(), Result.begin(), std::tolower);
+        std::transform(Result.begin(), Result.end(), Result.begin(), tolower);
         return Result;
     }
 
