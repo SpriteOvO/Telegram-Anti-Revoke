@@ -142,7 +142,7 @@ bool IUpdater::ParseResponse(const std::string &Response)
             ChangeLog +
             "Do you want to go to GitHub to download the latest version?\n";
 
-        if (MessageBoxA(NULL, Msg.c_str(), "Anti-Revoke Plugin", MB_ICONQUESTION | MB_YESNO) == IDYES) {
+        if (MessageBoxA(nullptr, Msg.c_str(), "Anti-Revoke Plugin", MB_ICONQUESTION | MB_YESNO) == IDYES) {
             system(("start " + HtmlUrlContent).c_str());
         }
 

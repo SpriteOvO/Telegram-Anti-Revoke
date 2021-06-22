@@ -173,17 +173,17 @@ void IAntiRevoke::ProcessBlockedMessages()
             Safe::TryExcept(
                 [&]()
                 {
-                    QtString *pTimeText = NULL;
+                    QtString *pTimeText = nullptr;
                     HistoryMessageEdited *pEdited = pMessage->GetEdited();
                     HistoryMessageSigned *pSigned = pMessage->GetSigned();
 
                     // Signed msg take precedence over Edited msg, and TG uses the Signed text when both exist.
                     //
-                    if (pSigned != NULL) {
+                    if (pSigned != nullptr) {
                         // Signed msg
                         pTimeText = pSigned->GetTimeText();
                     }
-                    else if (pEdited != NULL) {
+                    else if (pEdited != nullptr) {
                         // Edited msg
                         pTimeText = pEdited->GetTimeText();
                     }
@@ -193,7 +193,7 @@ void IAntiRevoke::ProcessBlockedMessages()
                     }
 
                     //  vvvvvvvvvvvvvvvvvvvv TODO: This is a workaround, try to hook HistoryMessage's destructor to improve.
-                    if (pTimeText == NULL ||
+                    if (pTimeText == nullptr ||
                         pTimeText->IsEmpty() || // This message content hasn't been cached by Telegram.
                         pTimeText->Find(_MarkData.Content) != std::wstring::npos /* This message is marked. */)
                     {
@@ -205,7 +205,7 @@ void IAntiRevoke::ProcessBlockedMessages()
 
                     std::wstring MarkedTime;
 
-                    if (pSigned != NULL)
+                    if (pSigned != nullptr)
                     {
                         // Signed msg text: "<author>, <time>" ("xxx, 10:20")
                         //
@@ -227,7 +227,7 @@ void IAntiRevoke::ProcessBlockedMessages()
                     //
 
                     HistoryViewElement *pMainView = pMessage->GetMainView();
-                    if (pMainView == NULL) {
+                    if (pMainView == nullptr) {
                         return;
                     }
 
@@ -235,12 +235,12 @@ void IAntiRevoke::ProcessBlockedMessages()
                     pMessage->SetTimeWidth(pMessage->GetTimeWidth() + _MarkData.Width);
 
                     Media *pMainViewMedia = pMainView->GetMedia();
-                    if (pMainViewMedia != NULL) {
+                    if (pMainViewMedia != nullptr) {
                         pMainViewMedia->SetWidth(pMainViewMedia->GetWidth() + _MarkData.Width);
                     }
 
                     HistoryMessageReply *pReply = pMessage->GetReply();
-                    if (pReply != NULL) {
+                    if (pReply != nullptr) {
                         pReply->MaxReplyWidth() += _MarkData.Width;
                     }
 

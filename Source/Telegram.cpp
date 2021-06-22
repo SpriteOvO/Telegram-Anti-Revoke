@@ -140,7 +140,7 @@ bool HistoryMessage::IsMessage()
     //
 
     using FnToHistoryMessageT = HistoryMessage*(*)(HistoryMessage *This);
-    return Utils::CallVirtual<FnToHistoryMessageT>(this, IRuntime::GetInstance().GetData().Index.ToHistoryMessage)(this) != NULL;
+    return Utils::CallVirtual<FnToHistoryMessageT>(this, IRuntime::GetInstance().GetData().Index.ToHistoryMessage)(this) != nullptr;
 }
 
 template <class CompT>
@@ -214,16 +214,16 @@ HistoryMessageReply* HistoryMessage::GetReply()
 //     // if it's a Video, then [Item->Media] isn't nullptr.
 // 
 //     Media *pMedia = GetMedia();
-//     if (pMedia != NULL) {
+//     if (pMedia != nullptr) {
 //         return FALSE;
 //     }
 // 
 //     HistoryViewElement *pMainView = GetMainView();
-//     if (pMainView == NULL) {
+//     if (pMainView == nullptr) {
 //         return FALSE;
 //     }
 // 
-//     return pMainView->GetMedia() != NULL;
+//     return pMainView->GetMedia() != nullptr;
 // }
 
 HistoryViewElement* HistoryMessage::GetMainView()

@@ -16,7 +16,7 @@ namespace File
     std::string GetCurrentFullNameA()
     {
         char Buffer[MAX_PATH] = { 0 };
-        if (GetModuleFileNameA(NULL, Buffer, MAX_PATH) == 0) {
+        if (GetModuleFileNameA(nullptr, Buffer, MAX_PATH) == 0) {
             return "";
         }
 
@@ -43,7 +43,7 @@ namespace File
     {
         std::string FullName = GetCurrentFullNameA();
 
-        ULONG InfoSize = GetFileVersionInfoSizeA(FullName.c_str(), NULL);
+        ULONG InfoSize = GetFileVersionInfoSizeA(FullName.c_str(), nullptr);
         if (InfoSize == 0) {
             return 0;
         }
@@ -53,7 +53,7 @@ namespace File
             return 0;
         }
 
-        VS_FIXEDFILEINFO *pVsInfo = NULL;
+        VS_FIXEDFILEINFO *pVsInfo = nullptr;
         UINT VsInfoSize = sizeof(VS_FIXEDFILEINFO);
         if (!VerQueryValueA(Buffer.get(), "\\", (PVOID*)&pVsInfo, &VsInfoSize)) {
             return 0;
@@ -126,9 +126,9 @@ namespace Convert
     std::string UnicodeToAnsi(const std::wstring &String)
     {
         std::string Result;
-        int Length = WideCharToMultiByte(CP_ACP, 0, String.c_str(), (int)String.length(), NULL, 0, NULL, NULL);
+        int Length = WideCharToMultiByte(CP_ACP, 0, String.c_str(), (int)String.length(), nullptr, 0, nullptr, nullptr);
         Result.resize(Length);
-        WideCharToMultiByte(CP_ACP, 0, String.c_str(), (int)String.length(), (char*)Result.data(), Length, NULL, NULL);
+        WideCharToMultiByte(CP_ACP, 0, String.c_str(), (int)String.length(), (char*)Result.data(), Length, nullptr, nullptr);
         return Result;
     }
 
@@ -147,12 +147,12 @@ namespace Internet
         }
 
         bool Result = false;
-        HINTERNET hInternet = NULL, hConnect = NULL, hRequest = NULL;
+        HINTERNET hInternet = nullptr, hConnect = nullptr, hRequest = nullptr;
 
         do
         {
-            hInternet = InternetOpenA("Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
-            if (hInternet == NULL) {
+            hInternet = InternetOpenA("Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)", INTERNET_OPEN_TYPE_PRECONFIG, nullptr, nullptr, 0);
+            if (hInternet == nullptr) {
                 break;
             }
 
@@ -167,13 +167,13 @@ namespace Internet
                 break;
             }
 
-            hConnect = InternetConnectA(hInternet, HostName.c_str(), INTERNET_DEFAULT_HTTPS_PORT, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0);
-            if (hConnect == NULL) {
+            hConnect = InternetConnectA(hInternet, HostName.c_str(), INTERNET_DEFAULT_HTTPS_PORT, nullptr, nullptr, INTERNET_SERVICE_HTTP, 0, 0);
+            if (hConnect == nullptr) {
                 break;
             }
 
-            hRequest = HttpOpenRequestA(hConnect, HttpVerb.c_str(), ObjectName.c_str(), "HTTP/1.1", NULL, NULL, INTERNET_FLAG_NO_CACHE_WRITE | INTERNET_FLAG_RELOAD | INTERNET_FLAG_SECURE, 0);
-            if (hRequest == NULL) {
+            hRequest = HttpOpenRequestA(hConnect, HttpVerb.c_str(), ObjectName.c_str(), "HTTP/1.1", nullptr, nullptr, INTERNET_FLAG_NO_CACHE_WRITE | INTERNET_FLAG_RELOAD | INTERNET_FLAG_SECURE, 0);
+            if (hRequest == nullptr) {
                 break;
             }
 
@@ -222,13 +222,13 @@ namespace Internet
 
 
     EXIT:
-        if (hRequest != NULL) {
+        if (hRequest != nullptr) {
             InternetCloseHandle(hRequest);
         }
-        if (hConnect != NULL) {
+        if (hConnect != nullptr) {
             InternetCloseHandle(hConnect);
         }
-        if (hInternet != NULL) {
+        if (hInternet != nullptr) {
             InternetCloseHandle(hInternet);
         }
 
@@ -250,7 +250,7 @@ namespace Memory
 #define PAGE_SIZE    ( 0x1000 )
         std::vector<uintptr_t> Result;
 
-        if (StartAddress == NULL || SearchSize == 0 || Pattern == NULL || Mask == NULL) {
+        if (StartAddress == nullptr || SearchSize == 0 || Pattern == nullptr || Mask == nullptr) {
             return Result;
         }
 
@@ -366,7 +366,7 @@ namespace Utils
 {
     void CreateConsole()
     {
-        FILE *hStream = NULL;
+        FILE *hStream = nullptr;
         AllocConsole();
         freopen_s(&hStream, "CONOUT$", "w", stdout);
     }

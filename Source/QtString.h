@@ -37,6 +37,6 @@ public:
     void Clear();
 
 private:
-    QtArrayData *d = NULL;
+    QtArrayData *d = nullptr;
 
 };

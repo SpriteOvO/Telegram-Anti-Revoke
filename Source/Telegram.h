@@ -22,7 +22,7 @@ public:
     int32_t GetWidth();
     void SetWidth(int32_t Value);
 
-    void* VirtualTable = NULL;
+    void* VirtualTable = nullptr;
     int32_t MaxWidth = 0;
     int32_t MinHeight = 0;
     int32_t Width = 0;

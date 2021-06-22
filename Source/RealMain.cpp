@@ -23,7 +23,7 @@ bool CheckProcess()
 ULONG WINAPI Initialize(PVOID pParameter)
 {
 #ifdef _DEBUG
-    MessageBoxW(NULL, L"Initialize", L"Anti-Revoke Plugin", MB_ICONINFORMATION);
+    MessageBoxW(nullptr, L"Initialize", L"Anti-Revoke Plugin", MB_ICONINFORMATION);
 #endif
 
     Logger::Initialize();
@@ -73,8 +73,8 @@ BOOL WINAPI RealDllMain(HMODULE hModule, ULONG Reason, PVOID pReserved)
     {
         DisableThreadLibraryCalls(hModule);
 
-        HANDLE hThread = CreateThread(NULL, 0, Initialize, NULL, 0, NULL);
-        if (hThread == NULL) {
+        HANDLE hThread = CreateThread(nullptr, 0, Initialize, nullptr, 0, nullptr);
+        if (hThread == nullptr) {
             Logger::DoError("CreateThread() failed. ErrorCode: " + std::to_string(::GetLastError()), true);
             return FALSE;
         }

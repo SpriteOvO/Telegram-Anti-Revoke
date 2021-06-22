@@ -37,7 +37,7 @@ namespace Logger
 
         int Result;
         do {
-            Result = MessageBoxA(NULL, Message.c_str(), "Anti-Revoke Plugin", MB_ABORTRETRYIGNORE | MB_ICONERROR);
+            Result = MessageBoxA(nullptr, Message.c_str(), "Anti-Revoke Plugin", MB_ABORTRETRYIGNORE | MB_ICONERROR);
             // lol..
         } while (Result == IDRETRY || Result == IDIGNORE);
 
@@ -48,7 +48,7 @@ namespace Logger
             // Using ShellExecute will cause freezing. I guess it may be caused by different Runtime libraries like cross-module malloc/free.
             // So replace ShellExecute with system, there is not much difference anyway.
 
-            // ShellExecute(NULL, L"open", L"https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues", NULL, NULL, SW_SHOWNORMAL);
+            // ShellExecute(nullptr, L"open", L"https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues", nullptr, nullptr, SW_SHOWNORMAL);
             system("start " AR_ISSUES_URL);
         }
 
@@ -129,7 +129,7 @@ namespace Logger
             case spdlog::level::warn:
                 std::thread{
                     [](std::string Payload) {
-                        MessageBoxA(NULL, Payload.c_str(), "Anti-Revoke Plugin", MB_ICONWARNING);
+                        MessageBoxA(nullptr, Payload.c_str(), "Anti-Revoke Plugin", MB_ICONWARNING);
                     }, Payload
                 }.detach();
                 break;

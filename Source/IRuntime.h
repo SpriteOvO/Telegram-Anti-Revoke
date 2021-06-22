@@ -31,16 +31,16 @@ public:
         } Index; // Virtual call index
 
         struct {
-            FnMallocT Malloc = NULL;
-            FnFreeT Free = NULL;
-            FnIndexT EditedIndex = NULL;
-            FnIndexT SignedIndex = NULL;
-            FnIndexT ReplyIndex = NULL;
+            FnMallocT Malloc = nullptr;
+            FnFreeT Free = nullptr;
+            FnIndexT EditedIndex = nullptr;
+            FnIndexT SignedIndex = nullptr;
+            FnIndexT ReplyIndex = nullptr;
         } Function;
 
         struct {
-            void* FnDestroyMessageCaller = NULL;
-            LanguageInstance *pLangInstance = NULL;
+            void* FnDestroyMessageCaller = nullptr;
+            LanguageInstance *pLangInstance = nullptr;
         } Address;
     };
 
@@ -54,7 +54,7 @@ public:
     bool InitDynamicData();
 
 private:
-    uintptr_t _MainModule = NULL;
+    uintptr_t _MainModule = 0;
     uint32_t _FileVersion = 0;
     MODULEINFO _MainModuleInfo = { 0 };
 

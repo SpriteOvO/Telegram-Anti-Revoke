@@ -16,7 +16,7 @@ bool IRuntime::Initialize()
     _MainModule = (uintptr_t)GetModuleHandleW(L"Telegram.exe");
     _FileVersion = File::GetCurrentVersion();
 
-    if (_MainModule == NULL || _FileVersion == 0) {
+    if (_MainModule == 0 || _FileVersion == 0) {
         return false;
     }
 
@@ -909,24 +909,24 @@ bool IRuntime::InitDynamicData_LangInstance()
 # error "Unimplemented."
 #endif
 
-    uintptr_t CoreAppInstance = NULL;
+    uintptr_t CoreAppInstance = 0;
     for (size_t i = 0; i < 20; ++i)
     {
         CoreAppInstance = *(uintptr_t*)pCoreAppInstance;
-        if (CoreAppInstance != NULL) {
+        if (CoreAppInstance != 0) {
             break;
         }
         std::this_thread::sleep_for(1s);
     }
 
-    if (CoreAppInstance == NULL) {
+    if (CoreAppInstance == 0) {
         spdlog::warn("[IRuntime] CoreAppInstance always nullptr.");
         return false;
     }
 
     _Data.Address.pLangInstance = *(LanguageInstance**)(CoreAppInstance + LangInsOffset);
 
-    if (_Data.Address.pLangInstance == NULL) {
+    if (_Data.Address.pLangInstance == nullptr) {
         spdlog::warn("[IRuntime] Searched pLangInstance is null.");
         return false;
     }
