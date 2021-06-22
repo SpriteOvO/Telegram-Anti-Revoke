@@ -20,7 +20,7 @@ jobs:
     runs-on: windows-latest
 
     env:
-      UPLOAD_ARTIFACT: false
+      UPLOAD_ARTIFACT: true
 
     defaults:
       run:
