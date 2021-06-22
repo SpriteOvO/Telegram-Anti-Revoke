@@ -31,6 +31,8 @@ bool IRuntime::Initialize()
 
 bool IRuntime::InitFixedData()
 {
+#if defined PLATFORM_X86
+
     // ver < 2.4.0
     if (_FileVersion < 2004000) {
         return false;
@@ -67,6 +69,19 @@ bool IRuntime::InitFixedData()
     }
 
     return true;
+
+#elif defined PLATFORM_X64
+
+    _Data.Offset.TimeText = 0xB0;
+    _Data.Offset.TimeWidth = 0xB8;
+    _Data.Offset.MainView = 0x98;
+    _Data.Offset.SignedTimeText = 0x18;
+
+    return true;
+
+#else
+# error "Unimplemented."
+#endif
 }
 
 bool IRuntime::InitDynamicData()
