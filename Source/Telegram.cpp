@@ -88,12 +88,7 @@ QtString* HistoryMessageSigned::GetTimeText()
 // HistoryMessageReply
 //
 
-void HistoryMessageReply::SetMaxReplyWidth(int32_t Value)
-{
-    *(int32_t*)((uintptr_t)this + 0x6C) = Value;
-}
-
-int32_t HistoryMessageReply::GetMaxReplyWidth()
+int32_t& HistoryMessageReply::MaxReplyWidth()
 {
     return *(int32_t*)((uintptr_t)this + 0x6C);
 }

@@ -63,8 +63,7 @@ public:
 class HistoryMessageReply
 {
 public:
-    void SetMaxReplyWidth(int32_t Value);
-    int32_t GetMaxReplyWidth();
+    int32_t& MaxReplyWidth();
 
 };
 

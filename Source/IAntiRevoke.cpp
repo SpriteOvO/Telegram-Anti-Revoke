@@ -241,7 +241,7 @@ void IAntiRevoke::ProcessBlockedMessages()
 
                     HistoryMessageReply *pReply = pMessage->GetReply();
                     if (pReply != NULL) {
-                        pReply->SetMaxReplyWidth(pReply->GetMaxReplyWidth() + _MarkData.Width);
+                        pReply->MaxReplyWidth() += _MarkData.Width;
                     }
 
                 }, [&](ULONG ExceptionCode)
