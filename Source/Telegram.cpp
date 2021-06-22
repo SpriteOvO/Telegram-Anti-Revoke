@@ -51,7 +51,13 @@ DocumentData* Media::GetDocument()
 
 Media* HistoryViewElement::GetMedia()
 {
+#if defined PLATFORM_X86
     return *(Media**)((uintptr_t)this + 0x24);
+#elif defined PLATFORM_X64
+    return *(Media**)((uintptr_t)this + 0x38);
+#else
+# error "Unimplemented."
+#endif
 }
 
 //////////////////////////////////////////////////
