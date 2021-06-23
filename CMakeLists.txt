@@ -94,17 +94,17 @@ add_library(
 
     "Source/DllMain.cpp"
     "Source/RealMain.cpp"
-    "Source/IAntiRevoke.cpp"        "Source/IAntiRevoke.h"
-    "Source/Logger.cpp"             "Source/Logger.h"
-    "Source/IRuntime.cpp"           "Source/IRuntime.h"
-    "Source/IUpdater.cpp"           "Source/IUpdater.h"
-    "Source/QtString.cpp"           "Source/QtString.h"
-    "Source/Telegram.cpp"           "Source/Telegram.h"
-    "Source/Utils.cpp"              "Source/Utils.h"
+    "Source/IAntiRevoke.cpp"
+    "Source/Logger.cpp"
+    "Source/IRuntime.cpp"
+    "Source/IUpdater.cpp"
+    "Source/QtString.cpp"
+    "Source/Telegram.cpp"
+    "Source/Utils.cpp"
 
     "Source/Assembly.asm"
 
-    "Source/TelegramAntiRevoke.rc"  "Source/Resource.h"
+    "Source/TelegramAntiRevoke.rc"
 )
 
 configure_file("Source/Config.h.in" "Config.h")
