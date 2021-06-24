@@ -124,9 +124,11 @@ original_exports_callbacker extern_original_function_variable
 
 impl_proxy_function macro name: req, ordinal: req
     @catstr(<asm_proxy_>, name) proc
-        pushall
-        call Proxy_Initialize
-        popall
+        ifndef PLATFORM_X64
+            pushall
+            call Proxy_Initialize
+            popall
+        endif
         jmp @catstr(<Proxy_OEFn>, name)
     @catstr(<asm_proxy_>, name) endp
 endm
