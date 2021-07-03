@@ -101,7 +101,7 @@ add_library(
 
     "Assembly.asm"
 
-    "TelegramAntiRevoke.rc"
+    "Resource.rc"
 )
 
 configure_file("Config.h.in" "Config.h")
