@@ -22,6 +22,7 @@ endif()
 # Configure project
 #
 if (MSVC)
+
     if (TAR_OS STREQUAL "WIN7" OR TAR_OS STREQUAL "WIN10")
         add_compile_definitions("OS_${TAR_OS}")
     else()
@@ -39,6 +40,13 @@ if (MSVC)
     endif()
 
     add_compile_definitions("PLATFORM_${TAR_PLATFORM}")
+
+    add_compile_options(
+        "/MP"       # Multi-processor compilation = Yes
+    )
+
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 else()
     message(FATAL_ERROR "Unsupported compiler.")
 endif()

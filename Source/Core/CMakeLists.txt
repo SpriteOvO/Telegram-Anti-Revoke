@@ -74,7 +74,7 @@ add_library(
     "Resource.rc"
 )
 
-configure_file("Config.h.in" "Config.h")
+configure_file("../Common/Config.h.in" "Config.h")
 target_include_directories(Core PRIVATE ${PROJECT_BINARY_DIR})
 
 
@@ -102,11 +102,12 @@ if (MSVC)
 
     # Rename binary file name after build
     #
-    string(TOLOWER ${TAR_PLATFORM} TAR_BINARY_NAME)
+    string(TOLOWER ${TAR_PLATFORM} TAR_PLATFORM_L)
     add_custom_command(
         TARGET Core
         POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E rename "${TAR_BINARY_OUT_DIR}/Core.dll" "${TAR_BINARY_OUT_DIR}/${TAR_BINARY_NAME}.dll"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${TAR_BINARY_OUT_DIR}/TAR-Resources"
+        COMMAND ${CMAKE_COMMAND} -E rename "${TAR_BINARY_OUT_DIR}/Core.dll" "${TAR_BINARY_OUT_DIR}/TAR-Resources/${TAR_PLATFORM_L}.dll"
     )
 endif()
 
