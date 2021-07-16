@@ -22,7 +22,7 @@ void IAntiRevoke::InitMarker()
             GetId         : it
             GetPluralId   : it
             GetName       : Italian
-            GetNativeName : Italian
+            GetNativeName : Italiano
 
         English
             GetId         : en
