@@ -18,6 +18,12 @@ IAntiRevoke& IAntiRevoke::GetInstance()
 void IAntiRevoke::InitMarker()
 {
     /*
+        Italian
+            GetId         : it
+            GetPluralId   : it
+            GetName       : Italian
+            GetNativeName : Italian
+
         English
             GetId         : en
             GetPluralId   : en
@@ -54,6 +60,12 @@ void IAntiRevoke::InitMarker()
     std::unordered_map<std::wstring, std::vector<MarkDataT>> MultiLangMarks =
     {
         {
+            L"it",
+            {
+                { L"Italian", L"eliminato ", 10 * 6 }
+            }
+        },
+        {
             L"en",
             {
                 { L"English", L"deleted ", 8 * 6 }
@@ -88,7 +100,7 @@ void IAntiRevoke::InitMarker()
 
     // Set default lang
     //
-    _MarkData = MultiLangMarks[L"en"].at(0);
+    _MarkData = MultiLangMarks[L"it"].at(0);
 
     Safe::TryExcept(
         [&]()
