@@ -100,7 +100,7 @@ void IAntiRevoke::InitMarker()
 
     // Set default lang
     //
-    _MarkData = MultiLangMarks[L"it"].at(0);
+    _MarkData = MultiLangMarks[L"en"].at(0);
 
     Safe::TryExcept(
         [&]()
