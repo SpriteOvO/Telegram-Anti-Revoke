@@ -27,9 +27,23 @@ If you are using **Telegram beta**, please check the latest preview version.
 
 ## :hamburger: Usage
 1. Go to the [Release Page](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases) to download the latest version of the plugin.  
-2. Close the running Telegram process.  
-3. Copy *version.dll* file into the Telegram root directory.  
-4. Run the Telegram program.
+2. Open Telegram and open the top-left menu. From there, note the application version and architecture \***ARCH**\* (x86 or x64) which is labelled under its version, e.g "**Version** x.x.x **x64**" (If you are under x84 it shouldn't display the architecture on the version).
+3. Close the running Telegram process.
+4. Follow the instructions accordly to your Telegram version ([Before 2.8.5](#before-285) - [After 2.8.4](#after-284))
+5. Run Telegram.
+
+### Before 2.8.5
+1. Move the file "TAR-Resources\\***ARCH**\*.dll" to the Telegram directory as `version.dll`.
+
+### After 2.8.4
+1. Turn off the option "Launch Telegram when system starts" in the Telegram settings.
+2. Move the file "TAR-Launcher-\***ARCH**\*.exe" and the folder "TAR-Resources" to the Telegram directory.
+3. Execute the "TAR-Launcher-\***ARCH**\*.exe" or/and set it to [start with system](#after-284---start-with-system)
+
+### After 2.8.4 - Start with system
+1. Copy the file "TAR-Launcher-\***ARCH**\*.exe" to your clipboard.
+2. Navigate to `shell:startup` in Explorer `Win`+`R`).
+3. Right-click (open your context menu) and "Paste shortcut" in that directory.
 
 ## :hammer_and_wrench: Build
 See the [Build Instructions](/Docs/Build.md).
