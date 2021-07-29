@@ -187,10 +187,8 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, int showC
 
     auto targetKernel32 = GetProcessModuleBase(processInfo.dwProcessId, L"kernel32.dll");
     if (targetKernel32 == 0) {
-        FatalError(
-            "GetProcessModuleBase() kernel32.dll failed.\n"
-            "Please try again later."
-        );
+        // Telegram.exe exited at startup
+        return 0;
     }
 
     auto targetLoadLibrary = targetKernel32 + apiOffset;
