@@ -169,7 +169,7 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, int showC
 
     bool isCreateSuccess = CreateProcessA(
         "Telegram.exe",
-        nullptr,
+        cmdLine,
         nullptr,
         nullptr,
         false,
