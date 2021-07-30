@@ -195,7 +195,7 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, int showC
 
     auto targetBuffer = VirtualAllocEx(
         processInfo.hProcess,
-        cmdLine,
+        nullptr,
         0x1000,
         MEM_COMMIT,
         PAGE_READWRITE
