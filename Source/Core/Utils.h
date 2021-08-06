@@ -72,7 +72,6 @@ namespace Safe
 namespace Memory
 {
     void ReadProcess(HANDLE hProcess, void* TargetAddress, void* LocalBuffer, size_t Size);
-    std::vector<uintptr_t> FindPatternEx(HANDLE hProcess, void* StartAddress, size_t SearchSize, const char Pattern[], const char Mask[], ULONG Protect = PAGE_EXECUTE_READ);
     bool ForceOperate(void* Address, size_t Size, const std::function<void()> &FnCallback);
     std::vector<uint8_t> MakeCall(void* HookAddress, void* CallAddress);
     std::vector<uint8_t> MakeJmp(void* HookAddress, void* JmpAddress);

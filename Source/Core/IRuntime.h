@@ -5,8 +5,11 @@
 #include <Windows.h>
 #include <Psapi.h>
 
+#include <sigmatch/sigmatch.hpp>
+
 #include "Telegram.h"
 
+using namespace sigmatch_literals;
 
 using FnMallocT = void*(__cdecl *)(unsigned int size);
 using FnFreeT = void(__cdecl *)(void *block);
@@ -54,14 +57,11 @@ public:
     bool InitDynamicData();
 
 private:
-    uintptr_t _MainModule = 0;
+    sigmatch::this_process_target _ThisProcess;
+    sigmatch::search_context _MainModule;
     uint32_t _FileVersion = 0;
-    MODULEINFO _MainModuleInfo = { 0 };
 
     DataT _Data;
-
-    std::vector<uintptr_t> FindPatternInMainModule(const char Pattern[], const char Mask[]);
-    std::vector<uintptr_t> FindPatternInRange(uintptr_t StartAddress, size_t SearchSize, const char Pattern[], const char Mask[]);
 
     bool InitDynamicData_MallocFree();
     bool InitDynamicData_DestroyMessage();

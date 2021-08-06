@@ -13,19 +13,19 @@ IRuntime& IRuntime::GetInstance()
 
 bool IRuntime::Initialize()
 {
-    _MainModule = (uintptr_t)GetModuleHandleW(L"Telegram.exe");
-    _FileVersion = File::GetCurrentVersion();
+    _MainModule = _ThisProcess.in_module("Telegram.exe", sigmatch::mem_prot::read | sigmatch::mem_prot::execute);
+    if (_MainModule.error().has_value()) {
+        spdlog::warn("[IRuntime] _MainModule.error().value(): {}", _MainModule.error().value());
+        return false;
+    }
 
-    if (_MainModule == 0 || _FileVersion == 0) {
+    _FileVersion = File::GetCurrentVersion();
+    if (_FileVersion == 0) {
+        spdlog::warn("[IRuntime] _FileVersion == 0");
         return false;
     }
 
     spdlog::info("[IRuntime] Telegram version: {}", _FileVersion);
-
-    if (!GetModuleInformation(GetCurrentProcess(), (HMODULE)_MainModule, &_MainModuleInfo, sizeof(_MainModuleInfo))) {
-        return false;
-    }
-
     return true;
 }
 
@@ -126,16 +126,6 @@ bool IRuntime::InitDynamicData()
     return Result;
 }
 
-std::vector<uintptr_t> IRuntime::FindPatternInMainModule(const char Pattern[], const char Mask[])
-{
-    return Memory::FindPatternEx(GetCurrentProcess(), (void*)_MainModule, _MainModuleInfo.SizeOfImage, Pattern, Mask);
-}
-
-std::vector<uintptr_t> IRuntime::FindPatternInRange(uintptr_t StartAddress, size_t SearchSize, const char Pattern[], const char Mask[])
-{
-    return Memory::FindPatternEx(GetCurrentProcess(), (void*)StartAddress, SearchSize, Pattern, Mask);
-}
-
 // Some of the following instructions are taken from version 1.8.8
 // Thanks to [采蘑菇的小蘑菇] for providing help with compiling Telegram.
 //
@@ -192,20 +182,20 @@ bool IRuntime::InitDynamicData_MallocFree()
         free		56 E8 ?? ?? ?? ?? 59 5E 5B EB
     */
 
-    std::vector<uintptr_t> vMallocResult = FindPatternInMainModule("\x41\x84\xC0\x75\xF9\x2B\xCA\x53\x56\x8D\x59\x01\x53\xE8", "xxxxxxxxxxxxxx");
+    auto vMallocResult = _MainModule.search("41 84 C0 75 F9 2B CA 53 56 8D 59 01 53 E8"_sig).matches();
     if (vMallocResult.size() != 1) {
         spdlog::warn("[IRuntime] Search malloc failed.");
         return false;
     }
 
-    std::vector<uintptr_t> vFreeResult = FindPatternInRange(vMallocResult.at(0), 0x50, "\x56\xE8\x00\x00\x00\x00\x59\x5E\x5B\xEB", "xx????xxxx");
+    auto vFreeResult = _MainModule.search("56 E8 ?? ?? ?? ?? 59 5E 5B EB"_sig).matches();
     if (vFreeResult.size() != 1) {
         spdlog::warn("[IRuntime] Search free failed.");
         return false;
     }
 
-    uintptr_t MallocCaller = vMallocResult.at(0) + 13;
-    uintptr_t FreeCaller = vFreeResult.at(0) + 1;
+    auto MallocCaller = vMallocResult.at(0) + 13;
+    auto FreeCaller = vFreeResult.at(0) + 1;
 
     _Data.Function.Malloc = (FnMallocT)(MallocCaller + 5 + *(int32_t*)(MallocCaller + 1));
     _Data.Function.Free = (FnFreeT)(FreeCaller + 5 + *(int32_t*)(FreeCaller + 1));
@@ -251,20 +241,20 @@ bool IRuntime::InitDynamicData_MallocFree()
         free: 48 8B CB E8 ?? ?? ?? ?? EB
     */
 
-    std::vector<uintptr_t> vMallocResult = FindPatternInMainModule("\x48\xFF\xC7\x80\x3C\x38\x00\x75\xF7\x48\x8D\x4F\x01\xE8", "xxxxxxxxxxxxxx");
+    auto vMallocResult = _MainModule.search("48 FF C7 80 3C 38 00 75 F7 48 8D 4F 01 E8"_sig).matches();
     if (vMallocResult.size() != 1) {
         spdlog::warn("[IRuntime] Search malloc failed.");
         return false;
     }
 
-    std::vector<uintptr_t> vFreeResult = FindPatternInRange(vMallocResult.at(0), 0x50, "\x48\x8B\xCB\xE8\x00\x00\x00\x00\xEB", "xxxx????x");
+    auto vFreeResult = _ThisProcess.in_range({vMallocResult.at(0), 0x50}).search("48 8B CB E8 ?? ?? ?? ?? EB"_sig).matches();
     if (vFreeResult.size() != 1) {
         spdlog::warn("[IRuntime] Search free failed.");
         return false;
     }
 
-    uintptr_t MallocCaller = vMallocResult.at(0) + 13;
-    uintptr_t FreeCaller = vFreeResult.at(0) + 3;
+    auto MallocCaller = vMallocResult.at(0) + 13;
+    auto FreeCaller = vFreeResult.at(0) + 3;
 
     _Data.Function.Malloc = (FnMallocT)(MallocCaller + 5 + *(int32_t*)(MallocCaller + 1));
     _Data.Function.Free = (FnFreeT)(FreeCaller + 5 + *(int32_t*)(FreeCaller + 1));
@@ -333,7 +323,7 @@ bool IRuntime::InitDynamicData_DestroyMessage()
     // ver < 1.9.15
     if (_FileVersion < 1009015)
     {
-        std::vector<uintptr_t> vResult = FindPatternInMainModule("\x8B\x71\x00\x89\x08\x85\xC9\x0F\x84\x00\x00\x00\x00\x00\x00\x00\xE8", "xx?xxxxxx???????x");
+        auto vResult = _MainModule.search("8B 71 ?? 89 08 85 C9 0F 84 ?? ?? ?? ?? ?? ?? ?? E8"_sig).matches();
         if (vResult.size() != 1) {
             spdlog::warn("[IRuntime] Search DestroyMessage failed.");
             return false;
@@ -344,7 +334,7 @@ bool IRuntime::InitDynamicData_DestroyMessage()
     // ver >= 1.9.15
     else if (_FileVersion >= 1009015)
     {
-        std::vector<uintptr_t> vResult = FindPatternInMainModule("\x51\x8B\xC4\x89\x08\x8B\xCE\xE8\x00\x00\x00\x00\x80\xBE\x00\x00\x00\x00\x00", "xxxxxxxx????xx????x");
+        auto vResult = _MainModule.search("51 8B C4 89 08 8B CE E8 ?? ?? ?? ?? 80 BE ?? ?? ?? ?? 00"_sig).matches();
         if (vResult.size() != 1) {
             spdlog::warn("[IRuntime] Search new DestroyMessage failed.");
             return false;
@@ -419,7 +409,7 @@ bool IRuntime::InitDynamicData_DestroyMessage()
         48 8B 5A 18 48 85 DB 0F 84 ?? ?? ?? ?? 48 8B CB E8 ?? ?? ?? ?? 80 BB ?? ?? ?? ?? 00
     */
 
-    std::vector<uintptr_t> vResult = FindPatternInMainModule("\x48\x8B\x5A\x18\x48\x85\xDB\x0F\x84\x00\x00\x00\x00\x48\x8B\xCB\xE8\x00\x00\x00\x00\x80\xBB\x00\x00\x00\x00\x00", "xxxxxxxxx????xxxx????xx????x");
+    auto vResult = _MainModule.search("48 8B 5A 18 48 85 DB 0F 84 ?? ?? ?? ?? 48 8B CB E8 ?? ?? ?? ?? 80 BB ?? ?? ?? ?? 00"_sig).matches();
     if (vResult.size() != 1) {
         spdlog::warn("[IRuntime] Search DestroyMessage failed.");
         return false;
@@ -482,13 +472,13 @@ bool IRuntime::InitDynamicData_EditedIndex()
         E8 ?? ?? ?? ?? 83 7C 87 ?? ?? 73 ?? E8
     */
 
-    std::vector<uintptr_t> vResult = FindPatternInMainModule("\xE8\x00\x00\x00\x00\x83\x7C\x87\x00\x00\x73\x00\xE8", "x????xxx??x?x");
+    auto vResult = _MainModule.search("E8 ?? ?? ?? ?? 83 7C 87 ?? ?? 73 ?? E8"_sig).matches();
     if (vResult.size() != 1) {
         spdlog::warn("[IRuntime] Search EditedIndex failed.");
         return false;
     }
 
-    uintptr_t EditedIndexCaller = vResult.at(0);
+    auto EditedIndexCaller = vResult.at(0);
     _Data.Function.EditedIndex = (FnIndexT)(EditedIndexCaller + 5 + *(int32_t*)(EditedIndexCaller + 1));
 
     return true;
@@ -532,13 +522,13 @@ bool IRuntime::InitDynamicData_EditedIndex()
         48 83 7C CF 10 08 73 ?? E8
     */
 
-    std::vector<uintptr_t> vResult = FindPatternInMainModule("\x48\x83\x7C\xCF\x10\x08\x73\x00\xE8", "xxxxxxx?x");
+    auto vResult = _MainModule.search("48 83 7C CF 10 08 73 ?? E8"_sig).matches();
     if (vResult.size() != 1) {
         spdlog::warn("[IRuntime] Search EditedIndex failed.");
         return false;
     }
 
-    uintptr_t EditedIndexCaller = vResult.at(0) + 8;
+    auto EditedIndexCaller = vResult.at(0) + 8;
     _Data.Function.EditedIndex = (FnIndexT)(EditedIndexCaller + 5 + *(int32_t*)(EditedIndexCaller + 1));
 
     return true;
@@ -612,13 +602,13 @@ bool IRuntime::InitDynamicData_SignedIndex()
         E8 ?? ?? ?? ?? 8B 44 87 08 83 CF FF
     */
 
-    std::vector<uintptr_t> vResult = FindPatternInMainModule("\xE8\x00\x00\x00\x00\x8B\x44\x87\x08\x83\xCF\xFF", "x????xxxxxxx");
+    auto vResult = _MainModule.search("E8 ?? ?? ?? ?? 8B 44 87 08 83 CF FF"_sig).matches();
     if (vResult.size() != 1) {
         spdlog::warn("[IRuntime] Search SignedIndex failed.");
         return false;
     }
 
-    uintptr_t SignedIndexCaller = vResult.at(0);
+    auto SignedIndexCaller = vResult.at(0);
     _Data.Function.SignedIndex = (FnIndexT)(SignedIndexCaller + 5 + *(int32_t*)(SignedIndexCaller + 1));
 
     return true;
@@ -675,13 +665,13 @@ bool IRuntime::InitDynamicData_SignedIndex()
         E8 ?? ?? ?? ?? 4C 63 C0 4A 63 44 C3 10 83 F8 08 72 ?? 48 8B D8 48 03 5F 08 EB
     */
 
-    std::vector<uintptr_t> vResult = FindPatternInMainModule("\xE8\x00\x00\x00\x00\x4C\x63\xC0\x4A\x63\x44\xC3\x10\x83\xF8\x08\x72\x00\x48\x8B\xD8\x48\x03\x5F\x08\xEB", "x????xxxxxxxxxxxx?xxxxxxxx");
+    auto vResult = _MainModule.search("E8 ?? ?? ?? ?? 4C 63 C0 4A 63 44 C3 10 83 F8 08 72 ?? 48 8B D8 48 03 5F 08 EB"_sig).matches();
     if (vResult.size() != 1) {
         spdlog::warn("[IRuntime] Search SignedIndex failed.");
         return false;
     }
 
-    uintptr_t SignedIndexCaller = vResult.at(0);
+    auto SignedIndexCaller = vResult.at(0);
     _Data.Function.SignedIndex = (FnIndexT)(SignedIndexCaller + 5 + *(int32_t*)(SignedIndexCaller + 1));
 
     return true;
@@ -735,13 +725,13 @@ bool IRuntime::InitDynamicData_ReplyIndex()
         E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 8B 46 08 8B 38
     */
 
-    std::vector<uintptr_t> vResult = FindPatternInMainModule("\xE8\x00\x00\x00\x00\xE8\x00\x00\x00\x00\x8B\x46\x08\x8B\x38", "x????x????xxxxx");
+    auto vResult = _MainModule.search("E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 8B 46 08 8B 38"_sig).matches();
     if (vResult.size() != 1) {
         spdlog::warn("[IRuntime] Search ReplyIndex failed.");
         return false;
     }
 
-    uintptr_t ReplyIndexCaller = vResult.at(0) + 5;
+    auto ReplyIndexCaller = vResult.at(0) + 5;
     _Data.Function.ReplyIndex = (FnIndexT)(ReplyIndexCaller + 5 + *(int32_t*)(ReplyIndexCaller + 1));
 
     return true;
@@ -769,13 +759,13 @@ bool IRuntime::InitDynamicData_ReplyIndex()
         E8 ?? ?? ?? ?? 48 63 D0 48 63 44 D3 10 83 F8 08 72 6B
     */
 
-    std::vector<uintptr_t> vResult = FindPatternInMainModule("\xE8\x00\x00\x00\x00\x48\x63\xD0\x48\x63\x44\xD3\x10\x83\xF8\x08\x72\x6B", "x????xxxxxxxxxxxxx");
+    auto vResult = _MainModule.search("E8 ?? ?? ?? ?? 48 63 D0 48 63 44 D3 10 83 F8 08 72 6B"_sig).matches();
     if (vResult.size() != 1) {
         spdlog::warn("[IRuntime] Search ReplyIndex failed.");
         return false;
     }
 
-    uintptr_t ReplyIndexCaller = vResult.at(0);
+    auto ReplyIndexCaller = vResult.at(0);
     _Data.Function.ReplyIndex = (FnIndexT)(ReplyIndexCaller + 5 + *(int32_t*)(ReplyIndexCaller + 1));
 
     return true;
@@ -823,13 +813,13 @@ bool IRuntime::InitDynamicData_LangInstance()
         8B 0D ?? ?? ?? ?? 03 C6 0F B7 C0 85 C9 0F 84 ?? ?? ?? ?? 8B
     */
 
-    std::vector<uintptr_t> vResult;
+    std::vector<const std::byte *> vResult;
     uint32_t LangInsOffset;
 
     // ver < 2.1.14
     if (_FileVersion < 2001014)
     {
-        vResult = FindPatternInMainModule("\x8B\x0D\x00\x00\x00\x00\x03\xC6\x0F\xB7\xC0\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B\x49", "xx????xxxxxxxxx????xx");
+        vResult = _MainModule.search("8B 0D ?? ?? ?? ?? 03 C6 0F B7 C0 85 C9 0F 84 ?? ?? ?? ?? 8B 49"_sig).matches();
         if (vResult.empty()) {
             spdlog::warn("[IRuntime] Search LangInstance failed. (old)");
             return false;
@@ -839,7 +829,7 @@ bool IRuntime::InitDynamicData_LangInstance()
 
         // Check each result
         //
-        for (uintptr_t Address : vResult)
+        for (const std::byte *Address : vResult)
         {
             if ((uint32_t)(*(uint8_t*)(Address + 21)) != LangInsOffset) {
                 spdlog::warn("[IRuntime] Searched LangInstance index not sure. (old)");
@@ -850,7 +840,7 @@ bool IRuntime::InitDynamicData_LangInstance()
     // ver >= 2.1.14
     else if (_FileVersion >= 2001014)
     {
-        vResult = FindPatternInMainModule("\x8B\x0D\x00\x00\x00\x00\x03\xC6\x0F\xB7\xC0\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B", "xx????xxxxxxxxx????x");
+        vResult = _MainModule.search("8B 0D ?? ?? ?? ?? 03 C6 0F B7 C0 85 C9 0F 84 ?? ?? ?? ?? 8B"_sig).matches();
         if (vResult.empty()) {
             spdlog::warn("[IRuntime] Search LangInstance failed. (new)");
             return false;
@@ -860,7 +850,7 @@ bool IRuntime::InitDynamicData_LangInstance()
 
         // Check each result
         //
-        for (uintptr_t Address : vResult)
+        for (const std::byte *Address : vResult)
         {
             if (*(uint32_t*)(Address + 21) != LangInsOffset) {
                 spdlog::warn("[IRuntime] Searched LangInstance index not sure. (new)");
@@ -904,13 +894,13 @@ bool IRuntime::InitDynamicData_LangInstance()
         48 8B 05 ?? ?? ?? ?? 48 8B D9 48 85 C0 0F 84 ?? ?? ?? ?? 48 8B 80
     */
 
-    std::vector<uintptr_t> vResult = FindPatternInMainModule("\x48\x8B\x05\x00\x00\x00\x00\x48\x8B\xD9\x48\x85\xC0\x0F\x84\x00\x00\x00\x00\x48\x8B\x80", "xxx????xxxxxxxx????xxx");
+    auto vResult = _MainModule.search("48 8B 05 ?? ?? ?? ?? 48 8B D9 48 85 C0 0F 84 ?? ?? ?? ?? 48 8B 80"_sig).matches();
     if (vResult.size() != 1) {
         spdlog::warn("[IRuntime] Search LangInstance failed. (new x64)");
         return false;
     }
 
-    uintptr_t pCoreAppInstance = vResult.at(0) + 7 + *(int32_t*)(vResult.at(0) + 3);
+    auto pCoreAppInstance = vResult.at(0) + 7 + *(int32_t*)(vResult.at(0) + 3);
     uint32_t LangInsOffset = *(uint32_t*)(vResult.at(0) + 22);
 
 #else
@@ -957,7 +947,7 @@ bool IRuntime::InitDynamicData_ToHistoryMessage()
         8B 49 ?? 85 C9 0F 84 ?? ?? ?? ?? 8B 01 FF 90 ?? ?? ?? ?? 85 C0
     */
 
-    std::vector<uintptr_t> vResult = FindPatternInMainModule("\x8B\x49\x00\x85\xC9\x0F\x84\x00\x00\x00\x00\x8B\x01\xFF\x90\x00\x00\x00\x00\x85\xC0", "xx?xxxx????xxxx????xx");
+    auto vResult = _MainModule.search("8B 49 ?? 85 C9 0F 84 ?? ?? ?? ?? 8B 01 FF 90 ?? ?? ?? ?? 85 C0"_sig).matches();
     if (vResult.empty()) {
         spdlog::warn("[IRuntime] Search toHistoryMessage index falied.");
         return false;
@@ -972,7 +962,7 @@ bool IRuntime::InitDynamicData_ToHistoryMessage()
 
     // Check each offset
     //
-    for (uintptr_t Address : vResult)
+    for (const std::byte *Address : vResult)
     {
         if (*(uint32_t*)(Address + 15) != Offset) {
             spdlog::warn("[IRuntime] Searched toHistoryMessage index not sure.");
@@ -1008,7 +998,7 @@ bool IRuntime::InitDynamicData_ToHistoryMessage()
         FF 90 ?? ?? ?? ?? C6 43 01 01
     */
 
-    std::vector<uintptr_t> vResult = FindPatternInMainModule("\xFF\x90\x00\x00\x00\x00\xC6\x43\x01\x01", "xx????xxxx");
+    auto vResult = _MainModule.search("FF 90 ?? ?? ?? ?? C6 43 01 01"_sig).matches();
     if (vResult.size() != 1) {
         spdlog::warn("[IRuntime] Search toHistoryMessage index falied.");
         return false;
