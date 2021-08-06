@@ -52,10 +52,10 @@ Telegram 本地消息防撤回插件。
 为避免问题重复，请在提交前检查已有的问题。
 
 ## :gem: 第三方
-* sigmatch ([Apache-2.0 License](https://github.com/SpriteOvO/sigmatch/blob/main/LICENSE)) - ✨ 现代 C++ 20 签名匹配/搜索库（我的另一个项目）
-* json ([MIT License](https://github.com/nlohmann/json/blob/develop/LICENSE.MIT))
-* MinHook ([BSD 2-Clause License](https://github.com/TsudaKageyu/minhook/blob/master/LICENSE.txt))
-* spdlog ([MIT License](https://github.com/gabime/spdlog/blob/v1.x/LICENSE))
+* [sigmatch](https://github.com/SpriteOvO/sigmatch) ([Apache-2.0 License](https://github.com/SpriteOvO/sigmatch/blob/main/LICENSE)) - ✨ 现代 C++ 20 签名匹配/搜索库（我的另一个项目）
+* [json](https://github.com/nlohmann/json) ([MIT License](https://github.com/nlohmann/json/blob/develop/LICENSE.MIT))
+* [MinHook](https://github.com/TsudaKageyu/minhook) ([BSD 2-Clause License](https://github.com/TsudaKageyu/minhook/blob/master/LICENSE.txt))
+* [spdlog](https://github.com/gabime/spdlog) ([MIT License](https://github.com/gabime/spdlog/blob/v1.x/LICENSE))
 
 ## :beer: 鸣谢
 * 感谢 *采蘑菇的小蘑菇* 提供编译 Telegram 的帮助。

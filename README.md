@@ -53,10 +53,10 @@ Please use the [Issue Tracker](https://github.com/SpriteOvO/Telegram-Anti-Revoke
 To avoid duplication of issues, please check existing issues before submitting.
 
 ## :gem: ThirdParty
-* sigmatch ([Apache-2.0 License](https://github.com/SpriteOvO/sigmatch/blob/main/LICENSE)) - ✨ Modern C++ 20 signature match / search library (another project of mine)
-* json ([MIT License](https://github.com/nlohmann/json/blob/develop/LICENSE.MIT))
-* MinHook ([BSD 2-Clause License](https://github.com/TsudaKageyu/minhook/blob/master/LICENSE.txt))
-* spdlog ([MIT License](https://github.com/gabime/spdlog/blob/v1.x/LICENSE))
+* [sigmatch](https://github.com/SpriteOvO/sigmatch) ([Apache-2.0 License](https://github.com/SpriteOvO/sigmatch/blob/main/LICENSE)) - ✨ Modern C++ 20 signature match / search library (another project of mine)
+* [json](https://github.com/nlohmann/json) ([MIT License](https://github.com/nlohmann/json/blob/develop/LICENSE.MIT))
+* [MinHook](https://github.com/TsudaKageyu/minhook) ([BSD 2-Clause License](https://github.com/TsudaKageyu/minhook/blob/master/LICENSE.txt))
+* [spdlog](https://github.com/gabime/spdlog) ([MIT License](https://github.com/gabime/spdlog/blob/v1.x/LICENSE))
 
 ## :beer: Acknowledgments
 * Thanks to *采蘑菇的小蘑菇* for providing help with compiling Telegram.
