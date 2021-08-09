@@ -44,6 +44,7 @@ If you are using **Telegram beta**, please check the latest preview version.
 1. Copy the file "TAR-Launcher-\***ARCH**\*.exe" to your clipboard.
 2. Navigate to `shell:startup` in Explorer `Win`+`R`).
 3. Right-click (open your context menu) and "Paste shortcut" in that directory.
+4. Optionally to make it start minimized see the [-autostart guide](https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues/65#issuecomment-890500956)
 
 ## :hammer_and_wrench: Build
 See the [Build Instructions](/Docs/Build.md).

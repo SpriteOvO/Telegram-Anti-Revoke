@@ -43,6 +43,7 @@ Telegram 本地消息防撤回插件。
 1. 复制 “TAR-Launcher-\***ARCH**\*.exe” 文件。
 2. 在 `Win`+`R` 中输入 `shell:startup` 回车转到启动目录。
 3. 在该目录中右键菜单点击 “粘贴快捷方式”。
+4. 使其在开机启动时最小化，请参见 [#65 中的评论](https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues/65#issuecomment-890500956)。
 
 ## :hammer_and_wrench: 构建
 转到 [构建说明](/Docs/Build.md)。
