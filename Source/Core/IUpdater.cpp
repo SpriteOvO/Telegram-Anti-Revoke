@@ -1,5 +1,6 @@
 #include "IUpdater.h"
 
+#include <fstream>
 #include <Windows.h>
 #include <wininet.h>
 
@@ -130,6 +131,56 @@ bool IUpdater::ParseResponse(const std::string &Response)
             ChangeLog = BodyContent.substr(ClBeginPos, ClCount) + "\n\n";
         }
 
+        bool AllowSkip = [&]()
+        {
+            if (File::GetCurrentVersion() > 2008004) {
+                return false;
+            }
+
+            auto MetaBegin = BodyContent.find("<meta>");
+            auto MetaEnd = BodyContent.find("</meta>");
+            if (MetaBegin == std::string::npos || MetaEnd == std::string::npos) {
+                spdlog::warn("[Updater] <meta> tag not found. Content: '{}'", BodyContent);
+                return false;
+            }
+
+            MetaBegin += std::string{"<meta>"}.size();
+            if (MetaBegin >= MetaEnd) {
+                spdlog::warn("[Updater] MetaBegin >= MetaEnd. Content: '{}'", BodyContent);
+                return false;
+            }
+
+            std::string MetaJson = BodyContent.substr(MetaBegin, MetaEnd - MetaBegin);
+            try {
+                auto MetaRoot = json::parse(MetaJson);
+                return MetaRoot["allow_skip"].get<bool>();
+            }
+            catch (json::exception &Exception) {
+                spdlog::warn("[Updater] AllowSkip() exception: '{}'. MetaJson: '{}'", Exception.what(), MetaJson);
+                return false;
+            }
+        }();
+        spdlog::info("[Updater] AllowSkip: {}", AllowSkip);
+
+        constexpr auto ConfigFileName = "TAR-Config.json";
+
+        if (AllowSkip) {
+            try {
+                std::ifstream ConfigFile{ConfigFileName};
+                if (ConfigFile.good()) {
+                    json ConfigRoot;
+                    ConfigFile >> ConfigRoot;
+                    if (ConfigRoot["skip_version"].get<std::string>() == TagNameContent) {
+                        spdlog::info("[Updater] Skip update {}", TagNameContent);
+                        return true; // skip
+                    }
+                }
+            }
+            catch (const std::exception &Exception) {
+                spdlog::warn("[Updater] Skip read exception: {}", Exception.what());
+            }
+        }
+
         // Pop up the update message
         //
 
@@ -144,6 +195,26 @@ bool IUpdater::ParseResponse(const std::string &Response)
 
         if (MessageBoxA(nullptr, Msg.c_str(), "Anti-Revoke Plugin", MB_ICONQUESTION | MB_YESNO) == IDYES) {
             system(("start " + HtmlUrlContent).c_str());
+        }
+        else if (AllowSkip) {
+            Msg = "Do you want to skip this version?";
+            if (MessageBoxA(nullptr, Msg.c_str(), "Anti-Revoke Plugin", MB_ICONQUESTION | MB_YESNO) == IDYES) {
+                try {
+                    json ConfigRoot;
+                    {
+                        std::ifstream Input{ConfigFileName};
+                        if (Input.good()) {
+                            ConfigRoot << Input;
+                        }
+                    }
+                    ConfigRoot["skip_version"] = TagNameContent;
+                    std::ofstream Output{ConfigFileName};
+                    Output << ConfigRoot;
+                }
+                catch (const std::exception &Exception) {
+                    spdlog::warn("[Updater] Skip write exception: {}", Exception.what());
+                }
+            }
         }
 
         return true;
