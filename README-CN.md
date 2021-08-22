@@ -32,7 +32,7 @@ Telegram 本地消息防撤回插件。
 4. 根据您正在使用的 Telegram 版本遵循下面的步骤。
 
 ### v2.8.5 之前
-1. 复制 *version.dll* 文件到 Telegram 根目录。
+1. 将 “TAR-Launcher-\***ARCH**\*.exe” 文件重命名为 *version.dll* 复制到 Telegram 根目录。
 
 ### v2.8.4 之后
 1. 在 Telegram 设置中关闭开机自启。
