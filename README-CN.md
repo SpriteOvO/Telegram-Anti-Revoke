@@ -27,23 +27,24 @@ Telegram 本地消息防撤回插件。
 
 ## :hamburger: 用法
 1. 前往 [发布页面](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases) 下载最新版本插件。  
-2. 打开 Telegram 顶层菜单，注意底部的 ARCH 信息，`Version x.x.x` 为 x86 ARCH，`Version x.x.x x64` 为 x64 ARCH。  
+2. 打开 Telegram 顶层菜单，注意底部的 版本号 和 **\*ARCH\*** 架构，显示 `Version x.x.x` 则 **\*ARCH\*** 为 `x86`，显示 `Version x.x.x x64` 则 **\*ARCH\*** 为 `x64`。  
 3. 关闭正在运行的 Telegram 进程。  
-4. 根据您正在使用的 Telegram 版本遵循下面的步骤。
+4. 根据您正在使用的 Telegram 版本继续遵循下面的步骤。
 
 ### v2.8.5 之前
-1. 将 “TAR-Launcher-\***ARCH**\*.exe” 文件重命名为 *version.dll* 复制到 Telegram 根目录。
+1. 将 `TAR-Resources\*ARCH*.dll` 文件重命名为 `version.dll` 后移动到 Telegram 根目录。
+2. 运行 `Telegram.exe`。
 
-### v2.8.4 之后
+### v2.8.5 及之后
 1. 在 Telegram 设置中关闭开机自启。
-2. 移动 “TAR-Launcher-\***ARCH**\*.exe” 文件和 “TAR-Resources” 文件夹到 Telegram 目录。
-3. 运行 “TAR-Launcher-\***ARCH**\*.exe” 或者设置该文件为开机自启。
+2. 将 `TAR-Launcher-*ARCH*.exe` 文件和 `TAR-Resources` 文件夹移动到 Telegram 目录。
+3. 你需要每次运行 `TAR-Launcher-*ARCH*.exe` 来启动 Telegram。
 
-### v2.8.4 之后 - 设置开机自启
-1. 复制 “TAR-Launcher-\***ARCH**\*.exe” 文件。
+### v2.8.5 及之后 - 设置开机自启
+1. 复制 `TAR-Launcher-*ARCH*.exe` 文件。
 2. 在 `Win`+`R` 中输入 `shell:startup` 回车转到启动目录。
-3. 在该目录中右键菜单点击 “粘贴快捷方式”。
-4. 使其在开机启动时最小化，请参见 [#65 中的评论](https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues/65#issuecomment-890500956)。
+3. 在该目录中右键菜单点击 `粘贴快捷方式`。
+4. 如果需要使其在开机启动时最小化，请参见 [#65 中的评论](https://github.com/SpriteOvO/Telegram-Anti-Revoke/issues/65#issuecomment-890500956)。
 
 ## :hammer_and_wrench: 构建
 转到 [构建说明](/Docs/Build.md)。
