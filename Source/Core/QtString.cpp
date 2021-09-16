@@ -2,10 +2,7 @@
 #include "IRuntime.h"
 #include "IAntiRevoke.h"
 
-
-QtString::QtString()
-{
-}
+QtString::QtString() {}
 
 QtString::QtString(const wchar_t *String)
 {
@@ -15,14 +12,15 @@ QtString::QtString(const wchar_t *String)
 bool QtString::IsValidTime()
 {
     // Check valid
-    return d != nullptr && !IsBadReadPtr(d, sizeof(void*)) && !IsBadReadPtr((void*)((uintptr_t)d + d->offset), sizeof(QtArrayData) + 12) &&
-        GetRefCount() <= 1 &&
-        wcslen(GetText()) <= 8; // Fixed for 12h format. ("12:34 AM" / "12:34 PM")
+    return d != nullptr && !IsBadReadPtr(d, sizeof(void *)) &&
+           !IsBadReadPtr((void *)((uintptr_t)d + d->offset), sizeof(QtArrayData) + 12) &&
+           GetRefCount() <= 1 &&
+           wcslen(GetText()) <= 8; // Fixed for 12h format. ("12:34 AM" / "12:34 PM")
 }
 
-wchar_t* QtString::GetText()
+wchar_t *QtString::GetText()
 {
-    return (wchar_t*)((uintptr_t)d + d->offset);
+    return (wchar_t *)((uintptr_t)d + d->offset);
 }
 
 bool QtString::IsEmpty()

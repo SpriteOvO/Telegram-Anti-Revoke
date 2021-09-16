@@ -9,19 +9,13 @@
 
 #include <Config.h>
 
-
 using namespace std::chrono_literals;
 
 namespace fs = std::filesystem;
 
 [[noreturn]] void FatalError(const std::string &content)
 {
-    MessageBoxA(
-        nullptr,
-        content.c_str(),
-        "Telegram-Anti-Revoke Launcher",
-        MB_ICONERROR
-    );
+    MessageBoxA(nullptr, content.c_str(), "Telegram-Anti-Revoke Launcher", MB_ICONERROR);
 
     std::exit(1);
 }
@@ -47,8 +41,7 @@ Arch GetTargetArch(const fs::path &fullFilePath)
         return Arch::Unknown;
     }
 
-    switch (binaryType)
-    {
+    switch (binaryType) {
     case SCS_32BIT_BINARY:
         return Arch::x86;
     case SCS_64BIT_BINARY:
@@ -72,8 +65,7 @@ ptrdiff_t GetLoadLibraryOffset()
 
     if (apiAddress < kernel32) {
         FatalError(
-            std::format("Invalid address. kernel32: {}, apiAddress: {}", kernel32, apiAddress)
-        );
+            std::format("Invalid address. kernel32: {}, apiAddress: {}", kernel32, apiAddress));
     }
 
     return apiAddress - kernel32;
@@ -117,10 +109,8 @@ bool WriteMemory(HANDLE processHandle, void *target, const void *buffer, size_t 
 int WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, int showCmd)
 {
     if (!fs::exists("./Telegram.exe")) {
-        FatalError(
-            "\"Telegram.exe\" file not found.\n"
-            "Please place this file in the \"Telegram.exe\" directory."
-        );
+        FatalError("\"Telegram.exe\" file not found.\n"
+                   "Please place this file in the \"Telegram.exe\" directory.");
     }
 
 #if defined PLATFORM_X86
@@ -128,14 +118,12 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, int showC
 #elif defined PLATFORM_X64
     fs::path corePath = "./TAR-Resources/x64.dll";
 #else
-# error "Configurations error."
+    #error "Configurations error."
 #endif
 
     if (!fs::exists(corePath)) {
-        FatalError(
-            "Resource files are missing.\n"
-            "Did you forget to copy the \"TAR-Resources\" folder?"
-        );
+        FatalError("Resource files are missing.\n"
+                   "Did you forget to copy the \"TAR-Resources\" folder?");
     }
 
     auto arch = GetTargetArch(fs::absolute("./Telegram.exe"));
@@ -144,20 +132,16 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, int showC
     }
 #if defined PLATFORM_X86
     if (arch == Arch::x64) {
-        FatalError(
-            "The \"Telegram.exe\" in the current directory is x64 file.\n"
-            "Please run \"TAR-Launcher-x64.exe\" to try again."
-        );
+        FatalError("The \"Telegram.exe\" in the current directory is x64 file.\n"
+                   "Please run \"TAR-Launcher-x64.exe\" to try again.");
     }
 #elif defined PLATFORM_X64
     if (arch == Arch::x86) {
-        FatalError(
-            "The \"Telegram.exe\" in the current directory is x86 file.\n"
-            "Please run \"TAR-Launcher-x86.exe\" to try again."
-        );
+        FatalError("The \"Telegram.exe\" in the current directory is x86 file.\n"
+                   "Please run \"TAR-Launcher-x86.exe\" to try again.");
     }
 #else
-# error "Configurations error."
+    #error "Configurations error."
 #endif
 
     auto apiOffset = GetLoadLibraryOffset();
@@ -168,17 +152,8 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, int showC
     PROCESS_INFORMATION processInfo{};
 
     bool isCreateSuccess = CreateProcessA(
-        "Telegram.exe",
-        cmdLine,
-        nullptr,
-        nullptr,
-        false,
-        0,
-        nullptr,
-        nullptr,
-        &startupInfo,
-        &processInfo
-    );
+        "Telegram.exe", cmdLine, nullptr, nullptr, false, 0, nullptr, nullptr, &startupInfo,
+        &processInfo);
     if (!isCreateSuccess) {
         FatalError(std::format("CreateProcessA() failed. Last error code: {}", ::GetLastError()));
     }
@@ -193,13 +168,8 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, int showC
 
     auto targetLoadLibrary = targetKernel32 + apiOffset;
 
-    auto targetBuffer = VirtualAllocEx(
-        processInfo.hProcess,
-        nullptr,
-        0x1000,
-        MEM_COMMIT,
-        PAGE_READWRITE
-    );
+    auto targetBuffer =
+        VirtualAllocEx(processInfo.hProcess, nullptr, 0x1000, MEM_COMMIT, PAGE_READWRITE);
     if (targetBuffer == nullptr) {
         FatalError(std::format("VirtualAllocEx() failed. Last error code: {}", ::GetLastError()));
     }
@@ -207,27 +177,18 @@ int WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, int showC
     std::wstring targetFile = fs::absolute(corePath);
 
     if (!WriteMemory(
-        processInfo.hProcess,
-        targetBuffer,
-        targetFile.c_str(),
-        (targetFile.size() + 1) * sizeof(wchar_t))
-    ) {
+            processInfo.hProcess, targetBuffer, targetFile.c_str(),
+            (targetFile.size() + 1) * sizeof(wchar_t)))
+    {
         FatalError(std::format("WriteMemory() failed. Last error code: {}", ::GetLastError()));
     }
 
     HANDLE remoteThread = CreateRemoteThread(
-        processInfo.hProcess,
-        nullptr,
-        0,
-        (LPTHREAD_START_ROUTINE)targetLoadLibrary,
-        targetBuffer,
-        0,
-        nullptr
-    );
+        processInfo.hProcess, nullptr, 0, (LPTHREAD_START_ROUTINE)targetLoadLibrary, targetBuffer,
+        0, nullptr);
     if (remoteThread == nullptr) {
         FatalError(
-            std::format("CreateRemoteThread() failed. Last error code: {}", ::GetLastError())
-        );
+            std::format("CreateRemoteThread() failed. Last error code: {}", ::GetLastError()));
     }
     CloseHandle(remoteThread);
 

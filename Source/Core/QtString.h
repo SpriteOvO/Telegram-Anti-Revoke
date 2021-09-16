@@ -7,8 +7,8 @@
     将 Qt 和 VC Runtime 相关 DLL 都放到 根目录 或 SysWOW64 下依旧找不到（雾
     所以自己实现了一个简单的 QString 类
 
-    Direct reference to the Qt static library will cause the problem that the DLL file cannot be found after injection.
-    So I implemented a simple QString class.
+    Direct reference to the Qt static library will cause the problem that the DLL file cannot be
+    found after injection. So I implemented a simple QString class.
 */
 
 struct QtArrayData
@@ -27,7 +27,7 @@ public:
     QtString(const wchar_t *String);
 
     bool IsValidTime();
-    wchar_t* GetText();
+    wchar_t *GetText();
     bool IsEmpty();
     size_t Find(const std::wstring &String);
     int32_t GetRefCount();
@@ -38,5 +38,4 @@ public:
 
 private:
     QtArrayData *d = nullptr;
-
 };

@@ -2,7 +2,6 @@
 
 #include "QtString.h"
 
-
 // enum class DocumentType : uint32_t
 // {
 //     File = 0,
@@ -15,14 +14,13 @@
 //     WallPaper = 7,
 // };
 
-
 class Object
 {
 public:
     int32_t GetWidth();
     void SetWidth(int32_t Value);
 
-    void* VirtualTable = nullptr;
+    void *VirtualTable = nullptr;
     int32_t MaxWidth = 0;
     int32_t MinHeight = 0;
     int32_t Width = 0;
@@ -45,45 +43,44 @@ public:
 class HistoryViewElement : public Object
 {
 public:
-    Media* GetMedia();
+    Media *GetMedia();
 };
 
 class HistoryMessageEdited
 {
 public:
-    QtString* GetTimeText();
+    QtString *GetTimeText();
 };
 
 class HistoryMessageSigned
 {
 public:
-    QtString* GetTimeText();
+    QtString *GetTimeText();
 };
 
 class HistoryMessageReply
 {
 public:
-    int32_t& MaxReplyWidth();
-
+    int32_t &MaxReplyWidth();
 };
 
 // class PeerData
 // {
 // public:
 //     bool IsChannel();
-// 
+//
 // private:
 //     using PeerId = uint64_t;
-// 
+//
 //     static constexpr auto PeerIdMask         = PeerId(0xFFFFFFFFULL);
 //     static constexpr auto PeerIdTypeMask     = PeerId(0xF00000000ULL);
 //     static constexpr auto PeerIdUserShift    = PeerId(0x000000000ULL);
 //     static constexpr auto PeerIdChatShift    = PeerId(0x100000000ULL);
 //     static constexpr auto PeerIdChannelShift = PeerId(0x200000000ULL);
 //     static constexpr auto PeerIdFakeShift    = PeerId(0xF00000000ULL);
-// 
+//
 //     PeerId GetId();
-// 
+//
 // };
 
 class HistoryMessage;
@@ -96,14 +93,14 @@ public:
     // PeerData* GetPeer();
 
     // Make the function conform to __thiscall rule.
-    void OnDestroyMessage(HistoryMessage* pMessage);
+    void OnDestroyMessage(HistoryMessage *pMessage);
 };
 
-//class HistoryItem
-//{
-//public:
+// class HistoryItem
+// {
+// public:
 //
-//};
+// };
 
 class HistoryMessage /* : public HistoryItem */
 {
@@ -111,18 +108,18 @@ public:
     bool IsMessage();
 
     template <class CompT>
-    CompT* GetComponent(uint32_t index);
+    CompT *GetComponent(uint32_t index);
 
-    HistoryMessageEdited* GetEdited();
-    HistoryMessageSigned* GetSigned();
-    HistoryMessageReply* GetReply();
+    HistoryMessageEdited *GetEdited();
+    HistoryMessageSigned *GetSigned();
+    HistoryMessageReply *GetReply();
 
     // History* GetHistory();
     // Media* GetMedia();
     // bool IsSticker();
     // bool IsLargeEmoji();
-    HistoryViewElement* GetMainView();
-    QtString* GetTimeText();
+    HistoryViewElement *GetMainView();
+    QtString *GetTimeText();
     int32_t GetTimeWidth();
     void SetTimeWidth(int32_t Value);
 };
@@ -130,8 +127,8 @@ public:
 class LanguageInstance
 {
 public:
-    QtString* GetId();
-    QtString* GetPluralId();
-    QtString* GetName();
-    QtString* GetNativeName();
+    QtString *GetId();
+    QtString *GetPluralId();
+    QtString *GetName();
+    QtString *GetNativeName();
 };

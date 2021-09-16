@@ -9,7 +9,6 @@
 #include "IAntiRevoke.h"
 #include "Utils.h"
 
-
 bool CheckProcess()
 {
     std::string CurrentName = File::GetCurrentName();
@@ -32,7 +31,8 @@ ULONG WINAPI Initialize(PVOID pParameter)
         return TRUE;
     }
 
-    spdlog::info("Running. Version: \"{}\", Platform: \"{}\"", AR_VERSION_STRING,
+    spdlog::info(
+        "Running. Version: \"{}\", Platform: \"{}\"", AR_VERSION_STRING,
 #if defined PLATFORM_X86
         "x86"
 #elif defined PLATFORM_X64
@@ -49,9 +49,10 @@ ULONG WINAPI Initialize(PVOID pParameter)
     }
 
     IUpdater::GetInstance().CheckUpdate();
-    
+
     if (!Runtime.InitFixedData()) {
-        spdlog::error("The version of Telegram you are using has been deprecated by the plugin.\nPlease update your Telegram client.");
+        spdlog::error(
+            "The version of Telegram you are using has been deprecated by the plugin.\nPlease update your Telegram client.");
         return 0;
     }
 
@@ -69,13 +70,13 @@ ULONG WINAPI Initialize(PVOID pParameter)
 
 BOOL WINAPI RealDllMain(HMODULE hModule, ULONG Reason, PVOID pReserved)
 {
-    if (Reason == DLL_PROCESS_ATTACH)
-    {
+    if (Reason == DLL_PROCESS_ATTACH) {
         DisableThreadLibraryCalls(hModule);
 
         HANDLE hThread = CreateThread(nullptr, 0, Initialize, nullptr, 0, nullptr);
         if (hThread == nullptr) {
-            Logger::DoError("CreateThread() failed. ErrorCode: " + std::to_string(::GetLastError()), true);
+            Logger::DoError(
+                "CreateThread() failed. ErrorCode: " + std::to_string(::GetLastError()), true);
             return FALSE;
         }
 

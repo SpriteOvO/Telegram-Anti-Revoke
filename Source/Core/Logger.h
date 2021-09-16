@@ -2,11 +2,10 @@
 
 #include <string>
 
+namespace Logger {
 
-namespace Logger
-{
-    [[noreturn]] void DoError(const std::string &Content, bool bReport);
+[[noreturn]] void DoError(const std::string &Content, bool bReport);
 
-    void Initialize();
+void Initialize();
 
 } // namespace Logger

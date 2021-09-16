@@ -4,8 +4,7 @@
 
 #include "Utils.h"
 
-
-IRuntime& IRuntime::GetInstance()
+IRuntime &IRuntime::GetInstance()
 {
     static IRuntime i;
     return i;
@@ -13,7 +12,8 @@ IRuntime& IRuntime::GetInstance()
 
 bool IRuntime::Initialize()
 {
-    _MainModule = _ThisProcess.in_module("Telegram.exe", sigmatch::mem_prot::read | sigmatch::mem_prot::execute);
+    _MainModule = _ThisProcess.in_module(
+        "Telegram.exe", sigmatch::mem_prot::read | sigmatch::mem_prot::execute);
     if (_MainModule.error().has_value()) {
         spdlog::warn("[IRuntime] _MainModule.error().value(): {}", _MainModule.error().value());
         return false;
@@ -38,8 +38,7 @@ bool IRuntime::InitFixedData()
         return false;
     }
     // ver >= 2.4.0, ver < 2.4.1
-    else if (_FileVersion >= 2004000 && _FileVersion < 2004001)
-    {
+    else if (_FileVersion >= 2004000 && _FileVersion < 2004001) {
         _Data.Offset.TimeText = 0x70;
         _Data.Offset.TimeWidth = 0x74;
         _Data.Offset.MainView = 0x5C;
@@ -48,31 +47,28 @@ bool IRuntime::InitFixedData()
         // _Data.Offset.HistoryPeer = 0x7C;
     }
     // ver >= 2.4.1, ver < 2.6.0
-    else if (_FileVersion >= 2004001 && _FileVersion < 2006000)
-    {
+    else if (_FileVersion >= 2004001 && _FileVersion < 2006000) {
         _Data.Offset.TimeText = 0x70;
         _Data.Offset.TimeWidth = 0x74;
         _Data.Offset.MainView = 0x5C;
         // _Data.Offset.Media = 0x54;
-        _Data.Offset.SignedTimeText = 0x10;    // changed
+        _Data.Offset.SignedTimeText = 0x10; // changed
         // _Data.Offset.HistoryPeer = 0x7C;       // maybe untested! (I forgot :)
     }
     // ver >= 2.6.0, ver < 2.9.0
-    else if (_FileVersion >= 2006000 && _FileVersion < 2009000)
-    {
-        _Data.Offset.TimeText = 0x78;          // changed
-        _Data.Offset.TimeWidth = 0x7C;         // changed
-        _Data.Offset.MainView = 0x60;          // changed
+    else if (_FileVersion >= 2006000 && _FileVersion < 2009000) {
+        _Data.Offset.TimeText = 0x78;  // changed
+        _Data.Offset.TimeWidth = 0x7C; // changed
+        _Data.Offset.MainView = 0x60;  // changed
         // _Data.Offset.Media = 0x5C;             // changed
         _Data.Offset.SignedTimeText = 0x10;
         // _Data.Offset.HistoryPeer = 0x7C;       // untested!
     }
     // ver >= 2.9.0
-    else if (_FileVersion >= 2009000)
-    {
-        _Data.Offset.TimeText = 0x70;          // changed
-        _Data.Offset.TimeWidth = 0x74;         // changed
-        _Data.Offset.MainView = 0x5C;          // changed
+    else if (_FileVersion >= 2009000) {
+        _Data.Offset.TimeText = 0x70;  // changed
+        _Data.Offset.TimeWidth = 0x74; // changed
+        _Data.Offset.MainView = 0x5C;  // changed
         _Data.Offset.SignedTimeText = 0x10;
     }
 
@@ -88,7 +84,7 @@ bool IRuntime::InitFixedData()
     return true;
 
 #else
-# error "Unimplemented."
+    #error "Unimplemented."
 #endif
 }
 
@@ -98,15 +94,14 @@ bool IRuntime::InitDynamicData()
 
     Safe::TryExcept(
         [&]() {
-#define INIT_DATA_AND_LOG(name)                                                 \
-            if (!InitDynamicData_ ## name()) {                                  \
-                spdlog::warn("[IRuntime] InitDynamicData_" # name "() failed.");       \
-                return;                                                         \
-            }                                                                   \
-            else {                                                              \
-                spdlog::info("[IRuntime] InitDynamicData_" # name "() succeeded.");    \
-            }
-
+#define INIT_DATA_AND_LOG(name)                                                                    \
+    if (!InitDynamicData_##name()) {                                                               \
+        spdlog::warn("[IRuntime] InitDynamicData_" #name "() failed.");                            \
+        return;                                                                                    \
+    }                                                                                              \
+    else {                                                                                         \
+        spdlog::info("[IRuntime] InitDynamicData_" #name "() succeeded.");                         \
+    }
             INIT_DATA_AND_LOG(MallocFree);
             INIT_DATA_AND_LOG(DestroyMessage);
             INIT_DATA_AND_LOG(EditedIndex);
@@ -119,9 +114,9 @@ bool IRuntime::InitDynamicData()
             Result = true;
         },
         [&](uint32_t ExceptionCode) {
-            spdlog::warn("[IRuntime] InitDynamicData() caught an exception, code: {:#x}", ExceptionCode);
-        }
-    );
+            spdlog::warn(
+                "[IRuntime] InitDynamicData() caught an exception, code: {:#x}", ExceptionCode);
+        });
 
     return Result;
 }
@@ -156,9 +151,9 @@ bool IRuntime::InitDynamicData_MallocFree()
         .text:01B7CAC5 85 F6                                   test    esi, esi
         .text:01B7CAC7 74 19                                   jz      short loc_1B7CAE2
         .text:01B7CAC9 FF 37                                   push    dword ptr [edi] ; source
-        .text:01B7CACB 53                                      push    ebx             ; size_in_elements
-        .text:01B7CACC 56                                      push    esi             ; destination
-        .text:01B7CACD E8 B2 9E 01 00                          call    _strcpy_s
+        .text:01B7CACB 53                                      push    ebx             ;
+       size_in_elements .text:01B7CACC 56                                      push    esi ;
+       destination .text:01B7CACD E8 B2 9E 01 00                          call    _strcpy_s
         .text:01B7CAD2 8B 45 0C                                mov     eax, [ebp+to]
         .text:01B7CAD5 8B CE                                   mov     ecx, esi
         .text:01B7CAD7 83 C4 0C                                add     esp, 0Ch
@@ -166,8 +161,9 @@ bool IRuntime::InitDynamicData_MallocFree()
         .text:01B7CADC 89 08                                   mov     [eax], ecx
         .text:01B7CADE C6 40 04 01                             mov     byte ptr [eax+4], 1
         .text:01B7CAE2
-        .text:01B7CAE2                         loc_1B7CAE2:                            ; CODE XREF: ___std_exception_copy+2F↑j
-        .text:01B7CAE2 56                                      push    esi             ; block
+        .text:01B7CAE2                         loc_1B7CAE2:                            ; CODE XREF:
+       ___std_exception_copy+2F↑j .text:01B7CAE2 56                                      push    esi
+       ; block
 
         // and find this (internal free)
         //
@@ -182,7 +178,8 @@ bool IRuntime::InitDynamicData_MallocFree()
         free		56 E8 ?? ?? ?? ?? 59 5E 5B EB
     */
 
-    auto vMallocResult = _MainModule.search("41 84 C0 75 F9 2B CA 53 56 8D 59 01 53 E8"_sig).matches();
+    auto vMallocResult =
+        _MainModule.search("41 84 C0 75 F9 2B CA 53 56 8D 59 01 53 E8"_sig).matches();
     if (vMallocResult.size() != 1) {
         spdlog::warn("[IRuntime] Search malloc failed.");
         return false;
@@ -197,20 +194,22 @@ bool IRuntime::InitDynamicData_MallocFree()
     auto MallocCaller = vMallocResult.at(0) + 13;
     auto FreeCaller = vFreeResult.at(0) + 1;
 
-    _Data.Function.Malloc = (FnMallocT)(MallocCaller + 5 + *(int32_t*)(MallocCaller + 1));
-    _Data.Function.Free = (FnFreeT)(FreeCaller + 5 + *(int32_t*)(FreeCaller + 1));
+    _Data.Function.Malloc = (FnMallocT)(MallocCaller + 5 + *(int32_t *)(MallocCaller + 1));
+    _Data.Function.Free = (FnFreeT)(FreeCaller + 5 + *(int32_t *)(FreeCaller + 1));
 
     return true;
 
 #elif defined PLATFORM_X64
 
     /*
-        void __fastcall _std_exception_copy(const __std_exception_data *from, __std_exception_data *to)
+        void __fastcall _std_exception_copy(const __std_exception_data *from, __std_exception_data
+       *to)
 
         .text:0000000142B5CF5D 48 FF C7                                inc     rdi
         .text:0000000142B5CF60 80 3C 38 00                             cmp     byte ptr [rax+rdi], 0
         .text:0000000142B5CF64 75 F7                                   jnz     short loc_142B5CF5D
-        .text:0000000142B5CF66 48 8D 4F 01                             lea     rcx, [rdi+1]    ; size
+        .text:0000000142B5CF66 48 8D 4F 01                             lea     rcx, [rdi+1]    ;
+       size
 
         // find this (internal malloc)
         //
@@ -219,17 +218,17 @@ bool IRuntime::InitDynamicData_MallocFree()
         .text:0000000142B5CF6F 48 8B D8                                mov     rbx, rax
         .text:0000000142B5CF72 48 85 C0                                test    rax, rax
         .text:0000000142B5CF75 74 1C                                   jz      short loc_142B5CF93
-        .text:0000000142B5CF77 4C 8B 06                                mov     r8, [rsi]       ; source
-        .text:0000000142B5CF7A 48 8D 57 01                             lea     rdx, [rdi+1]    ; size_in_elements
-        .text:0000000142B5CF7E 48 8B C8                                mov     rcx, rax        ; destination
-        .text:0000000142B5CF81 E8 96 5E 02 00                          call    strcpy_s
-        .text:0000000142B5CF86 48 8B C3                                mov     rax, rbx
+        .text:0000000142B5CF77 4C 8B 06                                mov     r8, [rsi]       ;
+       source .text:0000000142B5CF7A 48 8D 57 01                             lea     rdx, [rdi+1] ;
+       size_in_elements .text:0000000142B5CF7E 48 8B C8                                mov     rcx,
+       rax        ; destination .text:0000000142B5CF81 E8 96 5E 02 00                          call
+       strcpy_s .text:0000000142B5CF86 48 8B C3                                mov     rax, rbx
         .text:0000000142B5CF89 41 C6 46 08 01                          mov     byte ptr [r14+8], 1
         .text:0000000142B5CF8E 49 89 06                                mov     [r14], rax
         .text:0000000142B5CF91 33 DB                                   xor     ebx, ebx
         .text:0000000142B5CF93
-        .text:0000000142B5CF93                         loc_142B5CF93:                          ; CODE XREF: __std_exception_copy+45↑j
-        .text:0000000142B5CF93 48 8B CB                                mov     rcx, rbx        ; block
+        .text:0000000142B5CF93                         loc_142B5CF93:                          ;
+       CODE XREF: __std_exception_copy+45↑j .text:0000000142B5CF93 48 8B CB mov     rcx, rbx ; block
 
         // and find this (internal free)
         //
@@ -241,13 +240,16 @@ bool IRuntime::InitDynamicData_MallocFree()
         free: 48 8B CB E8 ?? ?? ?? ?? EB
     */
 
-    auto vMallocResult = _MainModule.search("48 FF C7 80 3C 38 00 75 F7 48 8D 4F 01 E8"_sig).matches();
+    auto vMallocResult =
+        _MainModule.search("48 FF C7 80 3C 38 00 75 F7 48 8D 4F 01 E8"_sig).matches();
     if (vMallocResult.size() != 1) {
         spdlog::warn("[IRuntime] Search malloc failed.");
         return false;
     }
 
-    auto vFreeResult = _ThisProcess.in_range({vMallocResult.at(0), 0x50}).search("48 8B CB E8 ?? ?? ?? ?? EB"_sig).matches();
+    auto vFreeResult = _ThisProcess.in_range({vMallocResult.at(0), 0x50})
+                           .search("48 8B CB E8 ?? ?? ?? ?? EB"_sig)
+                           .matches();
     if (vFreeResult.size() != 1) {
         spdlog::warn("[IRuntime] Search free failed.");
         return false;
@@ -256,13 +258,13 @@ bool IRuntime::InitDynamicData_MallocFree()
     auto MallocCaller = vMallocResult.at(0) + 13;
     auto FreeCaller = vFreeResult.at(0) + 3;
 
-    _Data.Function.Malloc = (FnMallocT)(MallocCaller + 5 + *(int32_t*)(MallocCaller + 1));
-    _Data.Function.Free = (FnFreeT)(FreeCaller + 5 + *(int32_t*)(FreeCaller + 1));
+    _Data.Function.Malloc = (FnMallocT)(MallocCaller + 5 + *(int32_t *)(MallocCaller + 1));
+    _Data.Function.Free = (FnFreeT)(FreeCaller + 5 + *(int32_t *)(FreeCaller + 1));
 
     return true;
 
 #else
-# error "Unimplemented."
+    #error "Unimplemented."
 #endif
 }
 
@@ -271,7 +273,8 @@ bool IRuntime::InitDynamicData_DestroyMessage()
 #if defined PLATFORM_X86
 
     /*
-        void __userpurge Data::Session::processMessagesDeleted(Data::Session *this@<ecx>, int a2@<ebp>, int a3@<edi>, int a4@<esi>, int channelId, QVector<MTPint> *data)
+        void __userpurge Data::Session::processMessagesDeleted(Data::Session *this@<ecx>, int
+       a2@<ebp>, int a3@<edi>, int a4@<esi>, int channelId, QVector<MTPint> *data)
 
         .text:008CD8C1 8B 08                                   mov     this, [eax]
         .text:008CD8C3 8B 45 E8                                mov     eax, [ebp-18h]
@@ -288,7 +291,9 @@ bool IRuntime::InitDynamicData_DestroyMessage()
 
         // find this
         //
-        .text:008CD8E1 E8 9A 02 00 00                          call    ?destroyMessage@Session@Data@@QAEXV?$not_null@PAVHistoryItem@@@gsl@@@Z ; Data::Session::destroyMessage(gsl::not_null<HistoryItem *>)
+        .text:008CD8E1 E8 9A 02 00 00                          call
+       ?destroyMessage@Session@Data@@QAEXV?$not_null@PAVHistoryItem@@@gsl@@@Z ;
+       Data::Session::destroyMessage(gsl::not_null<HistoryItem *>)
 
         .text:008CD8E6 85 F6                                   test    esi, esi
         .text:008CD8E8 0F 84 0F 01 00 00                       jz      loc_8CD9FD
@@ -300,8 +305,10 @@ bool IRuntime::InitDynamicData_DestroyMessage()
         .text:008CD8FE 8D 45 C8                                lea     eax, [ebp-38h]
         .text:008CD901 50                                      push    eax             ; result
         .text:008CD902 8D 4D B4                                lea     this, [ebp-4Ch] ; this
-        .text:008CD905 E8 B6 3B D5 FF                          call    ?insert@?$flat_set@V?$not_null@PAVHistory@@@gsl@@U?$less@X@std@@@base@@QAE?AU?$pair@V?$flat_multi_set_iterator_impl@V?$not_null@PAVHistory@@@gsl@@V?$_Deque_iterator@V?$_Deque_val@U?$_Deque_simple_types@V?$flat_multi_set_const_wrap@V?$not_null@PAVHistory@@@gsl@@@base@@@std@@@std@@@std@@@base@@_N@std@@$$QAV?$not_null@PAVHistory@@@gsl@@@Z ; base::flat_set<gsl::not_null<History *>,std::less<void>>::insert(gsl::not_null<History *> &&)
-        .text:008CD90A EB 54                                   jmp     short loc_8CD960
+        .text:008CD905 E8 B6 3B D5 FF                          call
+       ?insert@?$flat_set@V?$not_null@PAVHistory@@@gsl@@U?$less@X@std@@@base@@QAE?AU?$pair@V?$flat_multi_set_iterator_impl@V?$not_null@PAVHistory@@@gsl@@V?$_Deque_iterator@V?$_Deque_val@U?$_Deque_simple_types@V?$flat_multi_set_const_wrap@V?$not_null@PAVHistory@@@gsl@@@base@@@std@@@std@@@std@@@base@@_N@std@@$$QAV?$not_null@PAVHistory@@@gsl@@@Z
+       ; base::flat_set<gsl::not_null<History *>,std::less<void>>::insert(gsl::not_null<History *>
+       &&) .text:008CD90A EB 54                                   jmp     short loc_8CD960
 
         8B 71 ?? 89 08 85 C9 0F 84 ?? ?? ?? ?? ?? ?? ?? E8
 
@@ -321,26 +328,27 @@ bool IRuntime::InitDynamicData_DestroyMessage()
     */
 
     // ver < 1.9.15
-    if (_FileVersion < 1009015)
-    {
-        auto vResult = _MainModule.search("8B 71 ?? 89 08 85 C9 0F 84 ?? ?? ?? ?? ?? ?? ?? E8"_sig).matches();
+    if (_FileVersion < 1009015) {
+        auto vResult =
+            _MainModule.search("8B 71 ?? 89 08 85 C9 0F 84 ?? ?? ?? ?? ?? ?? ?? E8"_sig).matches();
         if (vResult.size() != 1) {
             spdlog::warn("[IRuntime] Search DestroyMessage failed.");
             return false;
         }
 
-        _Data.Address.FnDestroyMessageCaller = (void*)(vResult.at(0) + 16);
+        _Data.Address.FnDestroyMessageCaller = (void *)(vResult.at(0) + 16);
     }
     // ver >= 1.9.15
-    else if (_FileVersion >= 1009015)
-    {
-        auto vResult = _MainModule.search("51 8B C4 89 08 8B CE E8 ?? ?? ?? ?? 80 BE ?? ?? ?? ?? 00"_sig).matches();
+    else if (_FileVersion >= 1009015) {
+        auto vResult =
+            _MainModule.search("51 8B C4 89 08 8B CE E8 ?? ?? ?? ?? 80 BE ?? ?? ?? ?? 00"_sig)
+                .matches();
         if (vResult.size() != 1) {
             spdlog::warn("[IRuntime] Search new DestroyMessage failed.");
             return false;
         }
 
-        _Data.Address.FnDestroyMessageCaller = (void*)(vResult.at(0) + 7);
+        _Data.Address.FnDestroyMessageCaller = (void *)(vResult.at(0) + 7);
     }
 
     return true;
@@ -348,7 +356,8 @@ bool IRuntime::InitDynamicData_DestroyMessage()
 #elif defined PLATFORM_X64
 
     /*
-        void Data::Session::processMessagesDeleted(struct ChatIdType<2>, class QVector<class tl::int_type> const &)
+        void Data::Session::processMessagesDeleted(struct ChatIdType<2>, class QVector<class
+       tl::int_type> const &)
 
         Telegram.exe+7ADDB2 - 74 1C                 - je Telegram.exe+7ADDD0
         Telegram.exe+7ADDB4 - 48 8B 09              - mov rcx,[rcx]
@@ -409,18 +418,22 @@ bool IRuntime::InitDynamicData_DestroyMessage()
         48 8B 5A 18 48 85 DB 0F 84 ?? ?? ?? ?? 48 8B CB E8 ?? ?? ?? ?? 80 BB ?? ?? ?? ?? 00
     */
 
-    auto vResult = _MainModule.search("48 8B 5A 18 48 85 DB 0F 84 ?? ?? ?? ?? 48 8B CB E8 ?? ?? ?? ?? 80 BB ?? ?? ?? ?? 00"_sig).matches();
+    auto vResult =
+        _MainModule
+            .search(
+                "48 8B 5A 18 48 85 DB 0F 84 ?? ?? ?? ?? 48 8B CB E8 ?? ?? ?? ?? 80 BB ?? ?? ?? ?? 00"_sig)
+            .matches();
     if (vResult.size() != 1) {
         spdlog::warn("[IRuntime] Search DestroyMessage failed.");
         return false;
     }
 
-    _Data.Address.FnDestroyMessageCaller = (void*)(vResult.at(0) + 16);
+    _Data.Address.FnDestroyMessageCaller = (void *)(vResult.at(0) + 16);
 
     return true;
 
 #else
-# error "Unimplemented."
+    #error "Unimplemented."
 #endif
 }
 
@@ -434,9 +447,9 @@ bool IRuntime::InitDynamicData_EditedIndex()
         .text:00A4F320 55                                      push    ebp
         .text:00A4F321 8B EC                                   mov     ebp, esp
         .text:00A4F323 6A FF                                   push    0FFFFFFFFh
-        .text:00A4F325 68 28 4F C8 01                          push    offset __ehhandler$?applyEdition@HistoryMessage@@UAEXABVMTPDmessage@@@Z
-        .text:00A4F32A 64 A1 00 00 00 00                       mov     eax, large fs:0
-        .text:00A4F330 50                                      push    eax
+        .text:00A4F325 68 28 4F C8 01                          push    offset
+       __ehhandler$?applyEdition@HistoryMessage@@UAEXABVMTPDmessage@@@Z .text:00A4F32A 64 A1 00 00
+       00 00                       mov     eax, large fs:0 .text:00A4F330 50 push    eax
         .text:00A4F331 83 EC 0C                                sub     esp, 0Ch
         .text:00A4F334 53                                      push    ebx
         .text:00A4F335 56                                      push    esi
@@ -462,12 +475,16 @@ bool IRuntime::InitDynamicData_EditedIndex()
 
         // find this (RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index()
         //
-        .text:00A4F36D E8 6E 3A EA FF                          call    ?Index@?$RuntimeComponent@UHistoryMessageEdited@@VHistoryItem@@@@SAHXZ ; RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index(void)
+        .text:00A4F36D E8 6E 3A EA FF                          call
+       ?Index@?$RuntimeComponent@UHistoryMessageEdited@@VHistoryItem@@@@SAHXZ ;
+       RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index(void)
 
         .text:00A4F372 83 7C 87 08 04                          cmp     dword ptr [edi+eax*4+8], 4
         .text:00A4F377 73 28                                   jnb     short loc_A4F3A1
-        .text:00A4F379 E8 62 3A EA FF                          call    ?Index@?$RuntimeComponent@UHistoryMessageEdited@@VHistoryItem@@@@SAHXZ ; RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index(void)
-        .text:00A4F37E 33 D2                                   xor     edx, edx
+        .text:00A4F379 E8 62 3A EA FF                          call
+       ?Index@?$RuntimeComponent@UHistoryMessageEdited@@VHistoryItem@@@@SAHXZ ;
+       RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index(void) .text:00A4F37E 33 D2 xor edx,
+       edx
 
         E8 ?? ?? ?? ?? 83 7C 87 ?? ?? 73 ?? E8
     */
@@ -479,14 +496,16 @@ bool IRuntime::InitDynamicData_EditedIndex()
     }
 
     auto EditedIndexCaller = vResult.at(0);
-    _Data.Function.EditedIndex = (FnIndexT)(EditedIndexCaller + 5 + *(int32_t*)(EditedIndexCaller + 1));
+    _Data.Function.EditedIndex =
+        (FnIndexT)(EditedIndexCaller + 5 + *(int32_t *)(EditedIndexCaller + 1));
 
     return true;
 
 #elif defined PLATFORM_X64
 
     /*
-        void __fastcall HistoryMessage::applyEdition(HistoryMessage *__hidden this, const struct MTPDmessage *)
+        void __fastcall HistoryMessage::applyEdition(HistoryMessage *__hidden this, const struct
+       MTPDmessage *)
 
         Telegram.exe+A65456 - 44 8B 42 10           - mov r8d,[rdx+10]
         Telegram.exe+A6545A - 41 81 E0 00002000     - and r8d,00200000 { 2097152 }
@@ -529,12 +548,13 @@ bool IRuntime::InitDynamicData_EditedIndex()
     }
 
     auto EditedIndexCaller = vResult.at(0) + 8;
-    _Data.Function.EditedIndex = (FnIndexT)(EditedIndexCaller + 5 + *(int32_t*)(EditedIndexCaller + 1));
+    _Data.Function.EditedIndex =
+        (FnIndexT)(EditedIndexCaller + 5 + *(int32_t *)(EditedIndexCaller + 1));
 
     return true;
 
 #else
-# error "Unimplemented."
+    #error "Unimplemented."
 #endif
 }
 
@@ -545,8 +565,8 @@ bool IRuntime::InitDynamicData_SignedIndex()
     /*
         HistoryView__Message__refreshEditedBadge
 
-        .text:009F109D                         loc_9F109D:                             ; CODE XREF: HistoryView__Message__refreshEditedBadge+69↑j
-        .text:009F109D 8D 47 28                                lea     eax, [edi+28h]
+        .text:009F109D                         loc_9F109D:                             ; CODE XREF:
+       HistoryView__Message__refreshEditedBadge+69↑j .text:009F109D 8D 47 28 lea     eax, [edi+28h]
         .text:009F10A0 50                                      push    eax
         .text:009F10A1 8D 4D E8                                lea     ecx, [ebp-18h]
         .text:009F10A4 E8 07 2E FC 00                          call    QDateTime__QDateTime
@@ -570,13 +590,14 @@ bool IRuntime::InitDynamicData_SignedIndex()
         .text:009F10E0 50                                      push    eax
         .text:009F10E1 E8 AA BA 03 00                          call    HistoryMessageEdited__refresh
         .text:009F10E6
-        .text:009F10E6                         loc_9F10E6:                             ; CODE XREF: HistoryView__Message__refreshEditedBadge+A2↑j
-        .text:009F10E6 8B 46 08                                mov     eax, [esi+8]
+        .text:009F10E6                         loc_9F10E6:                             ; CODE XREF:
+       HistoryView__Message__refreshEditedBadge+A2↑j .text:009F10E6 8B 46 08 mov     eax, [esi+8]
         .text:009F10E9 8B 38                                   mov     edi, [eax]
 
         // find this (RuntimeComponent<HistoryMessageSigned,HistoryItem>::Index()
         //
-        .text:009F10EB E8 30 62 FA FF                          call    RuntimeComponent_HistoryMessageSigned_HistoryItem___Index
+        .text:009F10EB E8 30 62 FA FF                          call
+       RuntimeComponent_HistoryMessageSigned_HistoryItem___Index
 
         .text:009F10F0 8B 44 87 08                             mov     eax, [edi+eax*4+8]
         .text:009F10F4 83 CF FF                                or      edi, 0FFFFFFFFh
@@ -609,14 +630,16 @@ bool IRuntime::InitDynamicData_SignedIndex()
     }
 
     auto SignedIndexCaller = vResult.at(0);
-    _Data.Function.SignedIndex = (FnIndexT)(SignedIndexCaller + 5 + *(int32_t*)(SignedIndexCaller + 1));
+    _Data.Function.SignedIndex =
+        (FnIndexT)(SignedIndexCaller + 5 + *(int32_t *)(SignedIndexCaller + 1));
 
     return true;
 
 #elif defined PLATFORM_X64
 
     /*
-        void __fastcall HistoryMessage::setPostAuthor(HistoryMessage *__hidden this, const struct QString *)
+        void __fastcall HistoryMessage::setPostAuthor(HistoryMessage *__hidden this, const struct
+       QString *)
 
         .text:0000000140ADFF00 48 89 5C 24 10                          mov     [rsp+arg_8], rbx
         .text:0000000140ADFF05 48 89 74 24 18                          mov     [rsp+arg_10], rsi
@@ -627,57 +650,65 @@ bool IRuntime::InitDynamicData_SignedIndex()
         .text:0000000140ADFF19 4C 8B F2                                mov     r14, rdx
         .text:0000000140ADFF1C 48 8B F9                                mov     rdi, rcx
         .text:0000000140ADFF1F 48 8B 18                                mov     rbx, [rax]
-        .text:0000000140ADFF22 E8 E9 B4 FF FF                          call    ?Index@?$RuntimeComponent@UHistoryMessageSigned@@VHistoryItem@@@@SAHXZ ; RuntimeComponent<HistoryMessageSigned,HistoryItem>::Index(void)
-        .text:0000000140ADFF27 4C 63 C0                                movsxd  r8, eax
-        .text:0000000140ADFF2A 4A 63 44 C3 10                          movsxd  rax, dword ptr [rbx+r8*8+10h]
-        .text:0000000140ADFF2F 83 F8 08                                cmp     eax, 8
+        .text:0000000140ADFF22 E8 E9 B4 FF FF                          call
+       ?Index@?$RuntimeComponent@UHistoryMessageSigned@@VHistoryItem@@@@SAHXZ ;
+       RuntimeComponent<HistoryMessageSigned,HistoryItem>::Index(void) .text:0000000140ADFF27 4C 63
+       C0                                movsxd  r8, eax .text:0000000140ADFF2A 4A 63 44 C3 10
+       movsxd  rax, dword ptr [rbx+r8*8+10h] .text:0000000140ADFF2F 83 F8 08 cmp     eax, 8
         .text:0000000140ADFF32 72 09                                   jb      short loc_140ADFF3D
         .text:0000000140ADFF34 48 8B D8                                mov     rbx, rax
         .text:0000000140ADFF37 48 03 5F 08                             add     rbx, [rdi+8]
         .text:0000000140ADFF3B EB 02                                   jmp     short loc_140ADFF3F
-        .text:0000000140ADFF3D                         ; ---------------------------------------------------------------------------
+        .text:0000000140ADFF3D                         ;
+       ---------------------------------------------------------------------------
         .text:0000000140ADFF3D
-        .text:0000000140ADFF3D                         loc_140ADFF3D:                          ; CODE XREF: HistoryMessage::setPostAuthor(QString const &)+32↑j
-        .text:0000000140ADFF3D 33 DB                                   xor     ebx, ebx
-        .text:0000000140ADFF3F
-        .text:0000000140ADFF3F                         loc_140ADFF3F:                          ; CODE XREF: HistoryMessage::setPostAuthor(QString const &)+3B↑j
-        .text:0000000140ADFF3F 49 8B 06                                mov     rax, [r14]
-        .text:0000000140ADFF42 83 78 04 00                             cmp     dword ptr [rax+4], 0
-        .text:0000000140ADFF46 75 48                                   jnz     short loc_140ADFF90
-        .text:0000000140ADFF48 48 85 DB                                test    rbx, rbx
+        .text:0000000140ADFF3D                         loc_140ADFF3D:                          ;
+       CODE XREF: HistoryMessage::setPostAuthor(QString const &)+32↑j .text:0000000140ADFF3D 33 DB
+       xor     ebx, ebx .text:0000000140ADFF3F .text:0000000140ADFF3F loc_140ADFF3F: ; CODE XREF:
+       HistoryMessage::setPostAuthor(QString const &)+3B↑j .text:0000000140ADFF3F 49 8B 06 mov rax,
+       [r14] .text:0000000140ADFF42 83 78 04 00                             cmp     dword ptr
+       [rax+4], 0 .text:0000000140ADFF46 75 48                                   jnz     short
+       loc_140ADFF90 .text:0000000140ADFF48 48 85 DB                                test    rbx, rbx
         .text:0000000140ADFF4B 0F 84 FA 00 00 00                       jz      loc_140AE004B
-        .text:0000000140ADFF51 E8 BA B4 FF FF                          call    ?Index@?$RuntimeComponent@UHistoryMessageSigned@@VHistoryItem@@@@SAHXZ ; RuntimeComponent<HistoryMessageSigned,HistoryItem>::Index(void)
-        .text:0000000140ADFF56 8B C8                                   mov     ecx, eax
-        .text:0000000140ADFF58 41 B8 01 00 00 00                       mov     r8d, 1
-        .text:0000000140ADFF5E 48 8B 47 08                             mov     rax, [rdi+8]
+        .text:0000000140ADFF51 E8 BA B4 FF FF                          call
+       ?Index@?$RuntimeComponent@UHistoryMessageSigned@@VHistoryItem@@@@SAHXZ ;
+       RuntimeComponent<HistoryMessageSigned,HistoryItem>::Index(void) .text:0000000140ADFF56 8B C8
+       mov     ecx, eax .text:0000000140ADFF58 41 B8 01 00 00 00                       mov     r8d,
+       1 .text:0000000140ADFF5E 48 8B 47 08                             mov     rax, [rdi+8]
         .text:0000000140ADFF62 49 D3 E0                                shl     r8, cl
-        .text:0000000140ADFF65 48 8D 4F 08                             lea     rcx, [rdi+8]    ; mask
-        .text:0000000140ADFF69 49 F7 D0                                not     r8
+        .text:0000000140ADFF65 48 8D 4F 08                             lea     rcx, [rdi+8]    ;
+       mask .text:0000000140ADFF69 49 F7 D0                                not     r8
         .text:0000000140ADFF6C 48 8B 10                                mov     rdx, [rax]
         .text:0000000140ADFF6F 48 8B 92 18 02 00 00                    mov     rdx, [rdx+218h]
         .text:0000000140ADFF76 49 23 D0                                and     rdx, r8
-        .text:0000000140ADFF79 E8 82 F7 EA FF                          call    ?UpdateComponents@RuntimeComposerBase@@IEAA_N_K@Z ; RuntimeComposerBase::UpdateComponents(unsigned __int64)
-        .text:0000000140ADFF7E 48 8B 4F 18                             mov     rcx, [rdi+18h]
-        .text:0000000140ADFF82 48 85 C9                                test    rcx, rcx
-        .text:0000000140ADFF85 0F 84 D6 00 00 00                       jz      loc_140AE0061
+        .text:0000000140ADFF79 E8 82 F7 EA FF                          call
+       ?UpdateComponents@RuntimeComposerBase@@IEAA_N_K@Z ;
+       RuntimeComposerBase::UpdateComponents(unsigned __int64) .text:0000000140ADFF7E 48 8B 4F 18
+       mov     rcx, [rdi+18h] .text:0000000140ADFF82 48 85 C9                                test
+       rcx, rcx .text:0000000140ADFF85 0F 84 D6 00 00 00                       jz      loc_140AE0061
         .text:0000000140ADFF8B E9 AB 00 00 00                          jmp     loc_140AE003B
 
         E8 ?? ?? ?? ?? 4C 63 C0 4A 63 44 C3 10 83 F8 08 72 ?? 48 8B D8 48 03 5F 08 EB
     */
 
-    auto vResult = _MainModule.search("E8 ?? ?? ?? ?? 4C 63 C0 4A 63 44 C3 10 83 F8 08 72 ?? 48 8B D8 48 03 5F 08 EB"_sig).matches();
+    auto vResult =
+        _MainModule
+            .search(
+                "E8 ?? ?? ?? ?? 4C 63 C0 4A 63 44 C3 10 83 F8 08 72 ?? 48 8B D8 48 03 5F 08 EB"_sig)
+            .matches();
     if (vResult.size() != 1) {
         spdlog::warn("[IRuntime] Search SignedIndex failed.");
         return false;
     }
 
     auto SignedIndexCaller = vResult.at(0);
-    _Data.Function.SignedIndex = (FnIndexT)(SignedIndexCaller + 5 + *(int32_t*)(SignedIndexCaller + 1));
+    _Data.Function.SignedIndex =
+        (FnIndexT)(SignedIndexCaller + 5 + *(int32_t *)(SignedIndexCaller + 1));
 
     return true;
 
 #else
-# error "Unimplemented."
+    #error "Unimplemented."
 #endif
 }
 
@@ -688,39 +719,41 @@ bool IRuntime::InitDynamicData_ReplyIndex()
     /*
         HistoryView__Message__updatePressed
 
-        .text:009EE632                         loc_9EE632:                             ; CODE XREF: HistoryView__Message__updatePressed+100↑j
-        .text:009EE632 8B CF                                   mov     ecx, edi
-        .text:009EE634 E8 27 13 00 00                          call    HistoryView__Message__displayFromName
-        .text:009EE639 8B CF                                   mov     ecx, edi
-        .text:009EE63B E8 00 14 00 00                          call    HistoryView__Message__displayForwardedFrom
+        .text:009EE632                         loc_9EE632:                             ; CODE XREF:
+       HistoryView__Message__updatePressed+100↑j .text:009EE632 8B CF mov     ecx, edi
+        .text:009EE634 E8 27 13 00 00                          call
+       HistoryView__Message__displayFromName .text:009EE639 8B CF mov     ecx, edi .text:009EE63B E8
+       00 14 00 00                          call    HistoryView__Message__displayForwardedFrom
         .text:009EE640 84 C0                                   test    al, al
         .text:009EE642 74 0E                                   jz      short loc_9EE652
         .text:009EE644 8D 4C 24 18                             lea     ecx, [esp+18h]
-        .text:009EE648 E8 A3 75 BE FF                          call    gsl__not_null_Calls__Call__Delegate_____operator__
-        .text:009EE64D E8 AE DF EE FF                          call    RuntimeComponent_HistoryMessageForwarded_HistoryItem___Index
-        .text:009EE652
-        .text:009EE652                         loc_9EE652:                             ; CODE XREF: HistoryView__Message__updatePressed+122↑j
+        .text:009EE648 E8 A3 75 BE FF                          call
+       gsl__not_null_Calls__Call__Delegate_____operator__ .text:009EE64D E8 AE DF EE FF call
+       RuntimeComponent_HistoryMessageForwarded_HistoryItem___Index .text:009EE652 .text:009EE652
+       loc_9EE652:                             ; CODE XREF:
+       HistoryView__Message__updatePressed+122↑j
 
         // find this (RuntimeComponent<HistoryMessageReply,HistoryItem>::Index()
         //
-        .text:009EE652 E8 B9 52 FB FF                          call    RuntimeComponent_HistoryMessageReply_HistoryItem___Index
+        .text:009EE652 E8 B9 52 FB FF                          call
+       RuntimeComponent_HistoryMessageReply_HistoryItem___Index
 
         .text:009EE657 8B 46 08                                mov     eax, [esi+8]
         .text:009EE65A 8B 38                                   mov     edi, [eax]
-        .text:009EE65C E8 BF 53 FB FF                          call    RuntimeComponent_HistoryMessageVia_HistoryItem___Index
-        .text:009EE661 8B 4C 87 08                             mov     ecx, [edi+eax*4+8]
-        .text:009EE665 83 F9 04                                cmp     ecx, 4
+        .text:009EE65C E8 BF 53 FB FF                          call
+       RuntimeComponent_HistoryMessageVia_HistoryItem___Index .text:009EE661 8B 4C 87 08 mov ecx,
+       [edi+eax*4+8] .text:009EE665 83 F9 04                                cmp     ecx, 4
         .text:009EE668 72 1D                                   jb      short loc_9EE687
         .text:009EE66A 8B 46 08                                mov     eax, [esi+8]
         .text:009EE66D 03 C1                                   add     eax, ecx
         .text:009EE66F 74 16                                   jz      short loc_9EE687
         .text:009EE671 8B 74 24 14                             mov     esi, [esp+14h]
         .text:009EE675 8B CE                                   mov     ecx, esi
-        .text:009EE677 E8 E4 12 00 00                          call    HistoryView__Message__displayFromName
-        .text:009EE67C 84 C0                                   test    al, al
-        .text:009EE67E 75 07                                   jnz     short loc_9EE687
-        .text:009EE680 8B CE                                   mov     ecx, esi
-        .text:009EE682 E8 B9 13 00 00                          call    HistoryView__Message__displayForwardedFrom
+        .text:009EE677 E8 E4 12 00 00                          call
+       HistoryView__Message__displayFromName .text:009EE67C 84 C0 test    al, al .text:009EE67E 75
+       07                                   jnz     short loc_9EE687 .text:009EE680 8B CE mov ecx,
+       esi .text:009EE682 E8 B9 13 00 00                          call
+       HistoryView__Message__displayForwardedFrom
 
         E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 8B 46 08 8B 38
     */
@@ -732,7 +765,8 @@ bool IRuntime::InitDynamicData_ReplyIndex()
     }
 
     auto ReplyIndexCaller = vResult.at(0) + 5;
-    _Data.Function.ReplyIndex = (FnIndexT)(ReplyIndexCaller + 5 + *(int32_t*)(ReplyIndexCaller + 1));
+    _Data.Function.ReplyIndex =
+        (FnIndexT)(ReplyIndexCaller + 5 + *(int32_t *)(ReplyIndexCaller + 1));
 
     return true;
 
@@ -747,10 +781,11 @@ bool IRuntime::InitDynamicData_ReplyIndex()
         .text:0000000140AE10DA 48 8B 41 08                             mov     rax, [rcx+8]
         .text:0000000140AE10DE 48 8B F9                                mov     rdi, rcx
         .text:0000000140AE10E1 48 8B 18                                mov     rbx, [rax]
-        .text:0000000140AE10E4 E8 57 A2 FF FF                          call    ?Index@?$RuntimeComponent@UHistoryMessageReply@@VHistoryItem@@@@SAHXZ ; RuntimeComponent<HistoryMessageReply,HistoryItem>::Index(void)
-        .text:0000000140AE10E9 48 63 D0                                movsxd  rdx, eax
-        .text:0000000140AE10EC 48 63 44 D3 10                          movsxd  rax, dword ptr [rbx+rdx*8+10h]
-        .text:0000000140AE10F1 83 F8 08                                cmp     eax, 8
+        .text:0000000140AE10E4 E8 57 A2 FF FF                          call
+       ?Index@?$RuntimeComponent@UHistoryMessageReply@@VHistoryItem@@@@SAHXZ ;
+       RuntimeComponent<HistoryMessageReply,HistoryItem>::Index(void) .text:0000000140AE10E9 48 63
+       D0                                movsxd  rdx, eax .text:0000000140AE10EC 48 63 44 D3 10
+       movsxd  rax, dword ptr [rbx+rdx*8+10h] .text:0000000140AE10F1 83 F8 08 cmp     eax, 8
         .text:0000000140AE10F4 72 6B                                   jb      short loc_140AE1161
         .text:0000000140AE10F6 48 8B D8                                mov     rbx, rax
         .text:0000000140AE10F9 48 03 5F 08                             add     rbx, [rdi+8]
@@ -759,19 +794,21 @@ bool IRuntime::InitDynamicData_ReplyIndex()
         E8 ?? ?? ?? ?? 48 63 D0 48 63 44 D3 10 83 F8 08 72 6B
     */
 
-    auto vResult = _MainModule.search("E8 ?? ?? ?? ?? 48 63 D0 48 63 44 D3 10 83 F8 08 72 6B"_sig).matches();
+    auto vResult =
+        _MainModule.search("E8 ?? ?? ?? ?? 48 63 D0 48 63 44 D3 10 83 F8 08 72 6B"_sig).matches();
     if (vResult.size() != 1) {
         spdlog::warn("[IRuntime] Search ReplyIndex failed.");
         return false;
     }
 
     auto ReplyIndexCaller = vResult.at(0);
-    _Data.Function.ReplyIndex = (FnIndexT)(ReplyIndexCaller + 5 + *(int32_t*)(ReplyIndexCaller + 1));
+    _Data.Function.ReplyIndex =
+        (FnIndexT)(ReplyIndexCaller + 5 + *(int32_t *)(ReplyIndexCaller + 1));
 
     return true;
 
 #else
-# error "Unimplemented."
+    #error "Unimplemented."
 #endif
 }
 
@@ -817,49 +854,49 @@ bool IRuntime::InitDynamicData_LangInstance()
     uint32_t LangInsOffset;
 
     // ver < 2.1.14
-    if (_FileVersion < 2001014)
-    {
-        vResult = _MainModule.search("8B 0D ?? ?? ?? ?? 03 C6 0F B7 C0 85 C9 0F 84 ?? ?? ?? ?? 8B 49"_sig).matches();
+    if (_FileVersion < 2001014) {
+        vResult =
+            _MainModule.search("8B 0D ?? ?? ?? ?? 03 C6 0F B7 C0 85 C9 0F 84 ?? ?? ?? ?? 8B 49"_sig)
+                .matches();
         if (vResult.empty()) {
             spdlog::warn("[IRuntime] Search LangInstance failed. (old)");
             return false;
         }
 
-        LangInsOffset = (uint32_t)(*(uint8_t*)(vResult.at(0) + 21));
+        LangInsOffset = (uint32_t)(*(uint8_t *)(vResult.at(0) + 21));
 
         // Check each result
         //
-        for (const std::byte *Address : vResult)
-        {
-            if ((uint32_t)(*(uint8_t*)(Address + 21)) != LangInsOffset) {
+        for (const std::byte *Address : vResult) {
+            if ((uint32_t)(*(uint8_t *)(Address + 21)) != LangInsOffset) {
                 spdlog::warn("[IRuntime] Searched LangInstance index not sure. (old)");
                 return false;
             }
         }
     }
     // ver >= 2.1.14
-    else if (_FileVersion >= 2001014)
-    {
-        vResult = _MainModule.search("8B 0D ?? ?? ?? ?? 03 C6 0F B7 C0 85 C9 0F 84 ?? ?? ?? ?? 8B"_sig).matches();
+    else if (_FileVersion >= 2001014) {
+        vResult =
+            _MainModule.search("8B 0D ?? ?? ?? ?? 03 C6 0F B7 C0 85 C9 0F 84 ?? ?? ?? ?? 8B"_sig)
+                .matches();
         if (vResult.empty()) {
             spdlog::warn("[IRuntime] Search LangInstance failed. (new)");
             return false;
         }
 
-        LangInsOffset = *(uint32_t*)(vResult.at(0) + 21);
+        LangInsOffset = *(uint32_t *)(vResult.at(0) + 21);
 
         // Check each result
         //
-        for (const std::byte *Address : vResult)
-        {
-            if (*(uint32_t*)(Address + 21) != LangInsOffset) {
+        for (const std::byte *Address : vResult) {
+            if (*(uint32_t *)(Address + 21) != LangInsOffset) {
                 spdlog::warn("[IRuntime] Searched LangInstance index not sure. (new)");
                 return false;
             }
         }
     }
 
-    uintptr_t pCoreAppInstance = *(uintptr_t*)(vResult.at(0) + 2);
+    uintptr_t pCoreAppInstance = *(uintptr_t *)(vResult.at(0) + 2);
 
 #elif defined PLATFORM_X64
 
@@ -869,7 +906,8 @@ bool IRuntime::InitDynamicData_LangInstance()
 
         // find this (Application::Instance)
         //
-        Telegram.exe+BEACE6 - 48 8B 05 F34CC704     - mov rax,[Telegram.exe+585F9E0] { (23F931E6690) }
+        Telegram.exe+BEACE6 - 48 8B 05 F34CC704     - mov rax,[Telegram.exe+585F9E0] { (23F931E6690)
+       }
 
         Telegram.exe+BEACED - 48 8B D9              - mov rbx,rcx
         Telegram.exe+BEACF0 - 48 85 C0              - test rax,rax
@@ -894,23 +932,24 @@ bool IRuntime::InitDynamicData_LangInstance()
         48 8B 05 ?? ?? ?? ?? 48 8B D9 48 85 C0 0F 84 ?? ?? ?? ?? 48 8B 80
     */
 
-    auto vResult = _MainModule.search("48 8B 05 ?? ?? ?? ?? 48 8B D9 48 85 C0 0F 84 ?? ?? ?? ?? 48 8B 80"_sig).matches();
+    auto vResult =
+        _MainModule.search("48 8B 05 ?? ?? ?? ?? 48 8B D9 48 85 C0 0F 84 ?? ?? ?? ?? 48 8B 80"_sig)
+            .matches();
     if (vResult.size() != 1) {
         spdlog::warn("[IRuntime] Search LangInstance failed. (new x64)");
         return false;
     }
 
-    auto pCoreAppInstance = vResult.at(0) + 7 + *(int32_t*)(vResult.at(0) + 3);
-    uint32_t LangInsOffset = *(uint32_t*)(vResult.at(0) + 22);
+    auto pCoreAppInstance = vResult.at(0) + 7 + *(int32_t *)(vResult.at(0) + 3);
+    uint32_t LangInsOffset = *(uint32_t *)(vResult.at(0) + 22);
 
 #else
-# error "Unimplemented."
+    #error "Unimplemented."
 #endif
 
     uintptr_t CoreAppInstance = 0;
-    for (size_t i = 0; i < 20; ++i)
-    {
-        CoreAppInstance = *(uintptr_t*)pCoreAppInstance;
+    for (size_t i = 0; i < 20; ++i) {
+        CoreAppInstance = *(uintptr_t *)pCoreAppInstance;
         if (CoreAppInstance != 0) {
             break;
         }
@@ -922,7 +961,7 @@ bool IRuntime::InitDynamicData_LangInstance()
         return false;
     }
 
-    _Data.Address.pLangInstance = *(LanguageInstance**)(CoreAppInstance + LangInsOffset);
+    _Data.Address.pLangInstance = *(LanguageInstance **)(CoreAppInstance + LangInsOffset);
 
     if (_Data.Address.pLangInstance == nullptr) {
         spdlog::warn("[IRuntime] Searched pLangInstance is null.");
@@ -947,24 +986,25 @@ bool IRuntime::InitDynamicData_ToHistoryMessage()
         8B 49 ?? 85 C9 0F 84 ?? ?? ?? ?? 8B 01 FF 90 ?? ?? ?? ?? 85 C0
     */
 
-    auto vResult = _MainModule.search("8B 49 ?? 85 C9 0F 84 ?? ?? ?? ?? 8B 01 FF 90 ?? ?? ?? ?? 85 C0"_sig).matches();
+    auto vResult =
+        _MainModule.search("8B 49 ?? 85 C9 0F 84 ?? ?? ?? ?? 8B 01 FF 90 ?? ?? ?? ?? 85 C0"_sig)
+            .matches();
     if (vResult.empty()) {
         spdlog::warn("[IRuntime] Search toHistoryMessage index falied.");
         return false;
     }
 
-    uint32_t Offset = *(uint32_t*)(vResult.at(0) + 15);
+    uint32_t Offset = *(uint32_t *)(vResult.at(0) + 15);
 
-    if (Offset % sizeof(void*) != 0) {
+    if (Offset % sizeof(void *) != 0) {
         spdlog::warn("[IRuntime] Searched toHistoryMessage index invalid.");
         return false;
     }
 
     // Check each offset
     //
-    for (const std::byte *Address : vResult)
-    {
-        if (*(uint32_t*)(Address + 15) != Offset) {
+    for (const std::byte *Address : vResult) {
+        if (*(uint32_t *)(Address + 15) != Offset) {
             spdlog::warn("[IRuntime] Searched toHistoryMessage index not sure.");
             return false;
         }
@@ -973,10 +1013,11 @@ bool IRuntime::InitDynamicData_ToHistoryMessage()
 #elif defined PLATFORM_X64
 
     /*
-        std::optional<enum Storage::SharedMediaType> Media::View::OverlayWidget::sharedMediaType(void)const
-    
-        .text:0000000140D35693 48 83 7F 50 00                          cmp     qword ptr [rdi+50h], 0
-        .text:0000000140D35698 74 2B                                   jz      short loc_140D356C5
+        std::optional<enum Storage::SharedMediaType>
+       Media::View::OverlayWidget::sharedMediaType(void)const
+
+        .text:0000000140D35693 48 83 7F 50 00                          cmp     qword ptr [rdi+50h],
+       0 .text:0000000140D35698 74 2B                                   jz      short loc_140D356C5
         .text:0000000140D3569A 48 8B 06                                mov     rax, [rsi]
         .text:0000000140D3569D 48 8B CE                                mov     rcx, rsi
 
@@ -1004,13 +1045,13 @@ bool IRuntime::InitDynamicData_ToHistoryMessage()
         return false;
     }
 
-    uint32_t Offset = *(uint32_t*)(vResult.at(0) + 2);
+    uint32_t Offset = *(uint32_t *)(vResult.at(0) + 2);
 
 #else
-# error "Unimplemented."
+    #error "Unimplemented."
 #endif
 
-    _Data.Index.ToHistoryMessage = (Offset / sizeof(void*)) - 1 /* Start from 0 */;
+    _Data.Index.ToHistoryMessage = (Offset / sizeof(void *)) - 1 /* Start from 0 */;
 
     return true;
 }

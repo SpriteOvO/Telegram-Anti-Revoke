@@ -3,11 +3,10 @@
 #include <string>
 #include <optional>
 
-
 class IUpdater
 {
 public:
-    static IUpdater& GetInstance();
+    static IUpdater &GetInstance();
 
     bool CheckUpdate();
 
@@ -16,5 +15,4 @@ private:
 
     std::optional<std::string> GetDataByBridge();
     std::optional<std::string> GetDataDirectly();
-
 };

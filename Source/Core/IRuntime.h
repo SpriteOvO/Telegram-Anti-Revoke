@@ -11,7 +11,7 @@
 
 using namespace sigmatch_literals;
 
-using FnMallocT = void*(__cdecl *)(unsigned int size);
+using FnMallocT = void *(__cdecl *)(unsigned int size);
 using FnFreeT = void(__cdecl *)(void *block);
 using FnIndexT = int(__cdecl *)();
 
@@ -20,7 +20,8 @@ class IRuntime
 public:
     struct DataT
     {
-        struct {
+        struct
+        {
             uint32_t TimeText;
             uint32_t TimeWidth;
             uint32_t MainView;
@@ -29,11 +30,13 @@ public:
             // uint32_t HistoryPeer;
         } Offset;
 
-        struct {
+        struct
+        {
             uint32_t ToHistoryMessage;
         } Index; // Virtual call index
 
-        struct {
+        struct
+        {
             FnMallocT Malloc = nullptr;
             FnFreeT Free = nullptr;
             FnIndexT EditedIndex = nullptr;
@@ -41,15 +44,19 @@ public:
             FnIndexT ReplyIndex = nullptr;
         } Function;
 
-        struct {
-            void* FnDestroyMessageCaller = nullptr;
+        struct
+        {
+            void *FnDestroyMessageCaller = nullptr;
             LanguageInstance *pLangInstance = nullptr;
         } Address;
     };
 
-    static IRuntime& GetInstance();
+    static IRuntime &GetInstance();
 
-    const auto &GetData() { return _Data; }
+    const auto &GetData()
+    {
+        return _Data;
+    }
 
     bool Initialize();
 
@@ -70,5 +77,4 @@ private:
     bool InitDynamicData_ReplyIndex();
     bool InitDynamicData_LangInstance();
     bool InitDynamicData_ToHistoryMessage();
-
 };

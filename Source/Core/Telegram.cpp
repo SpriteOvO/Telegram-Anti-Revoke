@@ -6,7 +6,6 @@
 #include "IRuntime.h"
 #include "IAntiRevoke.h"
 
-
 //////////////////////////////////////////////////
 // Object
 //
@@ -29,7 +28,7 @@ void Object::SetWidth(int32_t Value)
 // {
 //     return *(DocumentType*)((uintptr_t)this + 8);
 // }
-// 
+//
 // bool DocumentData::IsSticker()
 // {
 //     return GetType() == DocumentType::Sticker;
@@ -49,14 +48,14 @@ void Object::SetWidth(int32_t Value)
 // HistoryView::Element
 //
 
-Media* HistoryViewElement::GetMedia()
+Media *HistoryViewElement::GetMedia()
 {
 #if defined PLATFORM_X86
-    return *(Media**)((uintptr_t)this + 0x24);
+    return *(Media **)((uintptr_t)this + 0x24);
 #elif defined PLATFORM_X64
-    return *(Media**)((uintptr_t)this + 0x38);
+    return *(Media **)((uintptr_t)this + 0x38);
 #else
-# error "Unimplemented."
+    #error "Unimplemented."
 #endif
 }
 
@@ -64,14 +63,14 @@ Media* HistoryViewElement::GetMedia()
 // HistoryMessageEdited
 //
 
-QtString* HistoryMessageEdited::GetTimeText()
+QtString *HistoryMessageEdited::GetTimeText()
 {
 #if defined PLATFORM_X86
-    return (QtString*)((uintptr_t)this + 0x10);
+    return (QtString *)((uintptr_t)this + 0x10);
 #elif defined PLATFORM_X64
-    return (QtString*)((uintptr_t)this + 0x18);
+    return (QtString *)((uintptr_t)this + 0x18);
 #else
-# error "Unimplemented."
+    #error "Unimplemented."
 #endif
 }
 
@@ -79,23 +78,23 @@ QtString* HistoryMessageEdited::GetTimeText()
 // HistoryMessageSigned
 //
 
-QtString* HistoryMessageSigned::GetTimeText()
+QtString *HistoryMessageSigned::GetTimeText()
 {
-    return (QtString*)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.SignedTimeText);
+    return (QtString *)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.SignedTimeText);
 }
 
 //////////////////////////////////////////////////
 // HistoryMessageReply
 //
 
-int32_t& HistoryMessageReply::MaxReplyWidth()
+int32_t &HistoryMessageReply::MaxReplyWidth()
 {
 #if defined PLATFORM_X86
-    return *(int32_t*)((uintptr_t)this + 0x6C);
+    return *(int32_t *)((uintptr_t)this + 0x6C);
 #elif defined PLATFORM_X64
-    return *(int32_t*)((uintptr_t)this + 0xA4);
+    return *(int32_t *)((uintptr_t)this + 0xA4);
 #else
-# error "Unimplemented."
+    #error "Unimplemented."
 #endif
 }
 
@@ -107,7 +106,7 @@ int32_t& HistoryMessageReply::MaxReplyWidth()
 // {
 //     return (GetId() & PeerIdTypeMask) == PeerIdChannelShift;
 // }
-// 
+//
 // PeerData::PeerId PeerData::GetId()
 // {
 //     return *(PeerId*)((uintptr_t)this + 0x8);
@@ -122,7 +121,7 @@ int32_t& HistoryMessageReply::MaxReplyWidth()
 //     return *(PeerData**)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.HistoryPeer);
 // }
 
-void History::OnDestroyMessage(HistoryMessage* pMessage)
+void History::OnDestroyMessage(HistoryMessage *pMessage)
 {
     IAntiRevoke::GetInstance().OnDestroyMessage(this, pMessage);
 }
@@ -139,53 +138,58 @@ bool HistoryMessage::IsMessage()
     // It will cause a memory access crash, so we need to filter it out.
     //
 
-    using FnToHistoryMessageT = HistoryMessage*(*)(HistoryMessage *This);
-    return Utils::CallVirtual<FnToHistoryMessageT>(this, IRuntime::GetInstance().GetData().Index.ToHistoryMessage)(this) != nullptr;
+    using FnToHistoryMessageT = HistoryMessage *(*)(HistoryMessage * This);
+    return Utils::CallVirtual<FnToHistoryMessageT>(
+               this, IRuntime::GetInstance().GetData().Index.ToHistoryMessage)(this) != nullptr;
 }
 
 template <class CompT>
-CompT* HistoryMessage::GetComponent(uint32_t index)
+CompT *HistoryMessage::GetComponent(uint32_t index)
 {
     CompT *result = nullptr;
 
     Safe::TryExcept(
         [&]() {
-            struct RuntimeComposerMetadata {
+            struct RuntimeComposerMetadata
+            {
                 size_t size;
                 size_t align;
                 size_t offsets[64];
                 int last;
             };
 
-            auto data = *(void***)((uintptr_t)this + 8);
-            auto metaData = (RuntimeComposerMetadata*)(*data);
+            auto data = *(void ***)((uintptr_t)this + 8);
+            auto metaData = (RuntimeComposerMetadata *)(*data);
             auto offset = metaData->offsets[index];
-            if (offset >= sizeof(RuntimeComposerMetadata*)) {
-                result = (CompT*)((uintptr_t)data + offset);
+            if (offset >= sizeof(RuntimeComposerMetadata *)) {
+                result = (CompT *)((uintptr_t)data + offset);
             }
-
-        }, [&](ULONG ExceptionCode)
-        {
-            spdlog::warn("Function: [" __FUNCTION__ "] An exception was caught. Code: {:#x}, Address: {}", ExceptionCode, (void*)this);
-        }
-    );
+        },
+        [&](ULONG ExceptionCode) {
+            spdlog::warn(
+                "Function: [" __FUNCTION__ "] An exception was caught. Code: {:#x}, Address: {}",
+                ExceptionCode, (void *)this);
+        });
 
     return result;
 }
 
-HistoryMessageEdited* HistoryMessage::GetEdited()
+HistoryMessageEdited *HistoryMessage::GetEdited()
 {
-    return GetComponent<HistoryMessageEdited>(IRuntime::GetInstance().GetData().Function.EditedIndex());
+    return GetComponent<HistoryMessageEdited>(
+        IRuntime::GetInstance().GetData().Function.EditedIndex());
 }
 
-HistoryMessageSigned* HistoryMessage::GetSigned()
+HistoryMessageSigned *HistoryMessage::GetSigned()
 {
-    return GetComponent<HistoryMessageSigned>(IRuntime::GetInstance().GetData().Function.SignedIndex());
+    return GetComponent<HistoryMessageSigned>(
+        IRuntime::GetInstance().GetData().Function.SignedIndex());
 }
 
-HistoryMessageReply* HistoryMessage::GetReply()
+HistoryMessageReply *HistoryMessage::GetReply()
 {
-    return GetComponent<HistoryMessageReply>(IRuntime::GetInstance().GetData().Function.ReplyIndex());
+    return GetComponent<HistoryMessageReply>(
+        IRuntime::GetInstance().GetData().Function.ReplyIndex());
 }
 
 // History* HistoryMessage::GetHistory()
@@ -197,7 +201,7 @@ HistoryMessageReply* HistoryMessage::GetReply()
 // {
 //     return *(Media**)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.Media);
 // }
-// 
+//
 // bool HistoryMessage::IsSticker()
 // {
 //     if (Media *pMedia = GetMedia()) {
@@ -212,83 +216,84 @@ HistoryMessageReply* HistoryMessage::GetReply()
 // {
 //     // if it's a LargeEmoji, [Item->Media] is nullptr, and [Item->MainView->Media] isn't nullptr.
 //     // if it's a Video, then [Item->Media] isn't nullptr.
-// 
+//
 //     Media *pMedia = GetMedia();
 //     if (pMedia != nullptr) {
 //         return FALSE;
 //     }
-// 
+//
 //     HistoryViewElement *pMainView = GetMainView();
 //     if (pMainView == nullptr) {
 //         return FALSE;
 //     }
-// 
+//
 //     return pMainView->GetMedia() != nullptr;
 // }
 
-HistoryViewElement* HistoryMessage::GetMainView()
+HistoryViewElement *HistoryMessage::GetMainView()
 {
-    return *(HistoryViewElement**)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.MainView);
+    return *(
+        HistoryViewElement **)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.MainView);
 }
 
-QtString* HistoryMessage::GetTimeText()
+QtString *HistoryMessage::GetTimeText()
 {
-    return (QtString*)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.TimeText);
+    return (QtString *)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.TimeText);
 }
 
 int32_t HistoryMessage::GetTimeWidth()
 {
-    return *(int32_t*)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.TimeWidth);
+    return *(int32_t *)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.TimeWidth);
 }
 void HistoryMessage::SetTimeWidth(int32_t Value)
 {
-    *(int32_t*)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.TimeWidth) = Value;
+    *(int32_t *)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.TimeWidth) = Value;
 }
 
 //////////////////////////////////////////////////
 // Lang::Instance
 //
 
-QtString* LanguageInstance::GetId()
+QtString *LanguageInstance::GetId()
 {
 #if defined PLATFORM_X86
-    return (QtString*)((uintptr_t)this + 0x4);
+    return (QtString *)((uintptr_t)this + 0x4);
 #elif defined PLATFORM_X64
-    return (QtString*)((uintptr_t)this + 0x8);
+    return (QtString *)((uintptr_t)this + 0x8);
 #else
-# error "Unimplemented."
+    #error "Unimplemented."
 #endif
 }
 
-QtString* LanguageInstance::GetPluralId()
+QtString *LanguageInstance::GetPluralId()
 {
 #if defined PLATFORM_X86
-    return (QtString*)((uintptr_t)this + 0x8);
+    return (QtString *)((uintptr_t)this + 0x8);
 #elif defined PLATFORM_X64
-    return (QtString*)((uintptr_t)this + 0x10);
+    return (QtString *)((uintptr_t)this + 0x10);
 #else
-# error "Unimplemented."
+    #error "Unimplemented."
 #endif
 }
 
-QtString* LanguageInstance::GetName()
+QtString *LanguageInstance::GetName()
 {
 #if defined PLATFORM_X86
-    return (QtString*)((uintptr_t)this + 0x14);
+    return (QtString *)((uintptr_t)this + 0x14);
 #elif defined PLATFORM_X64
-    return (QtString*)((uintptr_t)this + 0x28);
+    return (QtString *)((uintptr_t)this + 0x28);
 #else
-# error "Unimplemented."
+    #error "Unimplemented."
 #endif
 }
 
-QtString* LanguageInstance::GetNativeName()
+QtString *LanguageInstance::GetNativeName()
 {
 #if defined PLATFORM_X86
-    return (QtString*)((uintptr_t)this + 0x18);
+    return (QtString *)((uintptr_t)this + 0x18);
 #elif defined PLATFORM_X64
-    return (QtString*)((uintptr_t)this + 0x30);
+    return (QtString *)((uintptr_t)this + 0x30);
 #else
-# error "Unimplemented."
+    #error "Unimplemented."
 #endif
 }

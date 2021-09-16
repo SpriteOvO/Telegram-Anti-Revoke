@@ -9,113 +9,116 @@
 
 #include "Logger.h"
 
-
 #if defined OS_WIN10
 
-#define ORIGINAL_EXPORTS_CALLBACKER(callback)    \
-    callback(GetFileVersionInfoA,        1);     \
-    callback(GetFileVersionInfoByHandle, 2);     \
-    callback(GetFileVersionInfoExA,      3);     \
-    callback(GetFileVersionInfoExW,      4);     \
-    callback(GetFileVersionInfoSizeA,    5);     \
-    callback(GetFileVersionInfoSizeExA,  6);     \
-    callback(GetFileVersionInfoSizeExW,  7);     \
-    callback(GetFileVersionInfoSizeW,    8);     \
-    callback(GetFileVersionInfoW,        9);     \
-    callback(VerFindFileA,               10);    \
-    callback(VerFindFileW,               11);    \
-    callback(VerInstallFileA,            12);    \
-    callback(VerInstallFileW,            13);    \
-    callback(VerLanguageNameA,           14);    \
-    callback(VerLanguageNameW,           15);    \
-    callback(VerQueryValueA,             16);    \
-    callback(VerQueryValueW,             17);
+    #define ORIGINAL_EXPORTS_CALLBACKER(callback)                                                  \
+        callback(GetFileVersionInfoA, 1);                                                          \
+        callback(GetFileVersionInfoByHandle, 2);                                                   \
+        callback(GetFileVersionInfoExA, 3);                                                        \
+        callback(GetFileVersionInfoExW, 4);                                                        \
+        callback(GetFileVersionInfoSizeA, 5);                                                      \
+        callback(GetFileVersionInfoSizeExA, 6);                                                    \
+        callback(GetFileVersionInfoSizeExW, 7);                                                    \
+        callback(GetFileVersionInfoSizeW, 8);                                                      \
+        callback(GetFileVersionInfoW, 9);                                                          \
+        callback(VerFindFileA, 10);                                                                \
+        callback(VerFindFileW, 11);                                                                \
+        callback(VerInstallFileA, 12);                                                             \
+        callback(VerInstallFileW, 13);                                                             \
+        callback(VerLanguageNameA, 14);                                                            \
+        callback(VerLanguageNameW, 15);                                                            \
+        callback(VerQueryValueA, 16);                                                              \
+        callback(VerQueryValueW, 17);
 
 #elif defined OS_WIN7
 
-#define ORIGINAL_EXPORTS_CALLBACKER(callback)    \
-    callback(GetFileVersionInfoA,        1);     \
-    callback(GetFileVersionInfoByHandle, 2);     \
-    callback(GetFileVersionInfoExW,      3);     \
-    callback(GetFileVersionInfoSizeA,    4);     \
-    callback(GetFileVersionInfoSizeExW,  5);     \
-    callback(GetFileVersionInfoSizeW,    6);     \
-    callback(GetFileVersionInfoW,        7);     \
-    callback(VerFindFileA,               8);     \
-    callback(VerFindFileW,               9);     \
-    callback(VerInstallFileA,            10);    \
-    callback(VerInstallFileW,            11);    \
-    callback(VerLanguageNameA,           12);    \
-    callback(VerLanguageNameW,           13);    \
-    callback(VerQueryValueA,             14);    \
-    callback(VerQueryValueW,             15);
+    #define ORIGINAL_EXPORTS_CALLBACKER(callback)                                                  \
+        callback(GetFileVersionInfoA, 1);                                                          \
+        callback(GetFileVersionInfoByHandle, 2);                                                   \
+        callback(GetFileVersionInfoExW, 3);                                                        \
+        callback(GetFileVersionInfoSizeA, 4);                                                      \
+        callback(GetFileVersionInfoSizeExW, 5);                                                    \
+        callback(GetFileVersionInfoSizeW, 6);                                                      \
+        callback(GetFileVersionInfoW, 7);                                                          \
+        callback(VerFindFileA, 8);                                                                 \
+        callback(VerFindFileW, 9);                                                                 \
+        callback(VerInstallFileA, 10);                                                             \
+        callback(VerInstallFileW, 11);                                                             \
+        callback(VerLanguageNameA, 12);                                                            \
+        callback(VerLanguageNameW, 13);                                                            \
+        callback(VerQueryValueA, 14);                                                              \
+        callback(VerQueryValueW, 15);
 
 #else
-# error "Project configuration error. You must define OS_WIN10 or OS_WIN7 in Preprocessor Definitions."
+    #error                                                                                         \
+        "Project configuration error. You must define OS_WIN10 or OS_WIN7 in Preprocessor Definitions."
 #endif
 
 // Export proxy functions
 //
 #if defined PLATFORM_X86
-# define EXPORT_PROXY_FUNCTION(name, ordinal)    __pragma(comment(linker, "/EXPORT:" # name "=_asm_proxy_" # name ",@" # ordinal))
+    #define EXPORT_PROXY_FUNCTION(name, ordinal)                                                   \
+        __pragma(comment(linker, "/EXPORT:" #name "=_asm_proxy_" #name ",@" #ordinal))
 #elif defined PLATFORM_X64
-# define EXPORT_PROXY_FUNCTION(name, ordinal)    __pragma(comment(linker, "/EXPORT:" # name "=asm_proxy_" # name ",@" # ordinal))
+    #define EXPORT_PROXY_FUNCTION(name, ordinal)                                                   \
+        __pragma(comment(linker, "/EXPORT:" #name "=asm_proxy_" #name ",@" #ordinal))
 #endif
 ORIGINAL_EXPORTS_CALLBACKER(EXPORT_PROXY_FUNCTION);
 #undef EXPORT_PROXY_FUNCTION
 
-namespace Proxy
-{
-    HMODULE hOriginalModule = nullptr;
+namespace Proxy {
 
-    // Declare original exported functions address
-    //
-#define DECLARE_ORIGINAL_EXPORT_ADDRESS(name, ordinal)    extern "C" void* Proxy_OEFn ## name = nullptr;
-    ORIGINAL_EXPORTS_CALLBACKER(DECLARE_ORIGINAL_EXPORT_ADDRESS);
+HMODULE hOriginalModule = nullptr;
+
+// Declare original exported functions address
+//
+#define DECLARE_ORIGINAL_EXPORT_ADDRESS(name, ordinal) extern "C" void *Proxy_OEFn##name = nullptr;
+ORIGINAL_EXPORTS_CALLBACKER(DECLARE_ORIGINAL_EXPORT_ADDRESS);
 #undef DECLARE_ORIGINAL_EXPORT_ADDRESS
 
-    void* GetExportedAddress(const char *SymbolName)
-    {
-        void* Address = GetProcAddress(hOriginalModule, SymbolName);
-        if (Address == nullptr) {
-            Logger::DoError("Cannot find \"" + std::string{SymbolName} + "\" exported symbol.", true);
-        }
-
-        return Address;
+void *GetExportedAddress(const char *SymbolName)
+{
+    void *Address = GetProcAddress(hOriginalModule, SymbolName);
+    if (Address == nullptr) {
+        Logger::DoError("Cannot find \"" + std::string{SymbolName} + "\" exported symbol.", true);
     }
 
-    extern "C" void Proxy_Initialize()
-    {
-        // Initialize hOriginalModule
-        //
-        if (hOriginalModule == nullptr)
-        {
-            char SystemPath[MAX_PATH];
-            GetSystemDirectoryA(SystemPath, MAX_PATH);
+    return Address;
+}
 
-            hOriginalModule = LoadLibraryA((std::string{SystemPath} + "\\version.dll").c_str());
-            if (hOriginalModule == nullptr) {
-                Logger::DoError("Unable to load the original module.", true);
-            }
+extern "C" void Proxy_Initialize()
+{
+    // Initialize hOriginalModule
+    //
+    if (hOriginalModule == nullptr) {
+        char SystemPath[MAX_PATH];
+        GetSystemDirectoryA(SystemPath, MAX_PATH);
+
+        hOriginalModule = LoadLibraryA((std::string{SystemPath} + "\\version.dll").c_str());
+        if (hOriginalModule == nullptr) {
+            Logger::DoError("Unable to load the original module.", true);
         }
+    }
 
-        // Initialize original exported functions address
-        //
-#define INIT_ORIGINAL_EXPORT_ADDRESS(name, ordinal)    if (Proxy_OEFn ## name == nullptr) { Proxy_OEFn ## name = GetExportedAddress(# name); }
-        ORIGINAL_EXPORTS_CALLBACKER(INIT_ORIGINAL_EXPORT_ADDRESS);
+    // Initialize original exported functions address
+    //
+#define INIT_ORIGINAL_EXPORT_ADDRESS(name, ordinal)                                                \
+    if (Proxy_OEFn##name == nullptr) {                                                             \
+        Proxy_OEFn##name = GetExportedAddress(#name);                                              \
+    }
+    ORIGINAL_EXPORTS_CALLBACKER(INIT_ORIGINAL_EXPORT_ADDRESS);
 #undef INIT_ORIGINAL_EXPORT_ADDRESS
-    }
+}
 
-    void Deinitialize()
-    {
-        if (hOriginalModule != nullptr) {
-            FreeLibrary(hOriginalModule);
-            hOriginalModule = nullptr;
-        }
+void Deinitialize()
+{
+    if (hOriginalModule != nullptr) {
+        FreeLibrary(hOriginalModule);
+        hOriginalModule = nullptr;
     }
+}
 
 } // namespace Proxy
-
 
 // Implemented in RealMain.cpp
 //
