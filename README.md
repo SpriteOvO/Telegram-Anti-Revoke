@@ -65,4 +65,5 @@ To avoid duplication of issues, please check existing issues before submitting.
 * Thanks to *dummycatz* for pointing out the cause of cross-module `malloc` / `free` crash.
 
 ## :warning: Warning
-This open source project and plugin is unofficial and is for educational purposes only.
+* The plugin makes no warranties and any risk of use is at your own risk.
+* This open source project and plugin is unofficial and is for educational purposes only.
