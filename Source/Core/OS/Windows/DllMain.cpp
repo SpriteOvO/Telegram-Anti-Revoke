@@ -7,7 +7,8 @@
 
 #include <string>
 
-#include "Logger.h"
+#include "DllMain.h"
+#include "../../Logger.h"
 
 #if defined OS_WIN10
 
@@ -66,6 +67,12 @@
 ORIGINAL_EXPORTS_CALLBACKER(EXPORT_PROXY_FUNCTION);
 #undef EXPORT_PROXY_FUNCTION
 
+// Implemented in RealMain.cpp
+//
+BOOL WINAPI RealDllMain(HMODULE hModule, ULONG Reason, PVOID pReserved);
+
+namespace OS::Windows::DllMain {
+
 namespace Proxy {
 
 HMODULE hOriginalModule = nullptr;
@@ -120,11 +127,7 @@ void Deinitialize()
 
 } // namespace Proxy
 
-// Implemented in RealMain.cpp
-//
-BOOL WINAPI RealDllMain(HMODULE hModule, ULONG Reason, PVOID pReserved);
-
-BOOL WINAPI DllMain(HMODULE hModule, ULONG Reason, PVOID pReserved)
+BOOL Entry(HMODULE hModule, ULONG Reason, PVOID pReserved)
 {
 #if defined PLATFORM_X64
     // Prevent calling API crashes in exported functions (idk why...
@@ -140,3 +143,5 @@ BOOL WINAPI DllMain(HMODULE hModule, ULONG Reason, PVOID pReserved)
 
     return TRUE;
 }
+
+} // namespace OS::Windows::DllMain

@@ -51,7 +51,7 @@ endif()
 if (MSVC)
 
     if (TAR_OS STREQUAL "WIN7" OR TAR_OS STREQUAL "WIN10")
-        add_compile_definitions("OS_${TAR_OS}")
+        add_compile_definitions("OS_WIN" "OS_${TAR_OS}")
     else()
         message(FATAL_ERROR "\"TAR_OS\" is invalid.")
     endif()
