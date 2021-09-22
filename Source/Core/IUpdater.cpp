@@ -5,8 +5,8 @@
 #include <wininet.h>
 
 #include <nlohmann/json.hpp>
-#include <spdlog/spdlog.h>
 
+#include "Logger.h"
 #include "Config.h"
 #include "Utils.h"
 
@@ -32,28 +32,28 @@ bool IUpdater::CheckUpdate()
 
     std::optional<std::string> Response = GetDataByBridge();
     if (!Response.has_value()) {
-        spdlog::warn("[Updater] GetDataByBridge() failed, try GetDataDirectly().");
+        LOG(Warn, "[Updater] GetDataByBridge() failed, try GetDataDirectly().");
     }
     else {
         if (ParseResponse(Response.value())) {
-            spdlog::info("[Updater] ParseResponse() successed. (ByBridge)");
+            LOG(Info, "[Updater] ParseResponse() successed. (ByBridge)");
             return true;
         }
-        spdlog::warn("[Updater] ParseResponse() failed, try Directly. (ByBridge)");
+        LOG(Warn, "[Updater] ParseResponse() failed, try Directly. (ByBridge)");
     }
 
     Response = GetDataDirectly();
     if (!Response.has_value()) {
-        spdlog::warn("[Updater] GetDataDirectly() failed.");
+        LOG(Warn, "[Updater] GetDataDirectly() failed.");
         return false;
     }
 
     if (!ParseResponse(Response.value())) {
-        spdlog::warn("[Updater] ParseResponse() failed. (Directly)");
+        LOG(Warn, "[Updater] ParseResponse() failed. (Directly)");
         return false;
     }
 
-    spdlog::info("[Updater] ParseResponse() successed. (Directly)");
+    LOG(Info, "[Updater] ParseResponse() successed. (Directly)");
     return true;
 }
 
@@ -69,12 +69,11 @@ bool IUpdater::ParseResponse(const std::string &Response)
         const auto &Body = Root["body"];
 
         if (Message.is_string()) {
-            spdlog::warn(
-                "[Updater] Response has a message. message: {}", Message.get<std::string>());
+            LOG(Warn, "[Updater] Response has a message. message: {}", Message.get<std::string>());
         }
 
         if (!TagName.is_string() || !HtmlUrl.is_string() || !Body.is_string()) {
-            spdlog::warn("[Updater] Response fields invalid.");
+            LOG(Warn, "[Updater] Response fields invalid.");
             return false;
         }
 
@@ -83,7 +82,7 @@ bool IUpdater::ParseResponse(const std::string &Response)
         std::string BodyContent = Body.get<std::string>();
 
         if (HtmlUrlContent.find(AR_REPO_URL) != 0) {
-            spdlog::warn("[Updater] html_url field invalid. html_url: {}", HtmlUrlContent);
+            LOG(Warn, "[Updater] html_url field invalid. html_url: {}", HtmlUrlContent);
             return false;
         }
 
@@ -91,8 +90,7 @@ bool IUpdater::ParseResponse(const std::string &Response)
         std::vector<std::string> vLatest = Text::SplitByFlag(TagNameContent, ".");
 
         if (vLocal.size() != 3 || vLatest.size() != 3) {
-            spdlog::warn(
-                "[Updater] Version format invalid. Local: {}, Latest: {}", AR_VERSION_STRING,
+            LOG(Warn, "[Updater] Version format invalid. Local: {}, Latest: {}", AR_VERSION_STRING,
                 TagNameContent);
             return false;
         }
@@ -105,12 +103,12 @@ bool IUpdater::ParseResponse(const std::string &Response)
         uint32_t LatestNumber = stoul(LatestString);
 
         if (LocalNumber >= LatestNumber) {
-            spdlog::info(
-                "[Updater] No need to update. Local: {}, Latest: {}", LocalString, LatestString);
+            LOG(Info, "[Updater] No need to update. Local: {}, Latest: {}", LocalString,
+                LatestString);
             return true;
         }
 
-        spdlog::info("[Updater] Need to update. Local: {}, Latest: {}", LocalString, LatestString);
+        LOG(Info, "[Updater] Need to update. Local: {}, Latest: {}", LocalString, LatestString);
 
         // Get Changelog
         //
@@ -141,13 +139,13 @@ bool IUpdater::ParseResponse(const std::string &Response)
             auto MetaBegin = BodyContent.find("<meta>");
             auto MetaEnd = BodyContent.find("</meta>");
             if (MetaBegin == std::string::npos || MetaEnd == std::string::npos) {
-                spdlog::warn("[Updater] <meta> tag not found. Content: '{}'", BodyContent);
+                LOG(Warn, "[Updater] <meta> tag not found. Content: '{}'", BodyContent);
                 return false;
             }
 
             MetaBegin += std::string{"<meta>"}.size();
             if (MetaBegin >= MetaEnd) {
-                spdlog::warn("[Updater] MetaBegin >= MetaEnd. Content: '{}'", BodyContent);
+                LOG(Warn, "[Updater] MetaBegin >= MetaEnd. Content: '{}'", BodyContent);
                 return false;
             }
 
@@ -157,13 +155,12 @@ bool IUpdater::ParseResponse(const std::string &Response)
                 return MetaRoot["allow_skip"].get<bool>();
             }
             catch (json::exception &Exception) {
-                spdlog::warn(
-                    "[Updater] AllowSkip() exception: '{}'. MetaJson: '{}'", Exception.what(),
+                LOG(Warn, "[Updater] AllowSkip() exception: '{}'. MetaJson: '{}'", Exception.what(),
                     MetaJson);
                 return false;
             }
         }();
-        spdlog::info("[Updater] AllowSkip: {}", AllowSkip);
+        LOG(Info, "[Updater] AllowSkip: {}", AllowSkip);
 
         constexpr auto ConfigFileName = "TAR-Config.json";
 
@@ -174,13 +171,13 @@ bool IUpdater::ParseResponse(const std::string &Response)
                     json ConfigRoot;
                     ConfigFile >> ConfigRoot;
                     if (ConfigRoot["skip_version"].get<std::string>() == TagNameContent) {
-                        spdlog::info("[Updater] Skip update {}", TagNameContent);
+                        LOG(Info, "[Updater] Skip update {}", TagNameContent);
                         return true; // skip
                     }
                 }
             }
             catch (const std::exception &Exception) {
-                spdlog::warn("[Updater] Skip read exception: {}", Exception.what());
+                LOG(Warn, "[Updater] Skip read exception: {}", Exception.what());
             }
         }
 
@@ -219,7 +216,7 @@ bool IUpdater::ParseResponse(const std::string &Response)
                     Output << ConfigRoot;
                 }
                 catch (const std::exception &Exception) {
-                    spdlog::warn("[Updater] Skip write exception: {}", Exception.what());
+                    LOG(Warn, "[Updater] Skip write exception: {}", Exception.what());
                 }
             }
         }
@@ -227,8 +224,7 @@ bool IUpdater::ParseResponse(const std::string &Response)
         return true;
     }
     catch (json::exception &Exception) {
-        spdlog::warn(
-            "[Updater] Caught a json exception. What: {}, Response: {}", Exception.what(),
+        LOG(Warn, "[Updater] Caught a json exception. What: {}, Response: {}", Exception.what(),
             Response);
         return false;
     }
@@ -245,14 +241,13 @@ std::optional<std::string> IUpdater::GetDataByBridge()
         "{\"forward_request\": \"" AR_LATEST_REQUEST "\"}");
 
     if (!IsSuccessed) {
-        spdlog::warn("[Updater] Internet::HttpRequest() failed. (ByBridge)");
+        LOG(Warn, "[Updater] Internet::HttpRequest() failed. (ByBridge)");
         return std::nullopt;
     }
 
     if (Status != HTTP_STATUS_OK) {
-        spdlog::warn(
-            "[Updater] Response status is not 200. Status: {}, Response: {} (ByBridge)", Status,
-            Response);
+        LOG(Warn, "[Updater] Response status is not 200. Status: {}, Response: {} (ByBridge)",
+            Status, Response);
         return std::nullopt;
     }
 
@@ -260,18 +255,16 @@ std::optional<std::string> IUpdater::GetDataByBridge()
         auto Root = json::parse(Response);
         const auto &BridgeErrorMessage = Root["bridge_error_message"];
         if (BridgeErrorMessage.is_string()) {
-            spdlog::warn(
-                "[Updater] bridge_error_message: {} (ByBridge)",
+            LOG(Warn, "[Updater] bridge_error_message: {} (ByBridge)",
                 BridgeErrorMessage.get<std::string>());
             return std::nullopt;
         }
 
-        spdlog::info("[Updater] Get data by bridge successed.");
+        LOG(Info, "[Updater] Get data by bridge successed.");
         return Response;
     }
     catch (json::exception &Exception) {
-        spdlog::warn(
-            "[Updater] Caught a json exception. What: {}, Response: {}", Exception.what(),
+        LOG(Warn, "[Updater] Caught a json exception. What: {}, Response: {}", Exception.what(),
             Response);
         return std::nullopt;
     }
@@ -288,17 +281,16 @@ std::optional<std::string> IUpdater::GetDataDirectly()
         });
 
     if (!IsSuccessed) {
-        spdlog::warn("[Updater] Internet::HttpRequest() failed. (Directly)");
+        LOG(Warn, "[Updater] Internet::HttpRequest() failed. (Directly)");
         return std::nullopt;
     }
 
     if (Status != HTTP_STATUS_OK) {
-        spdlog::warn(
-            "[Updater] Response status is not 200. Status: {}, Response: {} (Directly)", Status,
-            Response);
+        LOG(Warn, "[Updater] Response status is not 200. Status: {}, Response: {} (Directly)",
+            Status, Response);
         return std::nullopt;
     }
 
-    spdlog::info("[Updater] Get data directly successed.");
+    LOG(Info, "[Updater] Get data directly successed.");
     return Response;
 }

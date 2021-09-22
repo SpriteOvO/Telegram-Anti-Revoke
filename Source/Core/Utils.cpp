@@ -5,7 +5,7 @@
 #include <memory>
 #include <algorithm>
 
-#include <spdlog/spdlog.h>
+#include "Logger.h"
 
 #pragma comment(lib, "wininet.lib")
 #pragma comment(lib, "Version.lib")
@@ -171,8 +171,8 @@ bool HttpRequest(
                 hInternet, INTERNET_OPTION_RECEIVE_TIMEOUT, &Timeout, sizeof(Timeout)) ||
             !InternetSetOptionA(hInternet, INTERNET_OPTION_SEND_TIMEOUT, &Timeout, sizeof(Timeout)))
         {
-            spdlog::critical(
-                "InternetSetOptionA Set timeout failed. Last error: {}", ::GetLastError());
+            LOG(Critical, "InternetSetOptionA Set timeout failed. Last error: {}",
+                ::GetLastError());
             break;
         }
 

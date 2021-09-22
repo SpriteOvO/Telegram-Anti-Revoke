@@ -1,7 +1,6 @@
 #include "IRuntime.h"
 
-#include <spdlog/spdlog.h>
-
+#include "Logger.h"
 #include "Utils.h"
 
 IRuntime &IRuntime::GetInstance()
@@ -15,17 +14,17 @@ bool IRuntime::Initialize()
     _MainModule = _ThisProcess.in_module(
         "Telegram.exe", sigmatch::mem_prot::read | sigmatch::mem_prot::execute);
     if (_MainModule.error().has_value()) {
-        spdlog::warn("[IRuntime] _MainModule.error().value(): {}", _MainModule.error().value());
+        LOG(Warn, "[IRuntime] _MainModule.error().value(): {}", _MainModule.error().value());
         return false;
     }
 
     _FileVersion = File::GetCurrentVersion();
     if (_FileVersion == 0) {
-        spdlog::warn("[IRuntime] _FileVersion == 0");
+        LOG(Warn, "[IRuntime] _FileVersion == 0");
         return false;
     }
 
-    spdlog::info("[IRuntime] Telegram version: {}", _FileVersion);
+    LOG(Info, "[IRuntime] Telegram version: {}", _FileVersion);
     return true;
 }
 
@@ -96,11 +95,11 @@ bool IRuntime::InitDynamicData()
         [&]() {
 #define INIT_DATA_AND_LOG(name)                                                                    \
     if (!InitDynamicData_##name()) {                                                               \
-        spdlog::warn("[IRuntime] InitDynamicData_" #name "() failed.");                            \
+        LOG(Warn, "[IRuntime] InitDynamicData_" #name "() failed.");                               \
         return;                                                                                    \
     }                                                                                              \
     else {                                                                                         \
-        spdlog::info("[IRuntime] InitDynamicData_" #name "() succeeded.");                         \
+        LOG(Info, "[IRuntime] InitDynamicData_" #name "() succeeded.");                            \
     }
             INIT_DATA_AND_LOG(MallocFree);
             INIT_DATA_AND_LOG(DestroyMessage);
@@ -114,8 +113,8 @@ bool IRuntime::InitDynamicData()
             Result = true;
         },
         [&](uint32_t ExceptionCode) {
-            spdlog::warn(
-                "[IRuntime] InitDynamicData() caught an exception, code: {:#x}", ExceptionCode);
+            LOG(Warn, "[IRuntime] InitDynamicData() caught an exception, code: {:#x}",
+                ExceptionCode);
         });
 
     return Result;
@@ -181,13 +180,13 @@ bool IRuntime::InitDynamicData_MallocFree()
     auto vMallocResult =
         _MainModule.search("41 84 C0 75 F9 2B CA 53 56 8D 59 01 53 E8"_sig).matches();
     if (vMallocResult.size() != 1) {
-        spdlog::warn("[IRuntime] Search malloc failed.");
+        LOG(Warn, "[IRuntime] Search malloc failed.");
         return false;
     }
 
     auto vFreeResult = _MainModule.search("56 E8 ?? ?? ?? ?? 59 5E 5B EB"_sig).matches();
     if (vFreeResult.size() != 1) {
-        spdlog::warn("[IRuntime] Search free failed.");
+        LOG(Warn, "[IRuntime] Search free failed.");
         return false;
     }
 
@@ -243,7 +242,7 @@ bool IRuntime::InitDynamicData_MallocFree()
     auto vMallocResult =
         _MainModule.search("48 FF C7 80 3C 38 00 75 F7 48 8D 4F 01 E8"_sig).matches();
     if (vMallocResult.size() != 1) {
-        spdlog::warn("[IRuntime] Search malloc failed.");
+        LOG(Warn, "[IRuntime] Search malloc failed.");
         return false;
     }
 
@@ -251,7 +250,7 @@ bool IRuntime::InitDynamicData_MallocFree()
                            .search("48 8B CB E8 ?? ?? ?? ?? EB"_sig)
                            .matches();
     if (vFreeResult.size() != 1) {
-        spdlog::warn("[IRuntime] Search free failed.");
+        LOG(Warn, "[IRuntime] Search free failed.");
         return false;
     }
 
@@ -332,7 +331,7 @@ bool IRuntime::InitDynamicData_DestroyMessage()
         auto vResult =
             _MainModule.search("8B 71 ?? 89 08 85 C9 0F 84 ?? ?? ?? ?? ?? ?? ?? E8"_sig).matches();
         if (vResult.size() != 1) {
-            spdlog::warn("[IRuntime] Search DestroyMessage failed.");
+            LOG(Warn, "[IRuntime] Search DestroyMessage failed.");
             return false;
         }
 
@@ -344,7 +343,7 @@ bool IRuntime::InitDynamicData_DestroyMessage()
             _MainModule.search("51 8B C4 89 08 8B CE E8 ?? ?? ?? ?? 80 BE ?? ?? ?? ?? 00"_sig)
                 .matches();
         if (vResult.size() != 1) {
-            spdlog::warn("[IRuntime] Search new DestroyMessage failed.");
+            LOG(Warn, "[IRuntime] Search new DestroyMessage failed.");
             return false;
         }
 
@@ -424,7 +423,7 @@ bool IRuntime::InitDynamicData_DestroyMessage()
                 "48 8B 5A 18 48 85 DB 0F 84 ?? ?? ?? ?? 48 8B CB E8 ?? ?? ?? ?? 80 BB ?? ?? ?? ?? 00"_sig)
             .matches();
     if (vResult.size() != 1) {
-        spdlog::warn("[IRuntime] Search DestroyMessage failed.");
+        LOG(Warn, "[IRuntime] Search DestroyMessage failed.");
         return false;
     }
 
@@ -491,7 +490,7 @@ bool IRuntime::InitDynamicData_EditedIndex()
 
     auto vResult = _MainModule.search("E8 ?? ?? ?? ?? 83 7C 87 ?? ?? 73 ?? E8"_sig).matches();
     if (vResult.size() != 1) {
-        spdlog::warn("[IRuntime] Search EditedIndex failed.");
+        LOG(Warn, "[IRuntime] Search EditedIndex failed.");
         return false;
     }
 
@@ -543,7 +542,7 @@ bool IRuntime::InitDynamicData_EditedIndex()
 
     auto vResult = _MainModule.search("48 83 7C CF 10 08 73 ?? E8"_sig).matches();
     if (vResult.size() != 1) {
-        spdlog::warn("[IRuntime] Search EditedIndex failed.");
+        LOG(Warn, "[IRuntime] Search EditedIndex failed.");
         return false;
     }
 
@@ -625,7 +624,7 @@ bool IRuntime::InitDynamicData_SignedIndex()
 
     auto vResult = _MainModule.search("E8 ?? ?? ?? ?? 8B 44 87 08 83 CF FF"_sig).matches();
     if (vResult.size() != 1) {
-        spdlog::warn("[IRuntime] Search SignedIndex failed.");
+        LOG(Warn, "[IRuntime] Search SignedIndex failed.");
         return false;
     }
 
@@ -697,7 +696,7 @@ bool IRuntime::InitDynamicData_SignedIndex()
                 "E8 ?? ?? ?? ?? 4C 63 C0 4A 63 44 C3 10 83 F8 08 72 ?? 48 8B D8 48 03 5F 08 EB"_sig)
             .matches();
     if (vResult.size() != 1) {
-        spdlog::warn("[IRuntime] Search SignedIndex failed.");
+        LOG(Warn, "[IRuntime] Search SignedIndex failed.");
         return false;
     }
 
@@ -760,7 +759,7 @@ bool IRuntime::InitDynamicData_ReplyIndex()
 
     auto vResult = _MainModule.search("E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 8B 46 08 8B 38"_sig).matches();
     if (vResult.size() != 1) {
-        spdlog::warn("[IRuntime] Search ReplyIndex failed.");
+        LOG(Warn, "[IRuntime] Search ReplyIndex failed.");
         return false;
     }
 
@@ -797,7 +796,7 @@ bool IRuntime::InitDynamicData_ReplyIndex()
     auto vResult =
         _MainModule.search("E8 ?? ?? ?? ?? 48 63 D0 48 63 44 D3 10 83 F8 08 72 6B"_sig).matches();
     if (vResult.size() != 1) {
-        spdlog::warn("[IRuntime] Search ReplyIndex failed.");
+        LOG(Warn, "[IRuntime] Search ReplyIndex failed.");
         return false;
     }
 
@@ -859,7 +858,7 @@ bool IRuntime::InitDynamicData_LangInstance()
             _MainModule.search("8B 0D ?? ?? ?? ?? 03 C6 0F B7 C0 85 C9 0F 84 ?? ?? ?? ?? 8B 49"_sig)
                 .matches();
         if (vResult.empty()) {
-            spdlog::warn("[IRuntime] Search LangInstance failed. (old)");
+            LOG(Warn, "[IRuntime] Search LangInstance failed. (old)");
             return false;
         }
 
@@ -869,7 +868,7 @@ bool IRuntime::InitDynamicData_LangInstance()
         //
         for (const std::byte *Address : vResult) {
             if ((uint32_t)(*(uint8_t *)(Address + 21)) != LangInsOffset) {
-                spdlog::warn("[IRuntime] Searched LangInstance index not sure. (old)");
+                LOG(Warn, "[IRuntime] Searched LangInstance index not sure. (old)");
                 return false;
             }
         }
@@ -880,7 +879,7 @@ bool IRuntime::InitDynamicData_LangInstance()
             _MainModule.search("8B 0D ?? ?? ?? ?? 03 C6 0F B7 C0 85 C9 0F 84 ?? ?? ?? ?? 8B"_sig)
                 .matches();
         if (vResult.empty()) {
-            spdlog::warn("[IRuntime] Search LangInstance failed. (new)");
+            LOG(Warn, "[IRuntime] Search LangInstance failed. (new)");
             return false;
         }
 
@@ -890,7 +889,7 @@ bool IRuntime::InitDynamicData_LangInstance()
         //
         for (const std::byte *Address : vResult) {
             if (*(uint32_t *)(Address + 21) != LangInsOffset) {
-                spdlog::warn("[IRuntime] Searched LangInstance index not sure. (new)");
+                LOG(Warn, "[IRuntime] Searched LangInstance index not sure. (new)");
                 return false;
             }
         }
@@ -936,7 +935,7 @@ bool IRuntime::InitDynamicData_LangInstance()
         _MainModule.search("48 8B 05 ?? ?? ?? ?? 48 8B D9 48 85 C0 0F 84 ?? ?? ?? ?? 48 8B 80"_sig)
             .matches();
     if (vResult.size() != 1) {
-        spdlog::warn("[IRuntime] Search LangInstance failed. (new x64)");
+        LOG(Warn, "[IRuntime] Search LangInstance failed. (new x64)");
         return false;
     }
 
@@ -957,14 +956,14 @@ bool IRuntime::InitDynamicData_LangInstance()
     }
 
     if (CoreAppInstance == 0) {
-        spdlog::warn("[IRuntime] CoreAppInstance always nullptr.");
+        LOG(Warn, "[IRuntime] CoreAppInstance always nullptr.");
         return false;
     }
 
     _Data.Address.pLangInstance = *(LanguageInstance **)(CoreAppInstance + LangInsOffset);
 
     if (_Data.Address.pLangInstance == nullptr) {
-        spdlog::warn("[IRuntime] Searched pLangInstance is null.");
+        LOG(Warn, "[IRuntime] Searched pLangInstance is null.");
         return false;
     }
 
@@ -990,14 +989,14 @@ bool IRuntime::InitDynamicData_ToHistoryMessage()
         _MainModule.search("8B 49 ?? 85 C9 0F 84 ?? ?? ?? ?? 8B 01 FF 90 ?? ?? ?? ?? 85 C0"_sig)
             .matches();
     if (vResult.empty()) {
-        spdlog::warn("[IRuntime] Search toHistoryMessage index falied.");
+        LOG(Warn, "[IRuntime] Search toHistoryMessage index falied.");
         return false;
     }
 
     uint32_t Offset = *(uint32_t *)(vResult.at(0) + 15);
 
     if (Offset % sizeof(void *) != 0) {
-        spdlog::warn("[IRuntime] Searched toHistoryMessage index invalid.");
+        LOG(Warn, "[IRuntime] Searched toHistoryMessage index invalid.");
         return false;
     }
 
@@ -1005,7 +1004,7 @@ bool IRuntime::InitDynamicData_ToHistoryMessage()
     //
     for (const std::byte *Address : vResult) {
         if (*(uint32_t *)(Address + 15) != Offset) {
-            spdlog::warn("[IRuntime] Searched toHistoryMessage index not sure.");
+            LOG(Warn, "[IRuntime] Searched toHistoryMessage index not sure.");
             return false;
         }
     }
@@ -1041,7 +1040,7 @@ bool IRuntime::InitDynamicData_ToHistoryMessage()
 
     auto vResult = _MainModule.search("FF 90 ?? ?? ?? ?? C6 43 01 01"_sig).matches();
     if (vResult.size() != 1) {
-        spdlog::warn("[IRuntime] Search toHistoryMessage index falied.");
+        LOG(Warn, "[IRuntime] Search toHistoryMessage index falied.");
         return false;
     }
 

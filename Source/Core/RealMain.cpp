@@ -1,7 +1,5 @@
 ﻿#include <Windows.h>
 
-#include <spdlog/spdlog.h>
-
 #include "Config.h"
 #include "Logger.h"
 #include "IUpdater.h"
@@ -13,7 +11,7 @@ bool CheckProcess()
 {
     std::string CurrentName = File::GetCurrentName();
     if (Text::ToLower(CurrentName) != "telegram.exe") {
-        spdlog::warn("This is not a Telegram process. \"{}\"", CurrentName);
+        LOG(Warn, "This is not a Telegram process. \"{}\"", CurrentName);
         return false;
     }
     return true;
@@ -31,33 +29,26 @@ ULONG WINAPI Initialize(PVOID pParameter)
         return TRUE;
     }
 
-    spdlog::info(
-        "Running. Version: \"{}\", Platform: \"{}\"", AR_VERSION_STRING,
-#if defined PLATFORM_X86
-        "x86"
-#elif defined PLATFORM_X64
-        "x64"
-#endif
-    );
+    LOG(Info, "Running. Version: \"{}\", Platform: \"{}\"", AR_VERSION_STRING, AR_PLATFORM_STR);
 
     auto &Runtime = IRuntime::GetInstance();
     auto &AntiRevoke = IAntiRevoke::GetInstance();
 
     if (!Runtime.Initialize()) {
-        spdlog::critical("[IRuntime] Initialize failed.");
+        LOG(Critical, "[IRuntime] Initialize failed.");
         return 0;
     }
 
     IUpdater::GetInstance().CheckUpdate();
 
     if (!Runtime.InitFixedData()) {
-        spdlog::error(
+        LOG(Error,
             "The version of Telegram you are using has been deprecated by the plugin.\nPlease update your Telegram client.");
         return 0;
     }
 
     if (!Runtime.InitDynamicData()) {
-        spdlog::critical("[IRuntime] InitDynamicData() failed.");
+        LOG(Critical, "[IRuntime] InitDynamicData() failed.");
         return 0;
     }
 

@@ -3,8 +3,8 @@
 #include <unordered_map>
 
 #include <MinHook.h>
-#include <spdlog/spdlog.h>
 
+#include "Logger.h"
 #include "IRuntime.h"
 #include "Utils.h"
 
@@ -96,8 +96,7 @@ void IAntiRevoke::InitMarker()
             //
             auto Iterator = MultiLangMarks.find(CurrentPluralId);
             if (Iterator == MultiLangMarks.end()) {
-                spdlog::warn(
-                    "An unadded language. PluralId: \"{}\", Name: \"{}\"",
+                LOG(Warn, "An unadded language. PluralId: \"{}\", Name: \"{}\"",
                     Convert::UnicodeToAnsi(CurrentPluralId), Convert::UnicodeToAnsi(CurrentName));
                 return;
             }
@@ -122,8 +121,8 @@ void IAntiRevoke::InitMarker()
             }
         },
         [&](ULONG ExceptionCode) {
-            spdlog::warn(
-                "Function: [" __FUNCTION__ "] An exception was caught. Code: {:#x}", ExceptionCode);
+            LOG(Warn, "Function: [" __FUNCTION__ "] An exception was caught. Code: {:#x}",
+                ExceptionCode);
         });
 }
 
@@ -131,18 +130,18 @@ void IAntiRevoke::SetupHooks()
 {
     MH_STATUS Status = MH_Initialize();
     if (Status != MH_OK) {
-        spdlog::critical(
-            "[IAntiRevoke] MH_Initialize() failed. Status: {}", MH_StatusToString(Status));
+        LOG(Critical, "[IAntiRevoke] MH_Initialize() failed. Status: {}",
+            MH_StatusToString(Status));
         return;
     }
 
     if (!HookFreeFunction()) {
-        spdlog::critical("[IAntiRevoke] HookFreeFunction() failed.");
+        LOG(Critical, "[IAntiRevoke] HookFreeFunction() failed.");
         return;
     }
 
     if (!HookRevokeFunction()) {
-        spdlog::critical("[IAntiRevoke] HookRevokeFunction() failed.");
+        LOG(Critical, "[IAntiRevoke] HookRevokeFunction() failed.");
         return;
     }
 }
@@ -233,7 +232,7 @@ void IAntiRevoke::ProcessBlockedMessages()
                     }
                 },
                 [&](ULONG ExceptionCode) {
-                    spdlog::warn(
+                    LOG(Warn,
                         "Function: [" __FUNCTION__ "] An exception was caught. Code: {:#x}, Address: {}",
                         ExceptionCode, (void *)pMessage);
                 });
@@ -278,17 +277,16 @@ bool IAntiRevoke::HookRevokeFunction()
 
 #elif defined PLATFORM_X64
 
-    std::vector<uint8_t> Shellcode =
-        {
-            0xFF, 0xFF, 0xFF, // mov rcx,rbx                          ; Original placeholders
-            0xFF, 0x15, 0x02, 0x00, 0x00, 0x00, 0xEB, 0x08, 0xFF,
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // call History::OnDestroyMessage       ;
-                                                      // Detour
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // cmp byte ptr [rbx+00000228],00 { 0 } ;
-                                                      // Original
-            0xFF, 0x25, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF, 0xFF, 0xFF, 0xFF // jmp XXXXXXXXXXXXXXXX                 ; Jump back
-        };
+    std::vector<uint8_t> Shellcode = {
+        0xFF, 0xFF, 0xFF, // mov rcx,rbx                          ; Original placeholders
+        0xFF, 0x15, 0x02, 0x00, 0x00, 0x00, 0xEB, 0x08, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+        0xFF,                                     // call History::OnDestroyMessage       ;
+                                                  // Detour
+        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, // cmp byte ptr [rbx+00000228],00 { 0 } ;
+                                                  // Original
+        0xFF, 0x25, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+        0xFF // jmp XXXXXXXXXXXXXXXX                 ; Jump back
+    };
 
     auto HookBegin = (uint8_t *)HookAddress - 3;
     auto JumpBack = HookBegin + 15;
@@ -305,7 +303,7 @@ bool IAntiRevoke::HookRevokeFunction()
 
     auto Allocated = VirtualAlloc(nullptr, 0x1000, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
     if (Allocated == nullptr) {
-        spdlog::warn("VirtualAlloc failed. LastError: {}", ::GetLastError());
+        LOG(Warn, "VirtualAlloc failed. LastError: {}", ::GetLastError());
         return false;
     }
 
@@ -347,18 +345,18 @@ void IAntiRevoke::OnDestroyMessage(History *pHistory, HistoryMessage *pMessage)
 
             QtString *pTimeText = pMessage->GetTimeText();
             if (!pTimeText->IsValidTime()) {
-                spdlog::warn("A bad TimeText. Address: {}", (void *)pMessage);
+                LOG(Warn, "A bad TimeText. Address: {}", (void *)pMessage);
                 return;
             }
 
-            spdlog::debug("Caught a deleted meesage. Address: {}", (void *)pMessage);
+            LOG(Debug, "Caught a deleted meesage. Address: {}", (void *)pMessage);
 
             std::lock_guard<std::mutex> Lock(_Mutex);
             _BlockedMessages.insert(pMessage);
         },
         [&](ULONG ExceptionCode) {
-            spdlog::warn(
-                "Function: [" __FUNCTION__ "] An exception was caught. Code: {:#x}", ExceptionCode);
+            LOG(Warn, "Function: [" __FUNCTION__ "] An exception was caught. Code: {:#x}",
+                ExceptionCode);
         });
 }
 

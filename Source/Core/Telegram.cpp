@@ -1,7 +1,6 @@
 ﻿#include "Telegram.h"
 
-#include <spdlog/spdlog.h>
-
+#include "Logger.h"
 #include "Utils.h"
 #include "IRuntime.h"
 #include "IAntiRevoke.h"
@@ -166,7 +165,7 @@ CompT *HistoryMessage::GetComponent(uint32_t index)
             }
         },
         [&](ULONG ExceptionCode) {
-            spdlog::warn(
+            LOG(Warn,
                 "Function: [" __FUNCTION__ "] An exception was caught. Code: {:#x}, Address: {}",
                 ExceptionCode, (void *)this);
         });

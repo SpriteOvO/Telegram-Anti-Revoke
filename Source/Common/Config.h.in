@@ -19,6 +19,12 @@
 # define AR_PLATFORM_OS_STR  "Win10"
 #endif
 
+#if defined PLATFORM_X86
+# define AR_PLATFORM_STR     "x86"
+#elif defined PLATFORM_X64
+# define AR_PLATFORM_STR     "x64"
+#endif
+
 #define AR_OWNER_REPO        "SpriteOvO/Telegram-Anti-Revoke"
 #define AR_REPO_URL          "https://github.com/" AR_OWNER_REPO
 #define AR_REPO_URL_SHORT    "github.com/" AR_OWNER_REPO
