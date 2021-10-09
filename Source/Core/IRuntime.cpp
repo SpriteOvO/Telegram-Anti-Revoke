@@ -664,76 +664,126 @@ bool IRuntime::InitDynamicData_SignedIndex()
 {
 #if defined PLATFORM_X86
 
-    /*
-        HistoryView__Message__refreshEditedBadge
+    // ver < 3.1.7
+    if (_FileVersion < 3001007) {
+        /*
+            HistoryView__Message__refreshEditedBadge
 
-        .text:009F109D                         loc_9F109D:                             ; CODE XREF:
-       HistoryView__Message__refreshEditedBadge+69↑j .text:009F109D 8D 47 28 lea     eax, [edi+28h]
-        .text:009F10A0 50                                      push    eax
-        .text:009F10A1 8D 4D E8                                lea     ecx, [ebp-18h]
-        .text:009F10A4 E8 07 2E FC 00                          call    QDateTime__QDateTime
-        .text:009F10A9 68 8C 88 3D 03                          push    offset gTimeFormat
-        .text:009F10AE 8D 45 F0                                lea     eax, [ebp-10h]
-        .text:009F10B1 C7 45 FC 00 00 00 00                    mov     dword ptr [ebp-4], 0
-        .text:009F10B8 50                                      push    eax
-        .text:009F10B9 8D 4D E8                                lea     ecx, [ebp-18h]
-        .text:009F10BC E8 DF 91 FC 00                          call    QDateTime__toString
-        .text:009F10C1 8D 4D E8                                lea     ecx, [ebp-18h]
-        .text:009F10C4 C6 45 FC 02                             mov     byte ptr [ebp-4], 2
-        .text:009F10C8 E8 43 31 FC 00                          call    QDateTime___QDateTime
-        .text:009F10CD 8B 4D EC                                mov     ecx, [ebp-14h]
-        .text:009F10D0 85 C9                                   test    ecx, ecx
-        .text:009F10D2 74 12                                   jz      short loc_9F10E6
-        .text:009F10D4 85 DB                                   test    ebx, ebx
-        .text:009F10D6 0F 95 C0                                setnz   al
-        .text:009F10D9 0F B6 C0                                movzx   eax, al
-        .text:009F10DC 50                                      push    eax
-        .text:009F10DD 8D 45 F0                                lea     eax, [ebp-10h]
-        .text:009F10E0 50                                      push    eax
-        .text:009F10E1 E8 AA BA 03 00                          call    HistoryMessageEdited__refresh
-        .text:009F10E6
-        .text:009F10E6                         loc_9F10E6:                             ; CODE XREF:
-       HistoryView__Message__refreshEditedBadge+A2↑j .text:009F10E6 8B 46 08 mov     eax, [esi+8]
-        .text:009F10E9 8B 38                                   mov     edi, [eax]
+            .text:009F109D                         loc_9F109D:                             ; CODE
+           XREF: HistoryView__Message__refreshEditedBadge+69↑j .text:009F109D 8D 47 28 lea     eax,
+           [edi+28h] .text:009F10A0 50                                      push    eax
+            .text:009F10A1 8D 4D E8                                lea     ecx, [ebp-18h]
+            .text:009F10A4 E8 07 2E FC 00                          call    QDateTime__QDateTime
+            .text:009F10A9 68 8C 88 3D 03                          push    offset gTimeFormat
+            .text:009F10AE 8D 45 F0                                lea     eax, [ebp-10h]
+            .text:009F10B1 C7 45 FC 00 00 00 00                    mov     dword ptr [ebp-4], 0
+            .text:009F10B8 50                                      push    eax
+            .text:009F10B9 8D 4D E8                                lea     ecx, [ebp-18h]
+            .text:009F10BC E8 DF 91 FC 00                          call    QDateTime__toString
+            .text:009F10C1 8D 4D E8                                lea     ecx, [ebp-18h]
+            .text:009F10C4 C6 45 FC 02                             mov     byte ptr [ebp-4], 2
+            .text:009F10C8 E8 43 31 FC 00                          call    QDateTime___QDateTime
+            .text:009F10CD 8B 4D EC                                mov     ecx, [ebp-14h]
+            .text:009F10D0 85 C9                                   test    ecx, ecx
+            .text:009F10D2 74 12                                   jz      short loc_9F10E6
+            .text:009F10D4 85 DB                                   test    ebx, ebx
+            .text:009F10D6 0F 95 C0                                setnz   al
+            .text:009F10D9 0F B6 C0                                movzx   eax, al
+            .text:009F10DC 50                                      push    eax
+            .text:009F10DD 8D 45 F0                                lea     eax, [ebp-10h]
+            .text:009F10E0 50                                      push    eax
+            .text:009F10E1 E8 AA BA 03 00                          call
+           HistoryMessageEdited__refresh .text:009F10E6 .text:009F10E6 loc_9F10E6: ; CODE XREF:
+           HistoryView__Message__refreshEditedBadge+A2↑j .text:009F10E6 8B 46 08 mov     eax,
+           [esi+8] .text:009F10E9 8B 38                                   mov     edi, [eax]
 
-        // find this (RuntimeComponent<HistoryMessageSigned,HistoryItem>::Index()
-        //
-        .text:009F10EB E8 30 62 FA FF                          call
-       RuntimeComponent_HistoryMessageSigned_HistoryItem___Index
+            // find this (RuntimeComponent<HistoryMessageSigned,HistoryItem>::Index()
+            //
+            .text:009F10EB E8 30 62 FA FF                          call
+           RuntimeComponent_HistoryMessageSigned_HistoryItem___Index
 
-        .text:009F10F0 8B 44 87 08                             mov     eax, [edi+eax*4+8]
-        .text:009F10F4 83 CF FF                                or      edi, 0FFFFFFFFh
-        .text:009F10F7 83 F8 04                                cmp     eax, 4
-        .text:009F10FA 0F 82 F2 00 00 00                       jb      loc_9F11F2
-        .text:009F1100 8B 76 08                                mov     esi, [esi+8]
-        .text:009F1103 03 F0                                   add     esi, eax
-        .text:009F1105 0F 84 E7 00 00 00                       jz      loc_9F11F2
-        .text:009F110B 8B 45 EC                                mov     eax, [ebp-14h]
-        .text:009F110E 85 C0                                   test    eax, eax
-        .text:009F1110 74 1D                                   jz      short loc_9F112F
-        .text:009F1112 85 DB                                   test    ebx, ebx
-        .text:009F1114 74 19                                   jz      short loc_9F112F
-        .text:009F1116 FF 35 74 3C C4 02                       push    ds:AllTextSelection_7
-        .text:009F111C 8D 48 04                                lea     ecx, [eax+4]
-        .text:009F111F 8D 45 E0                                lea     eax, [ebp-20h]
-        .text:009F1122 50                                      push    eax
-        .text:009F1123 E8 68 26 3F 00                          call    Ui__Text__String__toString
-        .text:009F1128 8D 5F 06                                lea     ebx, [edi+6]
-        .text:009F112B 8B 08                                   mov     ecx, [eax]
-        .text:009F112D EB 1C                                   jmp     short loc_9F114B
+            .text:009F10F0 8B 44 87 08                             mov     eax, [edi+eax*4+8]
+            .text:009F10F4 83 CF FF                                or      edi, 0FFFFFFFFh
+            .text:009F10F7 83 F8 04                                cmp     eax, 4
+            .text:009F10FA 0F 82 F2 00 00 00                       jb      loc_9F11F2
+            .text:009F1100 8B 76 08                                mov     esi, [esi+8]
+            .text:009F1103 03 F0                                   add     esi, eax
+            .text:009F1105 0F 84 E7 00 00 00                       jz      loc_9F11F2
+            .text:009F110B 8B 45 EC                                mov     eax, [ebp-14h]
+            .text:009F110E 85 C0                                   test    eax, eax
+            .text:009F1110 74 1D                                   jz      short loc_9F112F
+            .text:009F1112 85 DB                                   test    ebx, ebx
+            .text:009F1114 74 19                                   jz      short loc_9F112F
+            .text:009F1116 FF 35 74 3C C4 02                       push    ds:AllTextSelection_7
+            .text:009F111C 8D 48 04                                lea     ecx, [eax+4]
+            .text:009F111F 8D 45 E0                                lea     eax, [ebp-20h]
+            .text:009F1122 50                                      push    eax
+            .text:009F1123 E8 68 26 3F 00                          call Ui__Text__String__toString
+            .text:009F1128 8D 5F 06                                lea     ebx, [edi+6]
+            .text:009F112B 8B 08                                   mov     ecx, [eax]
+            .text:009F112D EB 1C                                   jmp     short loc_9F114B
 
-        E8 ?? ?? ?? ?? 8B 44 87 08 83 CF FF
-    */
+            E8 ?? ?? ?? ?? 8B 44 87 08 83 CF FF
+        */
 
-    auto vResult = _MainModule.search("E8 ?? ?? ?? ?? 8B 44 87 08 83 CF FF"_sig).matches();
-    if (vResult.size() != 1) {
-        LOG(Warn, "[IRuntime] Search SignedIndex failed.");
-        return false;
+        auto vResult = _MainModule.search("E8 ?? ?? ?? ?? 8B 44 87 08 83 CF FF"_sig).matches();
+        if (vResult.size() != 1) {
+            LOG(Warn, "[IRuntime] Search SignedIndex failed.");
+            return false;
+        }
+
+        auto SignedIndexCaller = vResult.at(0);
+        _Data.Function.SignedIndex =
+            (FnIndexT)(SignedIndexCaller + 5 + *(int32_t *)(SignedIndexCaller + 1));
     }
+    // ver >= 3.1.7
+    else if (_FileVersion >= 3001007) {
+        // clang-format off
+        /*
+            .text:00DE62B0                         ; void __thiscall HistoryMessage::setPostAuthor(HistoryMessage *this, const QString *author)
+            .text:00DE62B0                         ?setPostAuthor@HistoryMessage@@UAEXABVQString@@@Z proc near
 
-    auto SignedIndexCaller = vResult.at(0);
-    _Data.Function.SignedIndex =
-        (FnIndexT)(SignedIndexCaller + 5 + *(int32_t *)(SignedIndexCaller + 1));
+            .text:00DE6320 8B 4F 18                                mov     this, [edi+18h] ; this
+            .text:00DE6323 85 C9                                   test    this, this
+            .text:00DE6325 0F 84 C7 00 00 00                       jz      loc_DE63F2
+            .text:00DE632B E9 AA 00 00 00                          jmp     loc_DE63DA
+            .text:00DE6330                         ; ---------------------------------------------------------------------------
+            .text:00DE6330
+            .text:00DE6330                         loc_DE6330:                             ; CODE XREF: HistoryMessage::setPostAuthor(QString const &)+2D↑j
+            .text:00DE6330 85 F6                                   test    esi, esi
+            .text:00DE6332 75 55                                   jnz     short loc_DE6389
+
+            // find this
+            .text:00DE6334 E8 C7 C2 FF FF                          call    ?Index@?$RuntimeComponent@UHistoryMessageSigned@@VHistoryItem@@@@SAHXZ ; RuntimeComponent<HistoryMessageSigned,HistoryItem>::Index(void)
+            .text:00DE6339 33 D2                                   xor     edx, edx
+            .text:00DE633B 33 C9                                   xor     this, this
+            .text:00DE633D 0F AB C2                                bts     edx, eax
+            .text:00DE6340 83 F8 20                                cmp     eax, 20h ; ' '
+            .text:00DE6343 0F 43 CA                                cmovnb  this, edx
+            .text:00DE6346 33 D1                                   xor     edx, this
+            .text:00DE6348 83 F8 40                                cmp     eax, 40h ; '@'
+            .text:00DE634B 8B 47 08                                mov     eax, [edi+8]
+            .text:00DE634E 0F 43 CA                                cmovnb  this, edx
+            .text:00DE6351 8B 00                                   mov     eax, [eax]
+            .text:00DE6353 0B 90 10 01 00 00                       or      edx, [eax+110h]
+            .text:00DE6359 8B 80 14 01 00 00                       mov     eax, [eax+114h]
+            .text:00DE635F 0B C1                                   or      eax, this
+            .text:00DE6361 8D 4F 08                                lea     this, [edi+8]   ; this
+
+            85 F6 75 ?? E8 ?? ?? ?? ?? 33 D2
+        */
+        // clang-format on
+
+        auto vResult = _MainModule.search("85 F6 75 ?? E8 ?? ?? ?? ?? 33 D2"_sig).matches();
+        if (vResult.size() != 1) {
+            LOG(Warn, "[IRuntime] Search SignedIndex failed. (new)");
+            return false;
+        }
+
+        auto SignedIndexCaller = vResult.at(0) + 4;
+        _Data.Function.SignedIndex =
+            (FnIndexT)(SignedIndexCaller + 5 + *(int32_t *)(SignedIndexCaller + 1));
+    }
 
     return true;
 
