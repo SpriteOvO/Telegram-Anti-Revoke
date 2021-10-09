@@ -460,65 +460,173 @@ bool IRuntime::InitDynamicData_DestroyMessage()
 bool IRuntime::InitDynamicData_EditedIndex()
 {
 #if defined PLATFORM_X86
+    // ver < 3.1.8
+    if (_FileVersion < 3001008) {
+        /*
+            void __thiscall HistoryMessage::applyEdition(HistoryMessage *this, MTPDmessage *message)
 
-    /*
-        void __thiscall HistoryMessage::applyEdition(HistoryMessage *this, MTPDmessage *message)
+            .text:00A4F320 55                                      push    ebp
+            .text:00A4F321 8B EC                                   mov     ebp, esp
+            .text:00A4F323 6A FF                                   push    0FFFFFFFFh
+            .text:00A4F325 68 28 4F C8 01                          push    offset
+           __ehhandler$?applyEdition@HistoryMessage@@UAEXABVMTPDmessage@@@Z .text:00A4F32A 64 A1 00
+           00 00 00                       mov     eax, large fs:0 .text:00A4F330 50 push    eax
+            .text:00A4F331 83 EC 0C                                sub     esp, 0Ch
+            .text:00A4F334 53                                      push    ebx
+            .text:00A4F335 56                                      push    esi
+            .text:00A4F336 57                                      push    edi
+            .text:00A4F337 A1 04 68 ED 02                          mov     eax, ___security_cookie
+            .text:00A4F33C 33 C5                                   xor     eax, ebp
+            .text:00A4F33E 50                                      push    eax
+            .text:00A4F33F 8D 45 F4                                lea     eax, [ebp+var_C]
+            .text:00A4F342 64 A3 00 00 00 00                       mov     large fs:0, eax
+            .text:00A4F348 8B D9                                   mov     ebx, this
+            .text:00A4F34A 8B 7D 08                                mov     edi, [ebp+message]
+            .text:00A4F34D 8B 77 08                                mov     esi, [edi+8]
+            .text:00A4F350 8D 47 48                                lea     eax, [edi+48h]
 
-        .text:00A4F320 55                                      push    ebp
-        .text:00A4F321 8B EC                                   mov     ebp, esp
-        .text:00A4F323 6A FF                                   push    0FFFFFFFFh
-        .text:00A4F325 68 28 4F C8 01                          push    offset
-       __ehhandler$?applyEdition@HistoryMessage@@UAEXABVMTPDmessage@@@Z .text:00A4F32A 64 A1 00 00
-       00 00                       mov     eax, large fs:0 .text:00A4F330 50 push    eax
-        .text:00A4F331 83 EC 0C                                sub     esp, 0Ch
-        .text:00A4F334 53                                      push    ebx
-        .text:00A4F335 56                                      push    esi
-        .text:00A4F336 57                                      push    edi
-        .text:00A4F337 A1 04 68 ED 02                          mov     eax, ___security_cookie
-        .text:00A4F33C 33 C5                                   xor     eax, ebp
-        .text:00A4F33E 50                                      push    eax
-        .text:00A4F33F 8D 45 F4                                lea     eax, [ebp+var_C]
-        .text:00A4F342 64 A3 00 00 00 00                       mov     large fs:0, eax
-        .text:00A4F348 8B D9                                   mov     ebx, this
-        .text:00A4F34A 8B 7D 08                                mov     edi, [ebp+message]
-        .text:00A4F34D 8B 77 08                                mov     esi, [edi+8]
-        .text:00A4F350 8D 47 48                                lea     eax, [edi+48h]
+            .text:00A4F353 81 E6 00 80 00 00                       and     esi, 8000h
+            .text:00A4F359 F7 DE                                   neg     esi
+            .text:00A4F35B 1B F6                                   sbb     esi, esi
+            .text:00A4F35D 23 F0                                   and     esi, eax
+            .text:00A4F35F 74 65                                   jz      short loc_A4F3C6
+            .text:00A4F361 81 4B 18 00 80 00 00                    or      dword ptr [ebx+18h],
+           8000h .text:00A4F368 8B 43 08                                mov     eax, [ebx+8]
+            .text:00A4F36B 8B 38                                   mov     edi, [eax]
 
-        .text:00A4F353 81 E6 00 80 00 00                       and     esi, 8000h
-        .text:00A4F359 F7 DE                                   neg     esi
-        .text:00A4F35B 1B F6                                   sbb     esi, esi
-        .text:00A4F35D 23 F0                                   and     esi, eax
-        .text:00A4F35F 74 65                                   jz      short loc_A4F3C6
-        .text:00A4F361 81 4B 18 00 80 00 00                    or      dword ptr [ebx+18h], 8000h
-        .text:00A4F368 8B 43 08                                mov     eax, [ebx+8]
-        .text:00A4F36B 8B 38                                   mov     edi, [eax]
+            // find this (RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index()
+            //
+            .text:00A4F36D E8 6E 3A EA FF                          call
+           ?Index@?$RuntimeComponent@UHistoryMessageEdited@@VHistoryItem@@@@SAHXZ ;
+           RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index(void)
 
-        // find this (RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index()
-        //
-        .text:00A4F36D E8 6E 3A EA FF                          call
-       ?Index@?$RuntimeComponent@UHistoryMessageEdited@@VHistoryItem@@@@SAHXZ ;
-       RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index(void)
+            .text:00A4F372 83 7C 87 08 04                          cmp     dword ptr [edi+eax*4+8],
+           4 .text:00A4F377 73 28                                   jnb     short loc_A4F3A1
+            .text:00A4F379 E8 62 3A EA FF                          call
+           ?Index@?$RuntimeComponent@UHistoryMessageEdited@@VHistoryItem@@@@SAHXZ ;
+           RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index(void) .text:00A4F37E 33 D2 xor
+           edx, edx
 
-        .text:00A4F372 83 7C 87 08 04                          cmp     dword ptr [edi+eax*4+8], 4
-        .text:00A4F377 73 28                                   jnb     short loc_A4F3A1
-        .text:00A4F379 E8 62 3A EA FF                          call
-       ?Index@?$RuntimeComponent@UHistoryMessageEdited@@VHistoryItem@@@@SAHXZ ;
-       RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index(void) .text:00A4F37E 33 D2 xor edx,
-       edx
+            E8 ?? ?? ?? ?? 83 7C 87 ?? ?? 73 ?? E8
+        */
 
-        E8 ?? ?? ?? ?? 83 7C 87 ?? ?? 73 ?? E8
-    */
+        auto vResult = _MainModule.search("E8 ?? ?? ?? ?? 83 7C 87 ?? ?? 73 ?? E8"_sig).matches();
+        if (vResult.size() != 1) {
+            LOG(Warn, "[IRuntime] Search EditedIndex failed.");
+            return false;
+        }
 
-    auto vResult = _MainModule.search("E8 ?? ?? ?? ?? 83 7C 87 ?? ?? 73 ?? E8"_sig).matches();
-    if (vResult.size() != 1) {
-        LOG(Warn, "[IRuntime] Search EditedIndex failed.");
-        return false;
+        auto EditedIndexCaller = vResult.at(0);
+        _Data.Function.EditedIndex =
+            (FnIndexT)(EditedIndexCaller + 5 + *(int32_t *)(EditedIndexCaller + 1));
     }
+    // ver >= 3.1.8
+    else if (_FileVersion >= 3001008) {
+        // clang-format off
+        /*
+            .text:00DE32A0                         ; void __thiscall HistoryMessage::applyEdition(HistoryMessage *this, HistoryMessageEdition *edition)
+            .text:00DE32A0                         ?applyEdition@HistoryMessage@@UAEX$$QAUHistoryMessageEdition@@@Z proc near
+            .text:00DE32A0
+            .text:00DE32A0                         var_B8          = byte ptr -0B8h
+            .text:00DE32A0                         data            = HistoryMessageRepliesData ptr -0A4h
+            .text:00DE32A0                         result          = TextWithEntities ptr -6Ch
+            .text:00DE32A0                         var_64          = std::vector<VPointF> ptr -64h
+            .text:00DE32A0                         var_58          = dword ptr -58h
+            .text:00DE32A0                         var_54          = qword ptr -54h
+            .text:00DE32A0                         var_4C          = qword ptr -4Ch
+            .text:00DE32A0                         var_44          = qword ptr -44h
+            .text:00DE32A0                         var_3C          = dword ptr -3Ch
+            .text:00DE32A0                         var_38          = byte ptr -38h
+            .text:00DE32A0                         var_37          = word ptr -37h
+            .text:00DE32A0                         var_35          = byte ptr -35h
+            .text:00DE32A0                         var_34          = dword ptr -34h
+            .text:00DE32A0                         var_30          = dword ptr -30h
+            .text:00DE32A0                         markup          = HistoryMessageMarkupData ptr -2Ch
+            .text:00DE32A0                         var_18          = dword ptr -18h
+            .text:00DE32A0                         textWithEntities= TextWithEntities ptr -14h
+            .text:00DE32A0                         var_C           = dword ptr -0Ch
+            .text:00DE32A0                         var_4           = dword ptr -4
+            .text:00DE32A0                         block           = dword ptr  8
+            .text:00DE32A0                         arg_4           = dword ptr  0Ch
+            .text:00DE32A0
+            .text:00DE32A0                         ; FUNCTION CHUNK AT .text:02EA4680 SIZE 0000004D BYTES
+            .text:00DE32A0                         ; FUNCTION CHUNK AT .text:02EA46D2 SIZE 00000020 BYTES
+            .text:00DE32A0
+            .text:00DE32A0                         this = ecx
+            .text:00DE32A0                         ; __unwind { // __ehhandler$?applyEdition@HistoryMessage@@UAEX$$QAUHistoryMessageEdition@@@Z
+            .text:00DE32A0 55                                      push    ebp
+            .text:00DE32A1 8B EC                                   mov     ebp, esp
+            .text:00DE32A3 6A FF                                   push    0FFFFFFFFh
+            .text:00DE32A5 68 D2 46 EA 02                          push    offset __ehhandler$?applyEdition@HistoryMessage@@UAEX$$QAUHistoryMessageEdition@@@Z
+            .text:00DE32AA 64 A1 00 00 00 00                       mov     eax, large fs:0
+            .text:00DE32B0 50                                      push    eax
+            .text:00DE32B1 81 EC AC 00 00 00                       sub     esp, 0ACh
+            .text:00DE32B7 53                                      push    ebx
+            .text:00DE32B8 56                                      push    esi
+            .text:00DE32B9 57                                      push    edi
+            .text:00DE32BA A1 54 3D 69 04                          mov     eax, ___security_cookie
+            .text:00DE32BF 33 C5                                   xor     eax, ebp
+            .text:00DE32C1 50                                      push    eax
+            .text:00DE32C2 8D 45 F4                                lea     eax, [ebp+var_C]
+            .text:00DE32C5 64 A3 00 00 00 00                       mov     large fs:0, eax
+            .text:00DE32CB 8B F9                                   mov     edi, this
+            .text:00DE32CD C7 45 E8 00 00 00 00                    mov     [ebp+var_18], 0
+            .text:00DE32D4 8B 5D 08                                mov     ebx, [ebp+block]
+            .text:00DE32D7 80 3B 00                                cmp     byte ptr [ebx], 0
+            .text:00DE32DA 74 06                                   jz      short loc_DE32E2
+            .text:00DE32DC 83 4F 20 01                             or      dword ptr [edi+20h], 1
+            .text:00DE32E0 EB 04                                   jmp     short loc_DE32E6
+            .text:00DE32E2                         ; ---------------------------------------------------------------------------
+            .text:00DE32E2
+            .text:00DE32E2                         loc_DE32E2:                             ; CODE XREF: HistoryMessage::applyEdition(HistoryMessageEdition &&)+3A↑j
+            .text:00DE32E2 83 67 20 FE                             and     dword ptr [edi+20h], 0FFFFFFFEh
+            .text:00DE32E6
+            .text:00DE32E6                         loc_DE32E6:                             ; CODE XREF: HistoryMessage::applyEdition(HistoryMessageEdition &&)+40↑j
+            .text:00DE32E6 83 7B 04 FF                             cmp     dword ptr [ebx+4], 0FFFFFFFFh
+            .text:00DE32EA 74 6E                                   jz      short loc_DE335A
+            .text:00DE32EC 8B 47 08                                mov     eax, [edi+8]
+            .text:00DE32EF 8B 30                                   mov     esi, [eax]
 
-    auto EditedIndexCaller = vResult.at(0);
-    _Data.Function.EditedIndex =
-        (FnIndexT)(EditedIndexCaller + 5 + *(int32_t *)(EditedIndexCaller + 1));
+            // find this
+            .text:00DE32F1 E8 AA F1 FF FF                          call    ?Index@?$RuntimeComponent@UHistoryMessageEdited@@VHistoryItem@@@@SAHXZ ; RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index(void)
 
+            .text:00DE32F6 83 7C 86 08 04                          cmp     dword ptr [esi+eax*4+8], 4
+            .text:00DE32FB 73 3A                                   jnb     short loc_DE3337
+            .text:00DE32FD E8 9E F1 FF FF                          call    ?Index@?$RuntimeComponent@UHistoryMessageEdited@@VHistoryItem@@@@SAHXZ ; RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index(void)
+            .text:00DE3302 33 D2                                   xor     edx, edx
+            .text:00DE3304 8D 77 08                                lea     esi, [edi+8]
+            .text:00DE3307 0F AB C2                                bts     edx, eax
+            .text:00DE330A 33 C9                                   xor     this, this
+            .text:00DE330C 83 F8 20                                cmp     eax, 20h ; ' '
+            .text:00DE330F 0F 43 CA                                cmovnb  this, edx
+            .text:00DE3312 33 D1                                   xor     edx, this
+            .text:00DE3314 83 F8 40                                cmp     eax, 40h ; '@'
+            .text:00DE3317 8B 06                                   mov     eax, [esi]
+            .text:00DE3319 0F 43 CA                                cmovnb  this, edx
+            .text:00DE331C 8B 00                                   mov     eax, [eax]
+            .text:00DE331E 0B 90 10 01 00 00                       or      edx, [eax+110h]
+            .text:00DE3324 8B 80 14 01 00 00                       mov     eax, [eax+114h]
+            .text:00DE332A 0B C1                                   or      eax, this
+            .text:00DE332C 8B CE                                   mov     this, esi       ; this
+            .text:00DE332E 50                                      push    eax
+            .text:00DE332F 52                                      push    edx             ; mask
+            .text:00DE3330 E8 DB 50 ED FF                          call    ?UpdateComponents@RuntimeComposerBase@@IAE_N_K@Z ; RuntimeComposerBase::UpdateComponents(unsigned __int64)
+            .text:00DE3335 EB 03                                   jmp     short loc_DE333A
+
+            83 7B 04 FF 74 ?? 8B 47 08 8B 30 E8
+        */
+        // clang-format on
+
+        auto vResult = _MainModule.search("83 7B 04 FF 74 ?? 8B 47 08 8B 30 E8"_sig).matches();
+        if (vResult.size() != 1) {
+            LOG(Warn, "[IRuntime] Search EditedIndex failed.");
+            return false;
+        }
+
+        auto EditedIndexCaller = vResult.at(0) + 11;
+        _Data.Function.EditedIndex =
+            (FnIndexT)(EditedIndexCaller + 5 + *(int32_t *)(EditedIndexCaller + 1));
+    }
     return true;
 
 #elif defined PLATFORM_X64
