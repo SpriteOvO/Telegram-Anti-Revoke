@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(TelegramAntiRevoke VERSION 0.4.1)
+project(TelegramAntiRevoke VERSION 0.4.2)
 
 if(MSVC AND ${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.20.4")
     #
