@@ -71,6 +71,8 @@ bool IRuntime::InitFixedData()
         _Data.Offset.SignedTimeText = 0x10;
     }
 
+    _Data.Offset.MaxReplyWidth = 0x6C;
+
     return true;
 
 #elif defined PLATFORM_X64
@@ -79,6 +81,15 @@ bool IRuntime::InitFixedData()
     _Data.Offset.TimeWidth = 0xB8;
     _Data.Offset.MainView = 0x98;
     _Data.Offset.SignedTimeText = 0x18;
+
+    // ver < 3.1.8
+    if (_FileVersion < 3001008) {
+        _Data.Offset.MaxReplyWidth = 0xA4;
+    }
+    // ver >= 3.1.8
+    else if (_FileVersion >= 3001008) {
+        _Data.Offset.MaxReplyWidth = 0xAC;
+    }
 
     return true;
 

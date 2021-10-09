@@ -88,13 +88,7 @@ QtString *HistoryMessageSigned::GetTimeText()
 
 int32_t &HistoryMessageReply::MaxReplyWidth()
 {
-#if defined PLATFORM_X86
-    return *(int32_t *)((uintptr_t)this + 0x6C);
-#elif defined PLATFORM_X64
-    return *(int32_t *)((uintptr_t)this + 0xA4);
-#else
-    #error "Unimplemented."
-#endif
+    return *(int32_t *)((uintptr_t)this + IRuntime::GetInstance().GetData().Offset.MaxReplyWidth);
 }
 
 //////////////////////////////////////////////////
