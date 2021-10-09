@@ -44,6 +44,7 @@ bool IRuntime::InitFixedData()
         // _Data.Offset.Media = 0x54;
         _Data.Offset.SignedTimeText = 0x14;
         // _Data.Offset.HistoryPeer = 0x7C;
+        _Data.Offset.MaxReplyWidth = 0x6C;
     }
     // ver >= 2.4.1, ver < 2.6.0
     else if (_FileVersion >= 2004001 && _FileVersion < 2006000) {
@@ -53,6 +54,7 @@ bool IRuntime::InitFixedData()
         // _Data.Offset.Media = 0x54;
         _Data.Offset.SignedTimeText = 0x10; // changed
         // _Data.Offset.HistoryPeer = 0x7C;       // maybe untested! (I forgot :)
+        _Data.Offset.MaxReplyWidth = 0x6C;
     }
     // ver >= 2.6.0, ver < 2.9.0
     else if (_FileVersion >= 2006000 && _FileVersion < 2009000) {
@@ -62,16 +64,24 @@ bool IRuntime::InitFixedData()
         // _Data.Offset.Media = 0x5C;             // changed
         _Data.Offset.SignedTimeText = 0x10;
         // _Data.Offset.HistoryPeer = 0x7C;       // untested!
+        _Data.Offset.MaxReplyWidth = 0x6C;
     }
-    // ver >= 2.9.0
-    else if (_FileVersion >= 2009000) {
+    // ver >= 2.9.0, ver < 3.1.7
+    else if (_FileVersion >= 2009000 && _FileVersion < 3001007) {
         _Data.Offset.TimeText = 0x70;  // changed
         _Data.Offset.TimeWidth = 0x74; // changed
         _Data.Offset.MainView = 0x5C;  // changed
         _Data.Offset.SignedTimeText = 0x10;
+        _Data.Offset.MaxReplyWidth = 0x6C;
     }
-
-    _Data.Offset.MaxReplyWidth = 0x6C;
+    // ver >= 3.1.7
+    else if (_FileVersion >= 3001007) {
+        _Data.Offset.TimeText = 0x78;  // changed
+        _Data.Offset.TimeWidth = 0x7C; // changed
+        _Data.Offset.MainView = 0x64;  // changed
+        _Data.Offset.SignedTimeText = 0x10;
+        _Data.Offset.MaxReplyWidth = 0x74; // changed
+    }
 
     return true;
 
