@@ -502,53 +502,145 @@ bool IRuntime::InitDynamicData_EditedIndex()
 
 #elif defined PLATFORM_X64
 
-    /*
-        void __fastcall HistoryMessage::applyEdition(HistoryMessage *__hidden this, const struct
-       MTPDmessage *)
+    // ver < 3.1.8
+    if (_FileVersion < 3001008) {
+        /*
+            void __fastcall HistoryMessage::applyEdition(HistoryMessage *__hidden this, const struct
+           MTPDmessage *)
 
-        Telegram.exe+A65456 - 44 8B 42 10           - mov r8d,[rdx+10]
-        Telegram.exe+A6545A - 41 81 E0 00002000     - and r8d,00200000 { 2097152 }
-        Telegram.exe+A65461 - 44 0B C0              - or r8d,eax
-        Telegram.exe+A65464 - 44 89 41 28           - mov [rcx+28],r8d
-        Telegram.exe+A65468 - F7 42 10 00800000     - test [rdx+10],00008000 { 32768 }
-        Telegram.exe+A6546F - 48 8D 9A 98000000     - lea rbx,[rdx+00000098]
-        Telegram.exe+A65476 - 49 0F44 DF            - cmove rbx,r15
-        Telegram.exe+A6547A - 48 85 DB              - test rbx,rbx
-        Telegram.exe+A6547D - 74 6F                 - je Telegram.exe+A654EE
-        Telegram.exe+A6547F - 41 0FBA E8 0F         - bts r8d,0F { 15 }
-        Telegram.exe+A65484 - 44 89 41 28           - mov [rcx+28],r8d
-        Telegram.exe+A65488 - 48 8B 41 08           - mov rax,[rcx+08]
-        Telegram.exe+A6548C - 48 8B 38              - mov rdi,[rax]
-        Telegram.exe+A6548F - E8 8C0ED7FF           - call Telegram.exe+7D6320
-        Telegram.exe+A65494 - 48 63 C8              - movsxd  rcx,eax
-        Telegram.exe+A65497 - 48 83 7C CF 10 08     - cmp qword ptr [rdi+rcx*8+10],08 { 8 }
-        Telegram.exe+A6549D - 73 26                 - jae Telegram.exe+A654C5
+            Telegram.exe+A65456 - 44 8B 42 10           - mov r8d,[rdx+10]
+            Telegram.exe+A6545A - 41 81 E0 00002000     - and r8d,00200000 { 2097152 }
+            Telegram.exe+A65461 - 44 0B C0              - or r8d,eax
+            Telegram.exe+A65464 - 44 89 41 28           - mov [rcx+28],r8d
+            Telegram.exe+A65468 - F7 42 10 00800000     - test [rdx+10],00008000 { 32768 }
+            Telegram.exe+A6546F - 48 8D 9A 98000000     - lea rbx,[rdx+00000098]
+            Telegram.exe+A65476 - 49 0F44 DF            - cmove rbx,r15
+            Telegram.exe+A6547A - 48 85 DB              - test rbx,rbx
+            Telegram.exe+A6547D - 74 6F                 - je Telegram.exe+A654EE
+            Telegram.exe+A6547F - 41 0FBA E8 0F         - bts r8d,0F { 15 }
+            Telegram.exe+A65484 - 44 89 41 28           - mov [rcx+28],r8d
+            Telegram.exe+A65488 - 48 8B 41 08           - mov rax,[rcx+08]
+            Telegram.exe+A6548C - 48 8B 38              - mov rdi,[rax]
+            Telegram.exe+A6548F - E8 8C0ED7FF           - call Telegram.exe+7D6320
+            Telegram.exe+A65494 - 48 63 C8              - movsxd  rcx,eax
+            Telegram.exe+A65497 - 48 83 7C CF 10 08     - cmp qword ptr [rdi+rcx*8+10],08 { 8 }
+            Telegram.exe+A6549D - 73 26                 - jae Telegram.exe+A654C5
 
-        // find this
-        //
-        Telegram.exe+A6549F - E8 7C0ED7FF           - call Telegram.exe+7D6320
+            // find this
+            //
+            Telegram.exe+A6549F - E8 7C0ED7FF           - call Telegram.exe+7D6320
 
-        Telegram.exe+A654A4 - 8B C8                 - mov ecx,eax
-        Telegram.exe+A654A6 - BA 01000000           - mov edx,00000001 { 1 }
-        Telegram.exe+A654AB - 48 D3 E2              - shl rdx,cl
-        Telegram.exe+A654AE - 48 8B 46 08           - mov rax,[rsi+08]
-        Telegram.exe+A654B2 - 48 8B 08              - mov rcx,[rax]
-        Telegram.exe+A654B5 - 48 0B 91 18020000     - or rdx,[rcx+00000218]
-        Telegram.exe+A654BC - 48 8D 4E 08           - lea rcx,[rsi+08]
-        Telegram.exe+A654C0 - E8 FB27EBFF           - call Telegram.exe+917CC0
+            Telegram.exe+A654A4 - 8B C8                 - mov ecx,eax
+            Telegram.exe+A654A6 - BA 01000000           - mov edx,00000001 { 1 }
+            Telegram.exe+A654AB - 48 D3 E2              - shl rdx,cl
+            Telegram.exe+A654AE - 48 8B 46 08           - mov rax,[rsi+08]
+            Telegram.exe+A654B2 - 48 8B 08              - mov rcx,[rax]
+            Telegram.exe+A654B5 - 48 0B 91 18020000     - or rdx,[rcx+00000218]
+            Telegram.exe+A654BC - 48 8D 4E 08           - lea rcx,[rsi+08]
+            Telegram.exe+A654C0 - E8 FB27EBFF           - call Telegram.exe+917CC0
 
-        48 83 7C CF 10 08 73 ?? E8
-    */
+            48 83 7C CF 10 08 73 ?? E8
+        */
 
-    auto vResult = _MainModule.search("48 83 7C CF 10 08 73 ?? E8"_sig).matches();
-    if (vResult.size() != 1) {
-        LOG(Warn, "[IRuntime] Search EditedIndex failed.");
-        return false;
+        auto vResult = _MainModule.search("48 83 7C CF 10 08 73 ?? E8"_sig).matches();
+        if (vResult.size() != 1) {
+            LOG(Warn, "[IRuntime] Search EditedIndex failed.");
+            return false;
+        }
+
+        auto EditedIndexCaller = vResult.at(0) + 8;
+        _Data.Function.EditedIndex =
+            (FnIndexT)(EditedIndexCaller + 5 + *(int32_t *)(EditedIndexCaller + 1));
     }
+    // ver >= 3.1.8
+    else if (_FileVersion >= 3001008) {
+        // clang-format off
+        /*
+            .text:0000000140B7BE70                         ; void __fastcall HistoryMessage::applyEdition(HistoryMessage *this, HistoryMessageEdition *edition)
+            .text:0000000140B7BE70                         ?applyEdition@HistoryMessage@@UEAAX$$QEAUHistoryMessageEdition@@@Z proc near
+            .text:0000000140B7BE70
+            .text:0000000140B7BE70                         result          = QString ptr -0C0h
+            .text:0000000140B7BE70                         var_B8          = QList<EntityInText> ptr -0B8h
+            .text:0000000140B7BE70                         data            = qword ptr -0B0h
+            .text:0000000140B7BE70                         var_A8          = QList<EntityInText> ptr -0A8h
+            .text:0000000140B7BE70                         markup          = HistoryMessageMarkupData ptr -0A0h
+            .text:0000000140B7BE70                         var_78          = HistoryMessageRepliesData ptr -78h
+            .text:0000000140B7BE70                         arg_0           = qword ptr  10h
+            .text:0000000140B7BE70                         arg_8           = dword ptr  18h
+            .text:0000000140B7BE70
+            .text:0000000140B7BE70                         ; __unwind { // __CxxFrameHandler4
+            .text:0000000140B7BE70 48 89 5C 24 08                          mov     [rsp-8+arg_0], rbx
+            .text:0000000140B7BE75 55                                      push    rbp
+            .text:0000000140B7BE76 56                                      push    rsi
+            .text:0000000140B7BE77 57                                      push    rdi
+            .text:0000000140B7BE78 41 54                                   push    r12
+            .text:0000000140B7BE7A 41 55                                   push    r13
+            .text:0000000140B7BE7C 41 56                                   push    r14
+            .text:0000000140B7BE7E 41 57                                   push    r15
+            .text:0000000140B7BE80 48 8D 6C 24 D9                          lea     rbp, [rsp-27h]
+            .text:0000000140B7BE85 48 81 EC B0 00 00 00                    sub     rsp, 0B0h
+            .text:0000000140B7BE8C 48 8B FA                                mov     rdi, rdx
+            .text:0000000140B7BE8F 48 8B F1                                mov     rsi, rcx
+            .text:0000000140B7BE92 45 33 E4                                xor     r12d, r12d
+            .text:0000000140B7BE95 44 89 65 6F                             mov     [rbp+57h+arg_8], r12d
+            .text:0000000140B7BE99 44 38 22                                cmp     [rdx], r12b
+            .text:0000000140B7BE9C 74 06                                   jz      short loc_140B7BEA4
+            .text:0000000140B7BE9E 83 49 28 01                             or      dword ptr [rcx+28h], 1
+            .text:0000000140B7BEA2 EB 04                                   jmp     short loc_140B7BEA8
+            .text:0000000140B7BEA4                         ; ---------------------------------------------------------------------------
+            .text:0000000140B7BEA4
+            .text:0000000140B7BEA4                         loc_140B7BEA4:                          ; CODE XREF: HistoryMessage::applyEdition(HistoryMessageEdition &&)+2C↑j
+            .text:0000000140B7BEA4 83 61 28 FE                             and     dword ptr [rcx+28h], 0FFFFFFFEh
+            .text:0000000140B7BEA8
+            .text:0000000140B7BEA8                         loc_140B7BEA8:                          ; CODE XREF: HistoryMessage::applyEdition(HistoryMessageEdition &&)+32↑j
+            .text:0000000140B7BEA8 41 BE 01 00 00 00                       mov     r14d, 1
+            .text:0000000140B7BEAE 83 7A 04 FF                             cmp     dword ptr [rdx+4], 0FFFFFFFFh
+            .text:0000000140B7BEB2 74 65                                   jz      short loc_140B7BF19
+            .text:0000000140B7BEB4 48 8B 41 08                             mov     rax, [rcx+8]
+            .text:0000000140B7BEB8 48 8B 18                                mov     rbx, [rax]
 
-    auto EditedIndexCaller = vResult.at(0) + 8;
-    _Data.Function.EditedIndex =
-        (FnIndexT)(EditedIndexCaller + 5 + *(int32_t *)(EditedIndexCaller + 1));
+            // find this
+            .text:0000000140B7BEBB E8 B0 F0 FF FF                          call    ?Index@?$RuntimeComponent@UHistoryMessageEdited@@VHistoryItem@@@@SAHXZ ; RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index(void)
+
+            .text:0000000140B7BEC0 48 63 C8                                movsxd  rcx, eax
+            .text:0000000140B7BEC3 48 83 7C CB 10 08                       cmp     qword ptr [rbx+rcx*8+10h], 8
+            .text:0000000140B7BEC9 73 24                                   jnb     short loc_140B7BEEF
+            .text:0000000140B7BECB E8 A0 F0 FF FF                          call    ?Index@?$RuntimeComponent@UHistoryMessageEdited@@VHistoryItem@@@@SAHXZ ; RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index(void)
+            .text:0000000140B7BED0 8B C8                                   mov     ecx, eax
+            .text:0000000140B7BED2 41 8B D6                                mov     edx, r14d
+            .text:0000000140B7BED5 48 D3 E2                                shl     rdx, cl
+            .text:0000000140B7BED8 48 8B 46 08                             mov     rax, [rsi+8]
+            .text:0000000140B7BEDC 48 8B 08                                mov     rcx, [rax]
+            .text:0000000140B7BEDF 48 0B 91 18 02 00 00                    or      rdx, [rcx+218h] ; mask
+            .text:0000000140B7BEE6 48 8D 4E 08                             lea     rcx, [rsi+8]    ; this
+            .text:0000000140B7BEEA E8 81 87 E9 FF                          call    ?UpdateComponents@RuntimeComposerBase@@IEAA_N_K@Z ; RuntimeComposerBase::UpdateComponents(unsigned __int64)
+            .text:0000000140B7BEEF
+            .text:0000000140B7BEEF                         loc_140B7BEEF:                          ; CODE XREF: HistoryMessage::applyEdition(HistoryMessageEdition &&)+59↑j
+            .text:0000000140B7BEEF 48 8B 46 08                             mov     rax, [rsi+8]
+            .text:0000000140B7BEF3 48 8B 18                                mov     rbx, [rax]
+            .text:0000000140B7BEF6 E8 75 F0 FF FF                          call    ?Index@?$RuntimeComponent@UHistoryMessageEdited@@VHistoryItem@@@@SAHXZ ; RuntimeComponent<HistoryMessageEdited,HistoryItem>::Index(void)
+            .text:0000000140B7BEFB 48 63 C8                                movsxd  rcx, eax
+            .text:0000000140B7BEFE 48 63 44 CB 10                          movsxd  rax, dword ptr [rbx+rcx*8+10h]
+            .text:0000000140B7BF03 83 F8 08                                cmp     eax, 8
+            .text:0000000140B7BF06 72 09                                   jb      short loc_140B7BF11
+            .text:0000000140B7BF08 48 8B C8                                mov     rcx, rax
+            .text:0000000140B7BF0B 48 03 4E 08                             add     rcx, [rsi+8]
+            .text:0000000140B7BF0F EB 03                                   jmp     short loc_140B7BF14
+
+            83 7A 04 FF 74 ?? 48 8B 41 08 48 8B 18 E8
+        */
+        // clang-format on
+
+        auto vResult = _MainModule.search("83 7A 04 FF 74 ?? 48 8B 41 08 48 8B 18 E8"_sig).matches();
+        if (vResult.size() != 1) {
+            LOG(Warn, "[IRuntime] Search EditedIndex failed. (new)");
+            return false;
+        }
+
+        auto EditedIndexCaller = vResult.at(0) + 13;
+        _Data.Function.EditedIndex =
+            (FnIndexT)(EditedIndexCaller + 5 + *(int32_t *)(EditedIndexCaller + 1));
+    }
 
     return true;
 
