@@ -125,15 +125,32 @@ void History::OnDestroyMessage(HistoryMessage *pMessage)
 
 bool HistoryMessage::IsMessage()
 {
-    // HistoryMessage *HistoryItem::toHistoryMessage()
-    //
     // Join channel msg is HistoryItem, that's not an inheritance class.
     // It will cause a memory access crash, so we need to filter it out.
     //
 
-    using FnToHistoryMessageT = HistoryMessage *(*)(HistoryMessage * This);
-    return Utils::CallVirtual<FnToHistoryMessageT>(
-               this, IRuntime::GetInstance().GetData().Index.ToHistoryMessage)(this) != nullptr;
+    auto RuntimeIns = IRuntime::GetInstance();
+    const auto FileVersion = RuntimeIns.GetFileVersion();
+    const auto &Index = RuntimeIns.GetData().Index;
+
+    // ver < 3.2.5
+    if (FileVersion < 3002005) {
+        // HistoryMessage *HistoryItem::toHistoryMessage()
+        //
+        using FnToHistoryMessageT = HistoryMessage *(*)(HistoryMessage * This);
+        return Utils::CallVirtual<FnToHistoryMessageT>(this, Index.ToHistoryMessage)(this) !=
+               nullptr;
+    }
+    // ver >= 3.2.5
+    else if (FileVersion >= 3002005) {
+        // bool HistoryItem::isService() const
+        //
+        using FnIsServiceT = bool (*)(HistoryMessage * This);
+        return !Utils::CallVirtual<FnIsServiceT>(this, Index.IsService)(this);
+    }
+    else {
+        return false;
+    }
 }
 
 template <class CompT>

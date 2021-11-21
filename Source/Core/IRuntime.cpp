@@ -128,7 +128,7 @@ bool IRuntime::InitDynamicData()
             INIT_DATA_AND_LOG(SignedIndex);
             INIT_DATA_AND_LOG(ReplyIndex);
             INIT_DATA_AND_LOG(LangInstance);
-            INIT_DATA_AND_LOG(ToHistoryMessage);
+            INIT_DATA_AND_LOG(IsMessage);
 
 #undef INIT_DATA_AND_LOG
             Result = true;
@@ -1245,45 +1245,83 @@ bool IRuntime::InitDynamicData_LangInstance()
     return true;
 }
 
-bool IRuntime::InitDynamicData_ToHistoryMessage()
+bool IRuntime::InitDynamicData_IsMessage()
 {
+    uint32_t Offset;
+
 #if defined PLATFORM_X86
 
-    // clang-format off
-    /*
-        Telegram.exe+724503 - 8B 49 20              - mov ecx,[ecx+20]
-        Telegram.exe+724506 - 85 C9                 - test ecx,ecx
-        Telegram.exe+724508 - 0F84 F2000000         - je Telegram.exe+724600
-        Telegram.exe+72450E - 8B 01                 - mov eax,[ecx]
-        Telegram.exe+724510 - FF 90 D8000000        - call dword ptr [eax+000000D8]
-        Telegram.exe+724516 - 85 C0                 - test eax,eax
+    // ver < 3.2.5
+    if (_FileVersion < 3002005) {
+        // clang-format off
+        /*
+            Telegram.exe+724503 - 8B 49 20              - mov ecx,[ecx+20]
+            Telegram.exe+724506 - 85 C9                 - test ecx,ecx
+            Telegram.exe+724508 - 0F84 F2000000         - je Telegram.exe+724600
+            Telegram.exe+72450E - 8B 01                 - mov eax,[ecx]
+            Telegram.exe+724510 - FF 90 D8000000        - call dword ptr [eax+000000D8]
+            Telegram.exe+724516 - 85 C0                 - test eax,eax
 
-        8B 49 ?? 85 C9 0F 84 ?? ?? ?? ?? 8B 01 FF 90 ?? ?? ?? ?? 85 C0
-    */
-    // clang-format on
+            8B 49 ?? 85 C9 0F 84 ?? ?? ?? ?? 8B 01 FF 90 ?? ?? ?? ?? 85 C0
+        */
+        // clang-format on
 
-    auto vResult =
-        _MainModule.search("8B 49 ?? 85 C9 0F 84 ?? ?? ?? ?? 8B 01 FF 90 ?? ?? ?? ?? 85 C0"_sig)
-            .matches();
-    if (vResult.empty()) {
-        LOG(Warn, "[IRuntime] Search toHistoryMessage index falied.");
-        return false;
-    }
-
-    uint32_t Offset = *(uint32_t *)(vResult.at(0) + 15);
-
-    if (Offset % sizeof(void *) != 0) {
-        LOG(Warn, "[IRuntime] Searched toHistoryMessage index invalid.");
-        return false;
-    }
-
-    // Check each offset
-    //
-    for (const std::byte *Address : vResult) {
-        if (*(uint32_t *)(Address + 15) != Offset) {
-            LOG(Warn, "[IRuntime] Searched toHistoryMessage index not sure.");
+        auto vResult =
+            _MainModule.search("8B 49 ?? 85 C9 0F 84 ?? ?? ?? ?? 8B 01 FF 90 ?? ?? ?? ?? 85 C0"_sig)
+                .matches();
+        if (vResult.empty()) {
+            LOG(Warn, "[IRuntime] Search toHistoryMessage index falied.");
             return false;
         }
+
+        Offset = *(uint32_t *)(vResult.at(0) + 15);
+
+        if (Offset % sizeof(void *) != 0) {
+            LOG(Warn, "[IRuntime] Searched toHistoryMessage index invalid.");
+            return false;
+        }
+
+        // Check each offset
+        //
+        for (const std::byte *Address : vResult) {
+            if (*(uint32_t *)(Address + 15) != Offset) {
+                LOG(Warn, "[IRuntime] Searched toHistoryMessage index not sure.");
+                return false;
+            }
+        }
+
+        _Data.Index.ToHistoryMessage = (Offset / sizeof(void *));
+    }
+    // ver >= 3.2.5
+    else if (_FileVersion >= 3002005) {
+        // clang-format off
+        /*
+            Telegram.exe+9DB713 - 88 4D EF              - mov [ebp-11],cl
+            Telegram.exe+9DB716 - 8B 4D E4              - mov ecx,[ebp-1C]
+            Telegram.exe+9DB719 - 8B 01                 - mov eax,[ecx]
+            Telegram.exe+9DB71B - 8B 40 5C              - mov eax,[eax+5C]
+            Telegram.exe+9DB71E - FF D0                 - call eax
+            Telegram.exe+9DB720 - 84 C0                 - test al,al
+
+            88 4D EF 8B 4D E4 8B 01 8B 40 ?? FF D0 84 C0
+        */
+        // clang-format on
+
+        auto vResult =
+            _MainModule.search("88 4D EF 8B 4D E4 8B 01 8B 40 ?? FF D0 84 C0"_sig).matches();
+        if (vResult.size() != 1) {
+            LOG(Warn, "[IRuntime] Search isService index falied.");
+            return false;
+        }
+
+        Offset = *(uint8_t *)(vResult.at(0) + 10);
+
+        if (Offset % sizeof(void *) != 0) {
+            LOG(Warn, "[IRuntime] Searched isService index invalid.");
+            return false;
+        }
+
+        _Data.Index.IsService = (Offset / sizeof(void *));
     }
 
 #elif defined PLATFORM_X64
@@ -1322,13 +1360,13 @@ bool IRuntime::InitDynamicData_ToHistoryMessage()
         return false;
     }
 
-    uint32_t Offset = *(uint32_t *)(vResult.at(0) + 2);
+    Offset = *(uint32_t *)(vResult.at(0) + 2);
+
+    _Data.Index.ToHistoryMessage = (Offset / sizeof(void *));
 
 #else
     #error "Unimplemented."
 #endif
-
-    _Data.Index.ToHistoryMessage = (Offset / sizeof(void *)) - 1 /* Start from 0 */;
 
     return true;
 }

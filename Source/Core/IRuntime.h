@@ -33,7 +33,10 @@ public:
 
         struct
         {
-            uint32_t ToHistoryMessage;
+            union {
+                uint32_t ToHistoryMessage;
+                uint32_t IsService;
+            };
         } Index; // Virtual call index
 
         struct
@@ -59,6 +62,11 @@ public:
         return _Data;
     }
 
+    auto GetFileVersion() const
+    {
+        return _FileVersion;
+    }
+
     bool Initialize();
 
     bool InitFixedData();
@@ -77,5 +85,5 @@ private:
     bool InitDynamicData_SignedIndex();
     bool InitDynamicData_ReplyIndex();
     bool InitDynamicData_LangInstance();
-    bool InitDynamicData_ToHistoryMessage();
+    bool InitDynamicData_IsMessage();
 };
