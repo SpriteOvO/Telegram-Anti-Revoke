@@ -1,3 +1,7 @@
+**This project is no longer maintained, please read the release notes for the last version [v0.4.4](https://github.com/SpriteOvO/Telegram-Anti-Revoke/releases/tag/0.4.4).**
+
+---
+
 # Telegram-Anti-Revoke
 
 [![](https://github.com/SpriteOvO/Telegram-Anti-Revoke/actions/workflows/windows-msvc.yml/badge.svg)](https://github.com/SpriteOvO/Telegram-Anti-Revoke/actions/workflows/windows-msvc.yml)
